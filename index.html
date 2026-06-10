@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prostate Cancer Awareness - Health Quest Game</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/game.js" defer></script>
+</head>
+<body data-theme="light">
+  <!-- Top Navigation -->
+  <nav class="app-navbar" role="navigation" aria-label="Main navigation">
+    <div class="navbar-content">
+      <button class="nav-btn nav-back" id="back-btn" aria-label="Go back to previous page">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        <span>Back</span>
+      </button>
+      
+      <div class="navbar-title">
+        <h1>Prostate Cancer Awareness</h1>
+      </div>
+
+      <div class="navbar-controls">
+        <button class="icon-btn" id="rules-btn" aria-label="Show game rules">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="theme-btn" aria-label="Toggle theme">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364 1.636l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M19 12a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="music-btn" aria-label="Toggle music">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 18v-6a3 3 0 00-3-3H5a2 2 0 00-2 2v6a2 2 0 002 2h1a3 3 0 003-3zm0 0V9a3 3 0 013-3h1a2 2 0 012 2v6a2 2 0 01-2 2h-1a3 3 0 01-3-3z"/>
+            <path d="M14 7a4 4 0 014 4v6a2 2 0 002 2h0a2 2 0 002-2v-6a6 6 0 00-6-6h0"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="sound-btn" aria-label="Toggle sound effects">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13.5 4.06c0-1.336-1.616-2.256-2.73-1.72l-5.24 3.102A1 1 0 005 7.25v9.5a1 1 0 00.53.882l5.24 3.102c1.11.536 2.73-.384 2.73-1.72V4.06zM15.5 12a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="read-aloud-btn" aria-label="Toggle read aloud">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5h4V7h2v5h4l-5 5z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Game Container -->
+  <div class="app-container">
+    <!-- Game Board Section -->
+    <section class="game-section" aria-label="Game play area">
+      <div class="board-wrapper">
+        <div class="game-board" aria-label="Snakes and ladders board">
+          <img 
+            src="assets/images/game.jpg" 
+            alt="Prostate Cancer Awareness Game Board" 
+            id="board-img"
+            class="board-image"
+          >
+          <img 
+            id="player1" 
+            class="player-token player-token-1" 
+            src="assets/images/player11.png" 
+            alt="Player 1 token"
+          >
+          <img 
+            id="player2" 
+            class="player-token player-token-2" 
+            src="assets/images/player22.png" 
+            alt="Player 2 token"
+          >
+        </div>
+      </div>
+
+      <!-- Side Controls -->
+      <aside class="game-controls" aria-label="Game controls and status">
+        <div class="control-panel">
+          <!-- Dice Display -->
+          <div class="dice-display">
+            <div class="dice-value" aria-live="polite" aria-label="Dice value">
+              <span id="dice-value-display">1</span>
+            </div>
+            <img id="dice-img" src="assets/images/dice1.png" alt="Dice showing 1" class="dice-image">
+          </div>
+
+          <!-- Current Player -->
+          <div class="current-player-info">
+            <span class="label">Current Turn:</span>
+            <span id="current-player-name" class="player-name" aria-live="polite">Player 1</span>
+          </div>
+
+          <!-- Roll Button -->
+          <button id="roll-dice" class="btn btn-primary btn-lg" type="button" aria-label="Roll the dice">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 4a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"/>
+              <path d="M16 4a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V4z"/>
+            </svg>
+            <span>Roll Dice</span>
+          </button>
+
+          <!-- Restart Button -->
+          <button id="restart" class="btn btn-secondary btn-sm" type="button" hidden aria-label="Restart the game">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 003.51 15"/>
+            </svg>
+            <span>Restart</span>
+          </button>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Player Info Section -->
+    <section class="player-section" aria-label="Player information">
+      <div class="player-cards-container">
+        <article class="player-card player-card-1">
+          <div class="player-avatar-wrapper">
+            <img src="assets/images/player11.png" alt="" class="player-avatar">
+          </div>
+          <div class="player-card-info">
+            <span class="player-label">Player 1</span>
+            <span id="player1-name-display" class="player-name">Player 1</span>
+          </div>
+        </article>
+
+        <article class="player-card player-card-2">
+          <div class="player-avatar-wrapper">
+            <img src="assets/images/player22.png" alt="" class="player-avatar">
+          </div>
+          <div class="player-card-info">
+            <span class="player-label">Player 2</span>
+            <span id="player2-name-display" class="player-name">Player 2</span>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <!-- Game Setup Modal (Carousel Rules + Player Names) -->
+  <div id="setup-modal" class="modal modal-active" role="dialog" aria-modal="true" aria-labelledby="setup-title">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="setup-title" class="modal-title">Game Rules</h2>
+        <button class="modal-close" id="close-setup" aria-label="Close setup modal" hidden>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Rules Carousel -->
+        <div class="rules-carousel" id="rules-carousel">
+          <div class="carousel-controls">
+            <button class="carousel-btn carousel-skip" id="skip-rules" aria-label="Skip rules">
+              <span>Skip</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6-.41-.41zM4 6h2v12H4z"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="carousel-slides" id="carousel-slides">
+            <!-- Slides will be generated by JS -->
+          </div>
+
+          <div class="carousel-indicators" id="carousel-indicators">
+            <!-- Indicators will be generated by JS -->
+          </div>
+
+          <div class="carousel-navigation">
+            <button class="carousel-btn carousel-prev" id="carousel-prev" aria-label="Previous rule">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+              <span>Back</span>
+            </button>
+            <button class="carousel-btn carousel-next" id="carousel-next" aria-label="Next rule">
+              <span>Next</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <div class="carousel-options">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" id="dont-show-again" aria-label="Don't show rules again">
+              <span class="checkbox-label">Don't show again</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Player Setup Form -->
+        <div class="player-setup" id="player-setup" hidden>
+          <h3>Configure Players</h3>
+          <div class="player-inputs">
+            <div class="input-group">
+              <label for="player1-name">Player 1 Name</label>
+              <input 
+                type="text" 
+                id="player1-name" 
+                placeholder="Enter name" 
+                value="Player 1"
+                maxlength="20"
+              >
+            </div>
+            <div class="input-group">
+              <label for="player2-name">Player 2 Name</label>
+              <input 
+                type="text" 
+                id="player2-name" 
+                placeholder="Enter name" 
+                value="Player 2"
+                maxlength="20"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="start-game" class="btn btn-primary" type="button">Start Game</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Question Modal -->
+  <div id="question-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="question-title" hidden>
+    <div class="modal-overlay"></div>
+    <div class="modal-content modal-question">
+      <div class="modal-header">
+        <h2 id="question-title" class="modal-title">Health Question</h2>
+      </div>
+
+      <div class="modal-body">
+        <p id="question-text" class="question-text"></p>
+      </div>
+
+      <div class="modal-footer modal-footer-question">
+        <button id="true-btn" class="btn btn-answer btn-true" type="button">
+          <span>True</span>
+        </button>
+        <button id="false-btn" class="btn btn-answer btn-false" type="button">
+          <span>False</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Winner Modal -->
+  <div id="winner-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="winner-title" hidden>
+    <div class="modal-overlay"></div>
+    <div class="modal-content modal-winner">
+      <div class="modal-body">
+        <div class="winner-icon">🎉</div>
+        <h2 id="winner-title" class="modal-title">Game Over!</h2>
+        <p id="winner-text" class="winner-text"></p>
+        <img id="winner-avatar" src="" alt="" class="winner-avatar">
+      </div>
+
+      <div class="modal-footer">
+        <button id="play-again-btn" class="btn btn-primary" type="button">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Elements -->
+  <audio id="background-music" loop></audio>
+  <audio id="question-sound"></audio>
+  <audio id="snake-sound"></audio>
+  <audio id="ladder-sound"></audio>
+  <audio id="dice-sound"></audio>
+  <audio id="win-sound"></audio>
+</body>
+</html>
