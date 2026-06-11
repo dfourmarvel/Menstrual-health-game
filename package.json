@@ -1,0 +1,24 @@
+{
+  "name": "menstrual-health-game",
+  "version": "1.0.0",
+  "description": "Menstrual Health Awareness Game - An educational board game for learning about menstrual health",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve . -p 3000"
+  },
+  "keywords": [
+    "menstrual-health",
+    "education",
+    "game",
+    "awareness"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/analytics": "^1.3.1"
+  },
+  "devDependencies": {
+    "serve": "^14.2.3"
+  }
+}
