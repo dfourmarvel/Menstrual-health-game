@@ -481,8 +481,8 @@ function createInitialGameState(playerNames = ["Player 1", "Player 2"]) {
   return {
     currentPlayer: 0,
     players: [
-      { name: playerNames[0], position: 0, element: null, hasStarted: false },
-      { name: playerNames[1], position: 0, element: null, hasStarted: false },
+      { name: playerNames[0], position: 0, element: null, hasStarted: false, score: 0, achievements: [], isAI: false },
+      { name: playerNames[1], position: 0, element: null, hasStarted: false, score: 0, achievements: [], isAI: false },
     ],
     isGameOver: false,
     isQuestionActive: false,
@@ -647,6 +647,100 @@ function cacheElements() {
 function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/* ---------------------------------------------------------------
+   IndexedDB persistence helpers (fallback to localStorage)
+   --------------------------------------------------------------- */
+const DB_NAME = 'MenstrualGameDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'games';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+        store.createIndex('byDate', 'timestamp');
+        store.createIndex('current', 'isCurrent');
+      }
+    };
+    request.onsuccess = e => resolve(e.target.result);
+    request.onerror = e => reject(e.target.error);
+  });
+}
+
+async function persistCurrentGame(state) {
+  if (!window.indexedDB) {
+    localStorage.setItem('menstrualGame_current', JSON.stringify(state));
+    return;
+  }
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  const store = tx.objectStore(STORE_NAME);
+  // Remove old current record
+  const curIdx = store.index('current');
+  const curCursor = await curIdx.openCursor(IDBKeyRange.only(true));
+  if (curCursor) curCursor.delete();
+  await store.put({ timestamp: Date.now(), isCurrent: true, state });
+  await tx.complete;
+}
+
+async function loadCurrentGame() {
+  if (!window.indexedDB) {
+    const raw = localStorage.getItem('menstrualGame_current');
+    return raw ? JSON.parse(raw) : null;
+  }
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, 'readonly');
+  const idx = tx.objectStore(STORE_NAME).index('current');
+  const cursor = await idx.openCursor(IDBKeyRange.only(true));
+  return cursor ? cursor.value.state : null;
+}
+
+async function archiveFinishedGame(state) {
+  if (!window.indexedDB) {
+    // store under a different key for history – simple array in localStorage
+    const hist = JSON.parse(localStorage.getItem('menstrualGame_history') || '[]');
+    hist.unshift({ timestamp: Date.now(), state });
+    localStorage.setItem('menstrualGame_history', JSON.stringify(hist.slice(0, 50)));
+    // also clear current record
+    localStorage.removeItem('menstrualGame_current');
+    return;
+  }
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  const store = tx.objectStore(STORE_NAME);
+  // Delete any existing current record (if still present)
+  const curIdx = store.index('current');
+  const curCursor = await curIdx.openCursor(IDBKeyRange.only(true));
+  if (curCursor) curCursor.delete();
+  await store.put({ timestamp: Date.now(), isCurrent: false, state });
+  await tx.complete;
+}
+
+async function fetchGameHistory(limit = 10) {
+  if (!window.indexedDB) {
+    const raw = localStorage.getItem('menstrualGame_history');
+    if (!raw) return [];
+    const all = JSON.parse(raw);
+    return all.slice(0, limit);
+  }
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, 'readonly');
+  const idx = tx.objectStore(STORE_NAME).index('byDate');
+  const result = [];
+  let cursor = await idx.openCursor(null, 'prev'); // newest first
+  while (cursor && result.length < limit) {
+    if (!cursor.value.isCurrent) {
+      result.push(cursor.value);
+    }
+    cursor = await cursor.continue();
+  }
+  return result;
+}
+
 
 function playSound(audio) {
   if (!appState.soundEnabled || !audio) return;
@@ -953,24 +1047,78 @@ function getBoardJump(position) {
   return null;
 }
 
+// ---------------------------------------------------------------------------
+// QUESTION HANDLING – session‑unique question pool
+// ---------------------------------------------------------------------------
+
+// Initialize a shuffled pool of questions for the current game session.
+function initializeQuestionPool() {
+  // Use only true/false (auto‑gradable) questions for gameplay.
+  const pool = questions.filter(q => q.type === 'true-false');
+  // Shuffle using Fisher‑Yates.
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  gameState.questionPool = pool; // array of question objects
+  gameState.usedQuestions = [];
+}
+
+// Retrieve the next question from the session pool, rebuilding if exhausted.
+function getNextQuestion() {
+  if (!gameState.questionPool || gameState.questionPool.length === 0) {
+    // Pool exhausted – rebuild while avoiding immediate repeats.
+    const recent = gameState.usedQuestions.slice(-5); // keep last 5 used
+    const all = questions.filter(q => q.type === 'true-false');
+    const newPool = all.filter(q => !recent.includes(q));
+    // Shuffle new pool
+    for (let i = newPool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newPool[i], newPool[j]] = [newPool[j], newPool[i]];
+    }
+    gameState.questionPool = newPool;
+    gameState.usedQuestions = [];
+  }
+  const next = gameState.questionPool.shift();
+  gameState.usedQuestions.push(next);
+  return next;
+}
+
 function showQuestion(callback) {
   // If the current player is AI, answer automatically without UI
   const currentPlayer = gameState.players[gameState.currentPlayer];
   if (currentPlayer.isAI) {
-    // Choose a random answer (true/false) for true‑false questions
-    // Note: Auto‑gradable questions are true‑false; we simply pick a random boolean
     const autoAnswer = Math.random() < 0.5;
-    // Simulate async delay to mimic thinking time
     setTimeout(() => callback(autoAnswer), 300);
     return;
+  }
 
-
-
-
-  const autoGradableQuestions = questions.filter(question => question.type === 'true-false');
-  if (autoGradableQuestions.length === 0) {
+  // Ensure the question bank is ready.
+  if (questions.length === 0) {
     loadFallbackQuestions();
   }
+
+  // Get a unique question for this turn.
+  const nextQuestion = getNextQuestion();
+
+  showQuestionModal(nextQuestion.question);
+  gameState.isQuestionActive = true;
+
+  function handleAnswer(answer) {
+    hideQuestionModal();
+    gameState.isQuestionActive = false;
+    elements.trueBtn.removeEventListener('click', onTrue);
+    elements.falseBtn.removeEventListener('click', onFalse);
+    callback(answer === nextQuestion.answer);
+  }
+
+  function onTrue() { handleAnswer(true); }
+  function onFalse() { handleAnswer(false); }
+
+  elements.trueBtn.addEventListener('click', onTrue);
+  elements.falseBtn.addEventListener('click', onFalse);
+}
+
 
   const playableQuestions = autoGradableQuestions.length > 0
     ? autoGradableQuestions
@@ -1144,10 +1292,44 @@ function finalizeTurn(newPosition) {
     elements.rollDiceBtn.hidden = true;
     elements.restartBtn.hidden = false;
     showWinnerModal(currentPlayer.name, currentPlayer.element);
+    // Archive completed game and clear current save
+    archiveFinishedGame({
+      players: gameState.players.map(p => ({
+        name: p.name,
+        position: p.position,
+        score: p.score,
+        achievements: p.achievements,
+      })),
+      currentPlayer: gameState.currentPlayer,
+      timestamp: Date.now(),
+    });
+    // Remove current session data
+    if (window.indexedDB) {
+      openDB().then(db => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const idx = tx.objectStore(STORE_NAME).index('current');
+        idx.openCursor(IDBKeyRange.only(true)).then(cursor => {
+          if (cursor) cursor.delete();
+        });
+      });
+    } else {
+      localStorage.removeItem('menstrualGame_current');
+    }
     return;
   }
 
   advanceTurn();
+  // Persist ongoing game state after each turn
+  persistCurrentGame({
+    players: gameState.players.map(p => ({
+      name: p.name,
+      position: p.position,
+      score: p.score,
+      achievements: p.achievements,
+    })),
+    currentPlayer: gameState.currentPlayer,
+    questionPool: gameState.questionPool?.map(q => q.id) || [],
+  });
 }
 
 function advanceTurn() {
@@ -1274,46 +1456,84 @@ function initGame() {
     backgroundSource.type = 'audio/mpeg';
     elements.backgroundMusic.appendChild(backgroundSource);
   }
-
-  /* Load questions from markdown file */
-  questionBankReady = loadQuestionsFromMarkdown();
-
-  /* Cache player elements */
+  
+  /* Load questions and then set up the session‑unique pool.
+     After the pool is ready we also attempt to restore a previously saved game. */
+  questionBankReady = loadQuestionsFromMarkdown()
+    .then(() => {
+      initializeQuestionPool();
+      return loadCurrentGame();
+    })
+    .then(saved => {
+      if (saved) {
+        // --- Restore players ---
+        gameState.players.forEach((p, i) => {
+          const sp = saved.players?.[i];
+          if (sp) {
+            p.name = sp.name;
+            p.position = sp.position;
+            p.score = sp.score;
+            p.achievements = sp.achievements || [];
+            // visual element for the first two players
+            if (i === 0) p.element = elements.player1;
+            if (i === 1) p.element = elements.player2;
+          }
+        });
+        gameState.currentPlayer = saved.currentPlayer ?? 0;
+        // Restore the shuffled question pool (IDs only) to keep uniqueness
+        if (saved.questionPool?.length) {
+          const allTrue = questions.filter(q => q.type === 'true-false');
+          gameState.questionPool = saved.questionPool
+            .map(id => allTrue.find(q => q.id === id))
+            .filter(Boolean);
+        }
+        // Update UI to reflect restored state
+        elements.currentPlayerName.textContent = gameState.players[gameState.currentPlayer].name;
+        elements.player1NameDisplay.textContent = gameState.players[0].name;
+        elements.player2NameDisplay.textContent = gameState.players[1].name;
+        gameState.players.forEach((player, idx) => updatePlayerPosition(idx, player.position));
+        elements.rollDiceBtn.disabled = false;
+      } else {
+        // No saved game – start fresh
+        hideSetupModal();
+        elements.rollDiceBtn.disabled = true;
+      }
+    })
+    .catch(err => {
+      console.warn('Failed to load game state', err);
+    });
+  
+  // Cache player elements for visual tokens
   gameState.players[0].element = elements.player1;
   gameState.players[1].element = elements.player2;
-
-  /* Initialize positions */
-  gameState.players.forEach((player, index) => {
-    updatePlayerPosition(index, player.position);
-  });
-
-  /* Theme & Audio initialization */
+  
+  // Theme & Audio initialization
   initializeTheme();
   updateAudioButtons();
-
-  /* Carousel setup */
+  
+  // Carousel setup
   initializeCarousel();
-
-  /* Event Listeners - Navigation */
+  
+  // Event Listeners - Navigation
   elements.backBtn.addEventListener('click', () => {
     window.history.back();
   });
-
+  
   elements.rulesBtn.addEventListener('click', showRulesModal);
   elements.themeBtn.addEventListener('click', toggleTheme);
   elements.musicBtn.addEventListener('click', toggleMusic);
   elements.soundBtn.addEventListener('click', toggleSound);
   elements.readAloudBtn?.addEventListener('click', toggleReadAloud);
-
-  /* Event Listeners - Game Controls */
+  
+  // Event Listeners - Game Controls
   elements.rollDiceBtn.addEventListener('click', handleTurn);
   elements.restartBtn.addEventListener('click', resetGame);
-
-  /* Event Listeners - Rules Carousel */
+  
+  // Event Listeners - Rules Carousel
   elements.carouselPrev.addEventListener('click', () => {
     updateCarouselSlide(currentRuleSlide - 1);
   });
-
+  
   elements.carouselNext.addEventListener('click', () => {
     if (currentRuleSlide === gameRules.length - 1) {
       moveToCarouselEnd();
@@ -1321,32 +1541,27 @@ function initGame() {
       updateCarouselSlide(currentRuleSlide + 1);
     }
   });
-
+  
   elements.skipRules.addEventListener('click', () => {
     moveToCarouselEnd();
   });
-
-  /* Event Listeners - Game Setup */
+  
+  // Event Listeners - Game Setup
   elements.startGameBtn.addEventListener('click', startGame);
-
-  /* Event Listeners - Dice buttons */
+  
+  // Event Listeners - Dice buttons (placeholders)
   elements.trueBtn.addEventListener('click', () => {});
   elements.falseBtn.addEventListener('click', () => {});
-
-  /* Play again button */
+  
+  // Play again button
   elements.playAgainBtn.addEventListener('click', resetGame);
+  
+  // Show setup modal on start (unless user disabled it) – now handled by loadCurrentGame
 
-  /* Show setup modal on start (unless user disabled it) */
-  if (appState.showRulesOnStart) {
-    showSetupModal();
-  } else {
-    /* Still show player setup */
-    showSetupModal();
-    moveToCarouselEnd();
-  }
-
+  
   elements.rollDiceBtn.disabled = true;
 }
+
 
 /* Keyboard shortcuts */
 document.addEventListener('keydown', (e) => {
