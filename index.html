@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prostate Cancer Awareness - Health Quest Game</title>
+  <title>Menstrual Health Awareness Game</title>
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/game.js" defer></script>
 </head>
@@ -19,7 +19,7 @@
       </button>
       
       <div class="navbar-title">
-        <h1>Prostate Cancer Awareness</h1>
+        <h1>Menstrual Health Awareness</h1>
       </div>
 
       <div class="navbar-controls">
@@ -85,10 +85,20 @@
         <div class="control-panel">
           <!-- Dice Display -->
           <div class="dice-display">
-            <div class="dice-value" aria-live="polite" aria-label="Dice value">
+            <div class="dice-value visually-hidden" aria-live="polite" aria-label="Dice value">
               <span id="dice-value-display">1</span>
             </div>
-            <img id="dice-img" src="assets/images/dice1.png" alt="Dice showing 1" class="dice-image">
+            <div id="dice-cube" class="dice-cube dice-face-1" role="img" aria-label="Dice showing 1">
+              <span class="pip pip-1"></span>
+              <span class="pip pip-2"></span>
+              <span class="pip pip-3"></span>
+              <span class="pip pip-4"></span>
+              <span class="pip pip-5"></span>
+              <span class="pip pip-6"></span>
+              <span class="pip pip-7"></span>
+              <span class="pip pip-8"></span>
+              <span class="pip pip-9"></span>
+            </div>
           </div>
 
           <!-- Current Player -->
@@ -240,7 +250,7 @@
     <div class="modal-overlay"></div>
     <div class="modal-content modal-question">
       <div class="modal-header">
-        <h2 id="question-title" class="modal-title">Health Question</h2>
+        <h2 id="question-title" class="modal-title">Menstrual Health Question</h2>
       </div>
 
       <div class="modal-body">

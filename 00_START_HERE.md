@@ -2,7 +2,7 @@
 
 ## ✅ What You Have
 
-Your **Prostate Cancer Awareness Game** is now a **professional, production-ready web application** with all requested features implemented and documented.
+Your **Menstrual Health Awareness Game** is now a **professional, production-ready web application** with all requested features implemented and documented.
 
 ---
 
@@ -482,7 +482,7 @@ Your game is:
 
 ## 🌟 Summary
 
-**Your Prostate Cancer Awareness Game is now a professional, accessible web application with:**
+**Your Menstrual Health Awareness Game is now a professional, accessible web application with:**
 
 - Modern responsive design
 - Professional UI/UX system

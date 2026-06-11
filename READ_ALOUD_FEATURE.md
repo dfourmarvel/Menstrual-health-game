@@ -337,7 +337,7 @@ utterance.onerror = () => {
 ```
 1. User lands on snake/ladder
 2. Question modal appears
-3. Speech: "Prostate cancer can often be asymptomatic in its early stages"
+3. Speech: "Menstruation is the monthly shedding of the uterine lining"
 4. User thinks about answer
 5. User clicks True or False
 6. Next question read aloud

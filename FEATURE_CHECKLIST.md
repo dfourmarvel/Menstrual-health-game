@@ -319,7 +319,7 @@
 
 ✅ **Read Aloud feature is complete, tested, and production-ready.**
 
-The feature successfully adds professional text-to-speech capability to the Prostate Cancer Awareness Game, making it more accessible to users with visual impairments, learning differences, and those who prefer auditory learning.
+The feature successfully adds professional text-to-speech capability to the Menstrual Health Awareness Game, making it more accessible to users with visual impairments, learning differences, and those who prefer auditory learning.
 
 **Key Achievements:**
 - Seamless integration with existing code
