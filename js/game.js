@@ -1119,67 +1119,6 @@ function showQuestion(callback) {
   elements.falseBtn.addEventListener('click', onFalse);
 }
 
-
-  const playableQuestions = autoGradableQuestions.length > 0
-    ? autoGradableQuestions
-    : questions.filter(question => question.type === 'true-false');
-  const randomQuestion = playableQuestions[Math.floor(Math.random() * playableQuestions.length)];
-
-  showQuestionModal(randomQuestion.question);
-  gameState.isQuestionActive = true;
-
-  function handleAnswer(answer) {
-    hideQuestionModal();
-    gameState.isQuestionActive = false;
-    elements.trueBtn.removeEventListener('click', onTrue);
-    elements.falseBtn.removeEventListener('click', onFalse);
-    callback(answer === randomQuestion.answer);
-  }
-
-  function onTrue() {
-    handleAnswer(true);
-  }
-
-  function onFalse() {
-    handleAnswer(false);
-  }
-
-  elements.trueBtn.addEventListener('click', onTrue);
-  elements.falseBtn.addEventListener('click', onFalse);
-}
-  const autoGradableQuestions = questions.filter(question => question.type === 'true-false');
-  if (autoGradableQuestions.length === 0) {
-    loadFallbackQuestions();
-  }
-
-  const playableQuestions = autoGradableQuestions.length > 0
-    ? autoGradableQuestions
-    : questions.filter(question => question.type === 'true-false');
-  const randomQuestion = playableQuestions[Math.floor(Math.random() * playableQuestions.length)];
-
-  showQuestionModal(randomQuestion.question);
-  gameState.isQuestionActive = true;
-
-  function handleAnswer(answer) {
-    hideQuestionModal();
-    gameState.isQuestionActive = false;
-    elements.trueBtn.removeEventListener('click', onTrue);
-    elements.falseBtn.removeEventListener('click', onFalse);
-    callback(answer === randomQuestion.answer);
-  }
-
-  function onTrue() {
-    handleAnswer(true);
-  }
-
-  function onFalse() {
-    handleAnswer(false);
-  }
-
-  elements.trueBtn.addEventListener('click', onTrue);
-  elements.falseBtn.addEventListener('click', onFalse);
-}
-
 function askEntryQuestion() {
   return new Promise((resolve) => {
     showQuestion(resolve);
@@ -1349,6 +1288,11 @@ function startGame() {
   // Pad the array to max 4 entries; empty entries will be treated as AI players in createInitialGameState
   while (inputNames.length < 4) inputNames.push("");
 
+  /* Check if user wants to hide rules on future starts */
+  if (elements.dontShowAgain.checked) {
+    localStorage.setItem('showRulesOnStart', 'false');
+  }
+
   // Reinitialize gameState with up to 4 players (AI flags set inside createInitialGameState)
   const playerNames = inputNames.filter(name => name);
   gameState = createInitialGameState(playerNames);
@@ -1364,38 +1308,6 @@ function startGame() {
   elements.currentPlayerName.textContent = gameState.players[0].name;
   elements.player1NameDisplay.textContent = gameState.players[0].name;
   elements.player2NameDisplay.textContent = gameState.players[1].name;
-
-  hideSetupModal();
-  
-  elements.rollDiceBtn.disabled = false;
-
-  gameState.players.forEach((player, index) => {
-    player.position = 0;
-    player.hasStarted = false;
-    updatePlayerPosition(index, 0);
-  });
-
-  gameState.currentPlayer = 0;
-  gameState.isGameOver = false;
-  gameState.isQuestionActive = false;
-  gameState.isRolling = false;
-
-  playMusic(elements.backgroundMusic);
-}
-  const player1Name = elements.player1NameInput.value.trim() || "Player 1";
-  const player2Name = elements.player2NameInput.value.trim() || "Player 2";
-
-  /* Check if user wants to hide rules on future starts */
-  if (elements.dontShowAgain.checked) {
-    localStorage.setItem('showRulesOnStart', 'false');
-  }
-
-  gameState.players[0].name = player1Name;
-  gameState.players[1].name = player2Name;
-
-  elements.currentPlayerName.textContent = player1Name;
-  elements.player1NameDisplay.textContent = player1Name;
-  elements.player2NameDisplay.textContent = player2Name;
 
   hideSetupModal();
   
@@ -1495,7 +1407,10 @@ function initGame() {
         elements.rollDiceBtn.disabled = false;
       } else {
         // No saved game – start fresh
-        hideSetupModal();
+        showSetupModal();
+        if (!appPreferences.showRulesOnStart) {
+          moveToCarouselEnd();
+        }
         elements.rollDiceBtn.disabled = true;
       }
     })
