@@ -1547,7 +1547,7 @@ function initGame() {
   });
   
   // Event Listeners - Game Setup
-  elements.startGameBtn.addEventListener('click', startGame);
+  elements.startGameBtn.addEventListener('click', (e) => { e.preventDefault(); startGame(); });
   
   // Event Listeners - Dice buttons (placeholders)
   elements.trueBtn.addEventListener('click', () => {});
