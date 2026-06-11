@@ -1,6 +1,6 @@
 /* ============================================================================
-   MODERN PROSTATE CANCER AWARENESS GAME - REDESIGNED
-   Improved from original with Health Quest UX patterns
+   MENSTRUAL HEALTH AWARENESS GAME
+   Educational board game interface
    ============================================================================ */
 
 /* ============================================================================
@@ -8,7 +8,7 @@
    ============================================================================ */
 
 :root {
-  /* Color Palette - Prostate Cancer Awareness Theme */
+  /* Color Palette - Menstrual Health Awareness Theme */
   --primary-color: #6366f1;      /* Indigo - professional and trustworthy */
   --primary-dark: #4f46e5;
   --primary-light: #818cf8;
@@ -284,9 +284,12 @@ button {
   align-items: center;
   gap: var(--spacing-md);
   padding: var(--spacing-lg);
-  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+  background:
+    radial-gradient(circle at 24% 18%, rgba(255, 255, 255, 0.34), transparent 26%),
+    linear-gradient(135deg, #0f766e 0%, var(--primary-color) 100%);
   border-radius: 10px;
   color: white;
+  perspective: 700px;
 }
 
 .dice-value {
@@ -299,10 +302,125 @@ button {
   display: block;
 }
 
-.dice-image {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
+.dice-cube {
+  --pip-size: 14px;
+  position: relative;
+  width: 88px;
+  height: 88px;
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(226, 232, 240, 0.96) 58%, rgba(148, 163, 184, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 9px 9px 18px rgba(255, 255, 255, 0.95),
+    inset -12px -14px 24px rgba(71, 85, 105, 0.28),
+    0 18px 30px rgba(15, 23, 42, 0.34);
+  transform: rotateX(58deg) rotateZ(-28deg);
+  transform-style: preserve-3d;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.dice-cube::before,
+.dice-cube::after {
+  content: "";
+  position: absolute;
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+.dice-cube::before {
+  inset: 7px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.46), transparent 48%);
+}
+
+.dice-cube::after {
+  left: 9px;
+  right: 9px;
+  bottom: -14px;
+  height: 18px;
+  background: rgba(15, 23, 42, 0.32);
+  filter: blur(12px);
+  transform: translateZ(-14px);
+}
+
+.dice-cube.is-rolling {
+  animation: diceTumble 1s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+  box-shadow:
+    inset 9px 9px 18px rgba(255, 255, 255, 0.95),
+    inset -12px -14px 24px rgba(71, 85, 105, 0.28),
+    0 22px 36px rgba(15, 23, 42, 0.42);
+}
+
+@keyframes diceTumble {
+  0% {
+    transform: rotateX(58deg) rotateZ(-28deg) translateY(0);
+  }
+  35% {
+    transform: rotateX(252deg) rotateY(118deg) rotateZ(35deg) translateY(-8px);
+  }
+  70% {
+    transform: rotateX(418deg) rotateY(232deg) rotateZ(-18deg) translateY(2px);
+  }
+  100% {
+    transform: rotateX(58deg) rotateZ(-28deg) translateY(0);
+  }
+}
+
+.pip {
+  position: absolute;
+  width: var(--pip-size);
+  height: var(--pip-size);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 35%, #475569, #111827 70%);
+  box-shadow:
+    inset 2px 2px 3px rgba(255, 255, 255, 0.16),
+    1px 2px 4px rgba(15, 23, 42, 0.28);
+  opacity: 0;
+  transform: translate(-50%, -50%) translateZ(12px);
+  transition: opacity var(--transition-fast);
+}
+
+.pip-1 { left: 25%; top: 25%; }
+.pip-2 { left: 50%; top: 25%; }
+.pip-3 { left: 75%; top: 25%; }
+.pip-4 { left: 25%; top: 50%; }
+.pip-5 { left: 50%; top: 50%; }
+.pip-6 { left: 75%; top: 50%; }
+.pip-7 { left: 25%; top: 75%; }
+.pip-8 { left: 50%; top: 75%; }
+.pip-9 { left: 75%; top: 75%; }
+
+.dice-face-1 .pip-5,
+.dice-face-2 .pip-1,
+.dice-face-2 .pip-9,
+.dice-face-3 .pip-1,
+.dice-face-3 .pip-5,
+.dice-face-3 .pip-9,
+.dice-face-4 .pip-1,
+.dice-face-4 .pip-3,
+.dice-face-4 .pip-7,
+.dice-face-4 .pip-9,
+.dice-face-5 .pip-1,
+.dice-face-5 .pip-3,
+.dice-face-5 .pip-5,
+.dice-face-5 .pip-7,
+.dice-face-5 .pip-9,
+.dice-face-6 .pip-1,
+.dice-face-6 .pip-3,
+.dice-face-6 .pip-4,
+.dice-face-6 .pip-6,
+.dice-face-6 .pip-7,
+.dice-face-6 .pip-9 {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dice-cube,
+  .dice-cube.is-rolling {
+    animation: none;
+    transition: none;
+  }
 }
 
 .current-player-info {
@@ -1013,9 +1131,11 @@ button {
     padding: var(--spacing-md);
   }
 
-  .dice-image {
-    width: 60px;
-    height: 60px;
+  .dice-cube {
+    --pip-size: 11px;
+    width: 68px;
+    height: 68px;
+    border-radius: 14px;
   }
 
   .modal-footer {

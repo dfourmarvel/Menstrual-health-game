@@ -2,7 +2,7 @@
 
 ## What Was Accomplished
 
-Your Prostate Cancer Awareness Game (Snakes & Ladders educational game) has been completely **redesigned and improved** with professional features:
+Your Menstrual Health Awareness Game (Snakes & Ladders educational game) has been completely **redesigned and improved** with professional features:
 
 ---
 
@@ -317,7 +317,7 @@ Menstrual health/
 ## 🎓 Learning Outcomes
 
 ### Educational Purpose
-- Game teaches 30 prostate cancer awareness questions
+- Game teaches menstrual health awareness questions
 - True/False format for assessment
 - Interactive gameplay for engagement
 - Accessible to diverse learners

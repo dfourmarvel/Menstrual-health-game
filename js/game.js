@@ -1,8 +1,8 @@
 /**
- * PROSTATE CANCER AWARENESS GAME - REDESIGNED
- * Improved with modern UI/UX patterns from Health Quest reference
+ * MENSTRUAL HEALTH AWARENESS GAME
+ * Educational board game for menstrual health literacy
  * 
- * Improvements:
+ * Features:
  * - Theme toggle (light/dark mode)
  * - Audio control system (music & sound effects toggles)
  * - Rules carousel with progress indicators
@@ -23,6 +23,7 @@ const DICE_FRAME_DELAY = 50;
 const ENTRY_CORRECT_SIX_CHANCE = 0.65;
 const IMAGE_PATH = "assets/images";
 const AUDIO_PATH = "assets/audio";
+const QUESTION_SOURCE_PATH = "questions.md";
 
 /* Snakes: Landing position -> slide down to */
 const snakes = {
@@ -38,45 +39,404 @@ const ladders = {
   85: 100, 58: 100,
 };
 
-/* Health awareness questions organized by difficulty/importance */
-const questions = [
-  { question: "The prostate is a small gland in men that produces seminal fluid.", answer: true },
-  { question: "Prostate cancer is most commonly diagnosed in Black men over 55 and White men over 65.", answer: true },
-  { question: "Prostate cancer can often be asymptomatic in its early stages.", answer: true },
-  { question: "PSA stands for Prostate-Specific Antigen, a protein produced by the prostate.", answer: true },
-  { question: "A PSA test measures prostate-specific antigen levels to help detect cancer.", answer: true },
-  { question: "A digital rectal exam (DRE) involves a doctor examining the prostate through the rectum.", answer: true },
-  { question: "Difficulty urinating can be a symptom of prostate cancer.", answer: true },
-  { question: "Having a family history of prostate cancer does not affect your risk.", answer: false },
-  { question: "Surgery to remove the prostate is a common treatment option.", answer: true },
-  { question: "Active surveillance involves closely monitoring prostate cancer without immediate treatment.", answer: true },
-  { question: "A diet high in red meat and dairy may increase the risk of prostate cancer.", answer: true },
-  { question: "The Gleason score grades prostate cancer based on its microscopic appearance.", answer: true },
-  { question: "Hormone therapy for prostate cancer blocks the production of hormones that fuel growth.", answer: true },
-  { question: "The most common type of prostate cancer is adenocarcinoma.", answer: true },
-  { question: "African American men have a lower risk of prostate cancer compared to other races.", answer: false },
-  { question: "Men with a positive family history of prostate cancer are at higher risk.", answer: true },
-  { question: "Men with a positive family history of breast cancer may have a higher risk of prostate cancer.", answer: true },
-  { question: "Prostate cancer screenings are recommended for men over 50.", answer: true },
-  { question: "MRI can help detect and stage prostate cancer.", answer: true },
-  { question: "A prostate biopsy involves taking small samples of prostate tissue to check for cancer.", answer: true },
-  { question: "Healthy lifestyle changes can improve quality of life for prostate cancer patients.", answer: true },
-  { question: "Cryotherapy uses cold-freeze therapy to destroy cancerous tissue in the prostate.", answer: true },
-  { question: "Some men with prostate cancer may have normal PSA levels.", answer: true },
-  { question: "Some men without prostate cancer may have high PSA levels.", answer: true },
-  { question: "Watchful waiting involves monitoring prostate cancer symptoms without active treatment.", answer: true },
-  { question: "Prostate cancer and its treatments can affect sexual function.", answer: true },
-  { question: "Obesity is linked to a higher risk of aggressive prostate cancer.", answer: false },
-  { question: "Genetic mutations like BRCA1/2 can increase prostate cancer risk.", answer: true },
-  { question: "Prostate cancer is more common in North America than other regions.", answer: true },
-  { question: "Regular exercise may help reduce prostate cancer risk.", answer: true },
-];
+/* Questions array - will be populated dynamically from questions.md */
+let questions = [];
+let questionBankReady = Promise.resolve();
+let questionBankMetadata = {
+  total: 0,
+  byType: {},
+  byDifficulty: {},
+  bySection: {},
+};
+
+/* Difficulty categories for questions */
+const difficultyLevels = {
+  easy: [],
+  medium: [],
+  hard: [],
+};
+
+/* 
+ * QUESTION PARSER & LOADER
+ * Parses questions.md at runtime to build the question bank
+ */
+
+/**
+ * Parse the questions.md file and extract questions with answers
+ * Categorizes them by difficulty based on section headings
+ */
+async function loadQuestionsFromMarkdown() {
+  try {
+    const response = await fetch(QUESTION_SOURCE_PATH);
+    if (!response.ok) {
+      console.warn('Could not load questions.md, using fallback questions');
+      loadFallbackQuestions();
+      return;
+    }
+
+    const markdown = await response.text();
+    const parsedQuestions = parseQuestionsMarkdown(markdown);
+    
+    if (parsedQuestions.length === 0) {
+      console.warn('No questions parsed from questions.md, using fallback questions');
+      loadFallbackQuestions();
+      return;
+    }
+
+    questions = parsedQuestions;
+    console.log(`Loaded ${questions.length} questions from questions.md`);
+    categorizeQuestionsByDifficulty();
+  } catch (error) {
+    console.warn('Error loading questions.md:', error);
+    loadFallbackQuestions();
+  }
+}
+
+/**
+ * Parse markdown text to extract questions and answers
+ * Recognizes both True/False and Q&A format questions
+ * @param {string} markdown - The markdown content from questions.md
+ * @returns {Array} Array of question objects with {question, answer, type, section, difficulty}
+ */
+function parseQuestionsMarkdown(markdown) {
+  const parsedQuestions = [];
+  const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
+  let currentSection = 'Introduction';
+  let currentDifficulty = 'easy';
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = normalizeMarkdownLine(lines[i]);
+    const heading = getSectionHeading(line);
+
+    if (heading) {
+      currentSection = heading;
+      currentDifficulty = inferDifficultyFromSection(currentSection, parsedQuestions.length);
+      i++;
+      continue;
+    }
+
+    const bulletQuestion = parseBulletQuestion(line, lines, i, currentSection, currentDifficulty, parsedQuestions.length);
+    if (bulletQuestion) {
+      parsedQuestions.push(bulletQuestion.question);
+      i = bulletQuestion.nextIndex;
+      continue;
+    }
+
+    const blockQuestion = parseQuestionBlock(lines, i, currentSection, currentDifficulty, parsedQuestions.length);
+    if (blockQuestion) {
+      parsedQuestions.push(blockQuestion.question);
+      i = blockQuestion.nextIndex;
+      continue;
+    }
+
+    const inlineQuestions = parseInlineQuestionPairs(line, currentSection, currentDifficulty, parsedQuestions.length);
+    if (inlineQuestions.length > 0) {
+      parsedQuestions.push(...inlineQuestions);
+      i++;
+      continue;
+    }
+
+    i++;
+  }
+
+  applyOrderBasedDifficulty(parsedQuestions);
+  return parsedQuestions;
+}
+
+function normalizeMarkdownLine(line) {
+  return line
+    .replace(/<[^>]+>/g, '')
+    .replace(/\\---/g, '---')
+    .trim();
+}
+
+function cleanMarkdownText(text) {
+  return text
+    .replace(/^\s*[-*]\s*/, '')
+    .replace(/^\s*\d+[.)]\s*/, '')
+    .replace(/\*\*/g, '')
+    .replace(/[_`]/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+function getSectionHeading(line) {
+  if (!line) return null;
+
+  const hashHeading = line.match(/^#{1,6}\s+(.+)$/);
+  if (hashHeading) {
+    return cleanMarkdownText(hashHeading[1]);
+  }
+
+  const boldHeading = line.match(/^\*\*([^*]+)\*\*$/);
+  if (!boldHeading) return null;
+
+  const heading = cleanMarkdownText(boldHeading[1]);
+  if (/^(answer|correct answer|explanation|question\s*\d*|questions?\s*\d*|q\d+\.|\d+\\?[.)]\s*)/i.test(heading)) {
+    return null;
+  }
+  if (heading.length > 95 || heading.endsWith('?') || /^true or false:/i.test(heading)) {
+    return null;
+  }
+
+  return heading;
+}
+
+function inferDifficultyFromSection(section, questionCount) {
+  const sectionText = section.toLowerCase();
+
+  if (/basic|understanding|questions?\s*1\s*[-–]\s*50/.test(sectionText)) {
+    return 'easy';
+  }
+  if (/intermediate|questions?\s*51\s*[-–]\s*100|period poverty|wash/.test(sectionText)) {
+    return 'medium';
+  }
+  if (/advanced|family|specialist|evidence|management|secondary|chronic|neuromodulation|mcq|sba|questions?\s*10\d|questions?\s*15\d|questions?\s*20\d|questions?\s*25\d/.test(sectionText)) {
+    return 'hard';
+  }
+
+  if (questionCount < 120) return 'easy';
+  if (questionCount < 260) return 'medium';
+  return 'hard';
+}
+
+function parseBulletQuestion(line, allLines, lineIndex, section, difficulty, questionIndex) {
+  const questionMatch = line.match(/^[-*]\s+\*\*(.+?)\*\*\s*$/);
+  if (!questionMatch || /^answer:/i.test(questionMatch[1])) return null;
+
+  const answerInfo = findAnswerAfterLine(allLines, lineIndex + 1);
+  if (!answerInfo) return null;
+
+  return {
+    question: buildQuestionRecord(questionMatch[1], answerInfo.answer, {
+      section,
+      difficulty,
+      sourceLine: lineIndex + 1,
+      order: questionIndex + 1,
+    }),
+    nextIndex: answerInfo.nextIndex,
+  };
+}
+
+function parseQuestionBlock(allLines, lineIndex, section, difficulty, questionIndex) {
+  const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
+  const questionNumberMatch = currentLine.match(/^\*\*Question\s+(\d+)\*\*\s*$/i);
+  const namedQuestionMatch = currentLine.match(/^\*\*Question:\*\*\s*(.+)$/i);
+  const shortQuestionMatch = currentLine.match(/^\*\*Q(\d+)\.\*\*\s*(.+)$/i);
+  const numberedBoldMatch = currentLine.match(/^\*\*(\d+)\\?[.)]\s*(.+?)\*\*\s*$/);
+  if (!questionNumberMatch && !namedQuestionMatch && !shortQuestionMatch && !numberedBoldMatch) return null;
+
+  const inlineQuestionText = namedQuestionMatch?.[1] || shortQuestionMatch?.[2] || numberedBoldMatch?.[2] || '';
+  const questionLines = inlineQuestionText ? [inlineQuestionText] : [];
+  let cursor = lineIndex + 1;
+
+  while (cursor < allLines.length) {
+    const line = normalizeMarkdownLine(allLines[cursor]);
+    if (!line) {
+      cursor++;
+      continue;
+    }
+    if (isAnswerLine(line)) break;
+    if (isQuestionStart(line) || getSectionHeading(line)) return null;
+    questionLines.push(line);
+    cursor++;
+  }
+
+  const answerInfo = findAnswerAfterLine(allLines, cursor);
+  if (!answerInfo || questionLines.length === 0) return null;
+
+  return {
+    question: buildQuestionRecord(questionLines.join(' '), answerInfo.answer, {
+      section,
+      difficulty,
+      sourceLine: lineIndex + 1,
+      order: questionIndex + 1,
+      questionNumber: Number(questionNumberMatch?.[1] || shortQuestionMatch?.[1] || numberedBoldMatch?.[1]) || null,
+    }),
+    nextIndex: answerInfo.nextIndex,
+  };
+}
+
+function parseInlineQuestionPairs(line, section, difficulty, questionIndex) {
+  const inlinePattern = /(?:^|\s)(?:\d+[.)]\s*)?\*\*(.+?)\*\*\s*(?:\*\*Answer:\*\*|Answer:)\s*([^*]+?)(?=\s+\d+[.)]\s*\*\*|$)/gi;
+  const parsed = [];
+  let match;
+
+  while ((match = inlinePattern.exec(line)) !== null) {
+    parsed.push(buildQuestionRecord(match[1], match[2], {
+      section,
+      difficulty,
+      sourceLine: null,
+      order: questionIndex + parsed.length + 1,
+    }));
+  }
+
+  return parsed;
+}
+
+function findAnswerAfterLine(allLines, startIndex) {
+  for (let cursor = startIndex; cursor < allLines.length; cursor++) {
+    const line = normalizeMarkdownLine(allLines[cursor]);
+    if (!line) continue;
+    if (isQuestionStart(line) || getSectionHeading(line)) return null;
+    if (!isAnswerLine(line)) continue;
+
+    const answer = extractAnswer(line, allLines, cursor);
+    if (!answer.value) return null;
+    return {
+      answer: answer.value,
+      nextIndex: answer.nextIndex,
+    };
+  }
+
+  return null;
+}
+
+function extractAnswer(answerLine, allLines, lineIndex) {
+  let answer = answerLine
+    .replace(/^\*\*(Correct\s+Answer|Answer):\*\*:?\s*/i, '')
+    .replace(/^\*\*(Correct\s+Answer|Answer):?\*\*\s*/i, '')
+    .replace(/^(Correct\s+Answer|Answer):\s*/i, '')
+    .trim();
+
+  let cursor = lineIndex + 1;
+
+  while (!answer && cursor < allLines.length) {
+    const line = normalizeMarkdownLine(allLines[cursor]);
+    if (!line) {
+      cursor++;
+      continue;
+    }
+    if (isQuestionStart(line) || isExplanationLine(line) || getSectionHeading(line)) break;
+    answer = line;
+    cursor++;
+    break;
+  }
+
+  while (cursor < allLines.length) {
+    const line = normalizeMarkdownLine(allLines[cursor]);
+    if (!line) {
+      cursor++;
+      continue;
+    }
+    if (isQuestionStart(line) || isAnswerLine(line) || isExplanationLine(line) || getSectionHeading(line)) break;
+    answer = `${answer} ${line}`;
+    cursor++;
+  }
+
+  return {
+    value: cleanMarkdownText(answer),
+    nextIndex: cursor,
+  };
+}
+
+function isQuestionStart(line) {
+  return /^[-*]\s+\*\*.+\*\*/.test(line) ||
+    /^\*\*Question\s+\d+\*\*/i.test(line) ||
+    /^\*\*Question:\*\*/i.test(line) ||
+    /^\*\*Q\d+\.\*\*/i.test(line) ||
+    /^\*\*\d+\\?[.)]\s+.+\*\*/.test(line);
+}
+
+function isAnswerLine(line) {
+  return /^\*\*(Correct\s+Answer|Answer):?\*\*/i.test(line) ||
+    /^(Correct\s+Answer|Answer):/i.test(line);
+}
+
+function isExplanationLine(line) {
+  return /^\*\*Explanation:?\*\*/i.test(line) || /^Explanation:?/i.test(line);
+}
+
+function buildQuestionRecord(questionText, answerText, metadata) {
+  const cleanedQuestion = cleanMarkdownText(questionText).replace(/^Question:\s*/i, '');
+  const cleanedAnswer = cleanMarkdownText(answerText);
+  const normalizedAnswer = cleanedAnswer.toLowerCase();
+  const isTrueFalse = /^true\b/i.test(cleanedQuestion) || /^(true|false)\b/i.test(normalizedAnswer);
+
+  return {
+    id: `q-${metadata.order}`,
+    question: cleanedQuestion,
+    answer: isTrueFalse ? normalizedAnswer.startsWith('true') : cleanedAnswer,
+    answerText: cleanedAnswer,
+    type: isTrueFalse ? 'true-false' : 'qa',
+    section: metadata.section,
+    difficulty: metadata.difficulty,
+    sourceLine: metadata.sourceLine,
+    questionNumber: metadata.questionNumber || null,
+  };
+}
+
+function applyOrderBasedDifficulty(parsedQuestions) {
+  const total = parsedQuestions.length;
+  if (total === 0) return;
+
+  parsedQuestions.forEach((question, index) => {
+    if (question.difficulty) return;
+
+    const progress = index / total;
+    if (progress < 0.34) {
+      question.difficulty = 'easy';
+    } else if (progress < 0.67) {
+      question.difficulty = 'medium';
+    } else {
+      question.difficulty = 'hard';
+    }
+  });
+}
+
+/**
+ * Categorize loaded questions into difficulty buckets
+ */
+function categorizeQuestionsByDifficulty() {
+  difficultyLevels.easy = questions.filter(q => q.difficulty === 'easy');
+  difficultyLevels.medium = questions.filter(q => q.difficulty === 'medium');
+  difficultyLevels.hard = questions.filter(q => q.difficulty === 'hard');
+  questionBankMetadata = questions.reduce((metadata, question) => {
+    metadata.total += 1;
+    metadata.byType[question.type] = (metadata.byType[question.type] || 0) + 1;
+    metadata.byDifficulty[question.difficulty] = (metadata.byDifficulty[question.difficulty] || 0) + 1;
+    metadata.bySection[question.section] = (metadata.bySection[question.section] || 0) + 1;
+    return metadata;
+  }, {
+    total: 0,
+    byType: {},
+    byDifficulty: {},
+    bySection: {},
+  });
+
+  console.log('Question bank loaded', questionBankMetadata);
+}
+
+/**
+ * Load fallback menstrual health questions if parsing fails
+ */
+function loadFallbackQuestions() {
+  questions = [
+    { question: "Menstruation is the monthly shedding of the uterine lining.", answer: true, type: 'true-false', difficulty: 'easy' },
+    { question: "True or False: Menstruation is a sign of good health in women.", answer: true, type: 'true-false', difficulty: 'easy' },
+    { question: "What is the average length of a menstrual cycle?", answer: "28 days (though it can range from 21 to 35 days)", type: 'qa', difficulty: 'easy' },
+    { question: "True or False: A menstrual cycle of 28 days is standard for all women.", answer: false, type: 'true-false', difficulty: 'easy' },
+    { question: "What is ovulation, and when does it occur in a menstrual cycle?", answer: "Ovulation is the release of an egg from the ovary, usually around the 14th day of a 28-day cycle", type: 'qa', difficulty: 'easy' },
+    { question: "True or False: Using unclean cloths during menstruation can lead to infections.", answer: true, type: 'true-false', difficulty: 'medium' },
+    { question: "What are the most common menstrual hygiene products?", answer: "Sanitary pads, tampons, menstrual cups, and reusable cloth pads", type: 'qa', difficulty: 'medium' },
+    { question: "True or False: Leaving a tampon in for too long can increase the risk of toxic shock syndrome (TSS).", answer: true, type: 'true-false', difficulty: 'medium' },
+    { question: "What is endometriosis, and how can it impact menstruation?", answer: "Endometriosis is tissue similar to uterine lining growing outside the uterus, leading to painful periods and heavy bleeding", type: 'qa', difficulty: 'hard' },
+    { question: "True or False: PCOS can lead to menstrual irregularities and infertility.", answer: true, type: 'true-false', difficulty: 'hard' },
+  ];
+  
+  difficultyLevels.easy = questions.filter(q => q.difficulty === 'easy');
+  difficultyLevels.medium = questions.filter(q => q.difficulty === 'medium');
+  difficultyLevels.hard = questions.filter(q => q.difficulty === 'hard');
+
+  console.log('Using fallback questions');
+}
 
 /* Game rules for carousel display */
 const gameRules = [
   {
     title: "How to Play",
-    description: "Roll the dice to move your piece across the board. Answer health questions to climb ladders and avoid snakes. The first player to reach the final tile wins!",
+    description: "Roll the dice to move your piece across the board. Answer menstrual health questions to climb ladders and avoid snakes. The first player to reach the final tile wins!",
     icon: "🎮"
   },
   {
@@ -86,12 +446,12 @@ const gameRules = [
   },
   {
     title: "Snakes & Ladders",
-    description: "Landing on a snake sends you down. Landing on a ladder moves you up. Answer health questions to decide your fate!",
+    description: "Landing on a snake sends you down. Landing on a ladder moves you up. Answer menstrual health questions to decide your fate!",
     icon: "🐍"
   },
   {
     title: "Health Questions",
-    description: "Answer true or false questions about prostate cancer awareness. Get it right and you climb the ladder or avoid the snake!",
+    description: "Answer true or false questions about menstrual health awareness. Get it right and you climb the ladder or avoid the snake!",
     icon: "❓"
   },
   {
@@ -101,12 +461,12 @@ const gameRules = [
   },
   {
     title: "Health Tips",
-    description: "Regular screenings and healthy lifestyle choices are important. Learn about prostate cancer risks and prevention.",
+    description: "Healthy hygiene, supportive conversations, timely care, and accurate cycle knowledge all help people manage menstruation safely and with dignity.",
     icon: "💪"
   },
   {
     title: "Let's Begin!",
-    description: "Configure your player names and click Start Game to begin. Have fun while learning about prostate health!",
+    description: "Configure your player names and click Start Game to begin. Have fun while learning about menstrual health!",
     icon: "✨"
   }
 ];
@@ -229,7 +589,7 @@ function cacheElements() {
     boardImg: document.getElementById('board-img'),
     player1: document.getElementById('player1'),
     player2: document.getElementById('player2'),
-    diceImg: document.getElementById('dice-img'),
+    diceCube: document.getElementById('dice-cube'),
     diceValueDisplay: document.getElementById('dice-value-display'),
     currentPlayerName: document.getElementById('current-player-name'),
     player1NameDisplay: document.getElementById('player1-name-display'),
@@ -304,6 +664,26 @@ function stopMusic(audio) {
   if (!audio) return;
   audio.pause();
   audio.currentTime = 0;
+}
+
+function setDiceFace(face) {
+  if (!elements.diceCube) return;
+
+  elements.diceCube.classList.remove(
+    'dice-face-1',
+    'dice-face-2',
+    'dice-face-3',
+    'dice-face-4',
+    'dice-face-5',
+    'dice-face-6'
+  );
+  elements.diceCube.classList.add(`dice-face-${face}`);
+  elements.diceCube.setAttribute('aria-label', `Dice showing ${face}`);
+  elements.diceValueDisplay.textContent = face;
+}
+
+function setDiceRolling(isRolling) {
+  elements.diceCube?.classList.toggle('is-rolling', isRolling);
 }
 
 /* ============================================================================
@@ -532,32 +912,31 @@ function getPositionCoordinates(position) {
 function updatePlayerPosition(playerIndex, position) {
   const coordinates = getPositionCoordinates(position);
   const player = gameState.players[playerIndex];
-
-  player.element.style.left = `${coordinates.x}%`;
-  player.element.style.bottom = `${coordinates.y}%`;
+  if (player.element) {
+    player.element.style.left = `${coordinates.x}%`;
+    player.element.style.bottom = `${coordinates.y}%`;
+  }
 }
 
 async function rollDice(options = {}) {
   return new Promise((resolve) => {
     playSound(elements.diceSound);
+    setDiceRolling(true);
     let rolls = 0;
     let randomFace = 1;
 
     const rollInterval = setInterval(() => {
       randomFace = Math.floor(Math.random() * 6) + 1;
-      elements.diceImg.src = `${IMAGE_PATH}/dice${randomFace}.png`;
-      elements.diceImg.alt = `Dice showing ${randomFace}`;
-      elements.diceValueDisplay.textContent = randomFace;
+      setDiceFace(randomFace);
       rolls += 1;
 
       if (rolls >= DICE_ROLL_FRAMES) {
         clearInterval(rollInterval);
         if (options.preferredFace && Math.random() < options.preferredFaceChance) {
           randomFace = options.preferredFace;
-          elements.diceImg.src = `${IMAGE_PATH}/dice${randomFace}.png`;
-          elements.diceImg.alt = `Dice showing ${randomFace}`;
-          elements.diceValueDisplay.textContent = randomFace;
+          setDiceFace(randomFace);
         }
+        setDiceRolling(false);
         resolve(randomFace);
       }
     }, DICE_FRAME_DELAY);
@@ -575,7 +954,60 @@ function getBoardJump(position) {
 }
 
 function showQuestion(callback) {
-  const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+  // If the current player is AI, answer automatically without UI
+  const currentPlayer = gameState.players[gameState.currentPlayer];
+  if (currentPlayer.isAI) {
+    // Choose a random answer (true/false) for true‑false questions
+    // Note: Auto‑gradable questions are true‑false; we simply pick a random boolean
+    const autoAnswer = Math.random() < 0.5;
+    // Simulate async delay to mimic thinking time
+    setTimeout(() => callback(autoAnswer), 300);
+    return;
+
+
+
+
+  const autoGradableQuestions = questions.filter(question => question.type === 'true-false');
+  if (autoGradableQuestions.length === 0) {
+    loadFallbackQuestions();
+  }
+
+  const playableQuestions = autoGradableQuestions.length > 0
+    ? autoGradableQuestions
+    : questions.filter(question => question.type === 'true-false');
+  const randomQuestion = playableQuestions[Math.floor(Math.random() * playableQuestions.length)];
+
+  showQuestionModal(randomQuestion.question);
+  gameState.isQuestionActive = true;
+
+  function handleAnswer(answer) {
+    hideQuestionModal();
+    gameState.isQuestionActive = false;
+    elements.trueBtn.removeEventListener('click', onTrue);
+    elements.falseBtn.removeEventListener('click', onFalse);
+    callback(answer === randomQuestion.answer);
+  }
+
+  function onTrue() {
+    handleAnswer(true);
+  }
+
+  function onFalse() {
+    handleAnswer(false);
+  }
+
+  elements.trueBtn.addEventListener('click', onTrue);
+  elements.falseBtn.addEventListener('click', onFalse);
+}
+  const autoGradableQuestions = questions.filter(question => question.type === 'true-false');
+  if (autoGradableQuestions.length === 0) {
+    loadFallbackQuestions();
+  }
+
+  const playableQuestions = autoGradableQuestions.length > 0
+    ? autoGradableQuestions
+    : questions.filter(question => question.type === 'true-false');
+  const randomQuestion = playableQuestions[Math.floor(Math.random() * playableQuestions.length)];
 
   showQuestionModal(randomQuestion.question);
   gameState.isQuestionActive = true;
@@ -609,6 +1041,11 @@ function askEntryQuestion() {
 async function handleTurn() {
   if (gameState.isGameOver || gameState.isQuestionActive || gameState.isRolling) {
     return;
+  }
+
+  await questionBankReady;
+  if (questions.length === 0) {
+    loadFallbackQuestions();
   }
 
   gameState.isRolling = true;
@@ -723,6 +1160,46 @@ function advanceTurn() {
    ============================================================================ */
 
 function startGame() {
+  // Gather up to 4 player names from inputs; missing names become AI players
+  const inputNames = [];
+  if (elements.player1NameInput) inputNames.push(elements.player1NameInput.value.trim());
+  if (elements.player2NameInput) inputNames.push(elements.player2NameInput.value.trim());
+  // Pad the array to max 4 entries; empty entries will be treated as AI players in createInitialGameState
+  while (inputNames.length < 4) inputNames.push("");
+
+  // Reinitialize gameState with up to 4 players (AI flags set inside createInitialGameState)
+  const playerNames = inputNames.filter(name => name);
+  gameState = createInitialGameState(playerNames);
+  // Assign DOM element references for the first two visual players (additional AI players are non‑visual)
+  gameState.players[0].element = elements.player1;
+  gameState.players[1].element = elements.player2;
+
+  // Set provided names for the first two slots (AI slots keep generated names)
+  gameState.players[0].name = playerNames[0] || "Player 1";
+  gameState.players[1].name = playerNames[1] || "Player 2";
+
+  // Update UI displays for the two visible players
+  elements.currentPlayerName.textContent = gameState.players[0].name;
+  elements.player1NameDisplay.textContent = gameState.players[0].name;
+  elements.player2NameDisplay.textContent = gameState.players[1].name;
+
+  hideSetupModal();
+  
+  elements.rollDiceBtn.disabled = false;
+
+  gameState.players.forEach((player, index) => {
+    player.position = 0;
+    player.hasStarted = false;
+    updatePlayerPosition(index, 0);
+  });
+
+  gameState.currentPlayer = 0;
+  gameState.isGameOver = false;
+  gameState.isQuestionActive = false;
+  gameState.isRolling = false;
+
+  playMusic(elements.backgroundMusic);
+}
   const player1Name = elements.player1NameInput.value.trim() || "Player 1";
   const player2Name = elements.player2NameInput.value.trim() || "Player 2";
 
@@ -763,9 +1240,8 @@ function resetGame() {
   gameState.players[0].element = elements.player1;
   gameState.players[1].element = elements.player2;
 
-  elements.diceImg.src = `${IMAGE_PATH}/dice1.png`;
-  elements.diceImg.alt = "Dice showing 1";
-  elements.diceValueDisplay.textContent = "1";
+  setDiceRolling(false);
+  setDiceFace(1);
   elements.currentPlayerName.textContent = gameState.players[0].name;
   elements.rollDiceBtn.hidden = false;
   elements.rollDiceBtn.disabled = false;
@@ -798,6 +1274,9 @@ function initGame() {
     backgroundSource.type = 'audio/mpeg';
     elements.backgroundMusic.appendChild(backgroundSource);
   }
+
+  /* Load questions from markdown file */
+  questionBankReady = loadQuestionsFromMarkdown();
 
   /* Cache player elements */
   gameState.players[0].element = elements.player1;

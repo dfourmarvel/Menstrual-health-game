@@ -1,8 +1,8 @@
-# Prostate Cancer Awareness Game - Redesign Documentation
+# Menstrual Health Awareness Game - Redesign Documentation
 
 ## Executive Summary
 
-This is a complete redesign and improvement of the Prostate Cancer Awareness Snakes & Ladders game. The redesign applies modern UI/UX patterns inspired by the Health Quest educational game platform while preserving the core educational game mechanics and user journey.
+This is a complete redesign and improvement of the Menstrual Health Awareness Snakes & Ladders game. The redesign applies modern UI/UX patterns while preserving the core educational game mechanics and user journey.
 
 **Status:** ✅ Production-ready redesign  
 **Date:** June 2026  
@@ -29,7 +29,7 @@ The redesign follows these core principles:
 | Element | Reason | Status |
 |---------|--------|--------|
 | **Game Mechanics** | Core serpentine board logic with snakes & ladders | ✓ Preserved |
-| **Question Bank** | 30 prostate cancer awareness questions | ✓ Preserved |
+| **Question Bank** | Menstrual health awareness questions | ✓ Preserved |
 | **Board Logic** | Position calculation, dice rolling, player movement | ✓ Preserved |
 | **Game Board Asset** | Original visual board design | ✓ Preserved |
 | **Two-Player Setup** | Player name input and turn management | ✓ Preserved |
@@ -570,4 +570,4 @@ For questions about this redesign or issues, please refer to the main project do
 ---
 
 **End of Design Documentation**  
-This redesign successfully modernizes the Prostate Cancer Awareness Game while preserving its educational value and game mechanics. All improvements focus on user experience, accessibility, and professional presentation.
+This redesign successfully modernizes the Menstrual Health Awareness Game while preserving its educational value and game mechanics. All improvements focus on user experience, accessibility, and professional presentation.

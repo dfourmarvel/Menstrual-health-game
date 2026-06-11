@@ -1,4 +1,4 @@
-# Prostate Cancer Awareness Game - Comprehensive Project Documentation
+# Menstrual Health Awareness Game - Comprehensive Project Documentation
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
@@ -31,7 +31,7 @@
 ## Project Overview
 
 ### Project Name
-**Prostate Cancer Awareness Game** - An educational Snakes & Ladders game designed to teach prostate cancer awareness through interactive gameplay.
+**Menstrual Health Awareness Game** - An educational Snakes & Ladders game designed to teach menstrual health awareness through interactive gameplay.
 
 ### Project Type
 Educational Web Game (Single-page Application)
@@ -40,7 +40,7 @@ Educational Web Game (Single-page Application)
 ✅ **Production Ready** - Complete redesign with professional features
 
 ### Description
-This project is a complete redesign of a Prostate Cancer Awareness educational game based on the classic Snakes & Ladders board game. The game teaches 30 prostate cancer awareness questions in a True/False format while maintaining engaging gameplay mechanics. The redesign adds modern UI/UX, accessibility features, and user customization options while preserving 100% of the original game mechanics.
+This project is a complete redesign of a Menstrual Health Awareness educational game based on the classic Snakes & Ladders board game. The game teaches menstrual health awareness questions in a True/False format while maintaining engaging gameplay mechanics. The redesign adds modern UI/UX, accessibility features, and user customization options while preserving 100% of the original game mechanics.
 
 ### Key Achievements
 - **Complete Design Overhaul**: Professional responsive layout with modern aesthetics
@@ -129,7 +129,7 @@ Menstrual health/
 
 #### 1. Navigation Bar (`<nav class="app-navbar">`)
 - **Back Button**: Navigation to previous page
-- **Title**: "Prostate Cancer Awareness"
+- **Title**: "Menstrual Health Awareness"
 - **Controls (5 icon buttons)**:
   - Rules carousel toggle
   - Theme toggle (light/dark)
@@ -378,12 +378,12 @@ The code uses an IIFE-style organization with clear section comments but no form
 5. **Extra Turn**: Rolling 6 grants additional turn
 
 ### Questions
-- **30 True/False Questions** covering:
-  - Prostate anatomy & function
-  - Risk factors & demographics
-  - Symptoms & screening
-  - Treatment options
-  - Statistics & research
+- **Menstrual Health Questions** covering:
+  - Menstrual cycle physiology
+  - Hygiene and menstrual products
+  - Health conditions & management
+  - Family support and education
+  - Stigma reduction & awareness
 - **Random Selection**: Each question event picks randomly from pool
 
 ---
@@ -1051,7 +1051,7 @@ const ladders = {
 
 ## Summary
 
-This Prostate Cancer Awareness Game represents a complete, production-ready educational web application featuring:
+This Menstrual Health Awareness Game represents a complete, production-ready educational web application featuring:
 
 ✅ **Core Game**: 10x10 Snakes & Ladders with 30 health questions  
 ✅ **Modern UI**: Professional design system with CSS custom properties  
@@ -1070,6 +1070,6 @@ The application is ready for immediate deployment, sharing, and use.
 ---
 
 *Documentation generated from codebase analysis*  
-*Project: Prostate Cancer Awareness Game*  
+*Project: Menstrual Health Awareness Game*  
 *Status: Production Ready ✅*  
 *Last Updated: June 2026*

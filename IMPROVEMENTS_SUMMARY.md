@@ -1,6 +1,6 @@
 # Quick Redesign Summary
 
-## 🎯 What Changed: Prostate Cancer Awareness Game Redesign
+## 🎯 What Changed: Menstrual Health Awareness Game Redesign
 
 This codebase has been completely redesigned with modern UI/UX improvements while preserving all core game functionality and educational content.
 
@@ -161,7 +161,7 @@ This codebase has been completely redesigned with modern UI/UX improvements whil
 ## 🎮 What Stayed The Same
 
 - ✅ **Game Mechanics**: Serpentine board, dice rolling, snakes & ladders logic
-- ✅ **Questions**: All 30 prostate cancer awareness questions preserved
+- ✅ **Questions**: All menstrual health awareness questions preserved
 - ✅ **Board Design**: Original visual board asset used
 - ✅ **Player Names**: Two-player setup maintained
 - ✅ **Winning Logic**: First to square 100 still wins

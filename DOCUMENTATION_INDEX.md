@@ -1,6 +1,6 @@
 # 📚 Documentation Index
 
-Welcome! Your Prostate Cancer Awareness Game has been completely redesigned with professional features. This index helps you find the information you need.
+Welcome! Your Menstrual Health Awareness Game has been completely redesigned with professional features. This index helps you find the information you need.
 
 ---
 
@@ -172,7 +172,7 @@ Welcome! Your Prostate Cancer Awareness Game has been completely redesigned with
 ## 🔍 Quick Facts
 
 ### Project Stats
-- **Game Name:** Prostate Cancer Awareness Game (Snakes & Ladders)
+- **Game Name:** Menstrual Health Awareness Game (Snakes & Ladders)
 - **Status:** ✅ Production Ready
 - **Version:** 2.0 (Complete Redesign)
 - **Files Modified:** 3 (HTML, CSS, JS)
@@ -360,7 +360,7 @@ All documentation verified:
 
 ## 🎉 You're All Set!
 
-Your Prostate Cancer Awareness Game is complete, documented, and ready to use!
+Your Menstrual Health Awareness Game is complete, documented, and ready to use!
 
 **Next Steps:**
 1. Choose a reading path above
