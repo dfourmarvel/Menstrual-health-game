@@ -478,11 +478,13 @@ const gameRules = [
 let gameState = createInitialGameState();
 
 function createInitialGameState(playerNames = ["Player 1", "Player 2"]) {
+  const defaultAvatars = ["assets/images/player11.png", "assets/images/player22.png"];
+
   return {
     currentPlayer: 0,
     players: [
-      { name: playerNames[0], position: 0, element: null, hasStarted: false, score: 0, achievements: [], isAI: false },
-      { name: playerNames[1], position: 0, element: null, hasStarted: false, score: 0, achievements: [], isAI: false },
+      { name: playerNames[0], position: 0, element: null, avatar: defaultAvatars[0], hasStarted: false, score: 0, achievements: [], isAI: false },
+      { name: playerNames[1], position: 0, element: null, avatar: defaultAvatars[1], hasStarted: false, score: 0, achievements: [], isAI: false },
     ],
     isGameOver: false,
     isQuestionActive: false,
@@ -607,6 +609,8 @@ function cacheElements() {
     currentPlayerName: document.getElementById('current-player-name'),
     player1NameDisplay: document.getElementById('player1-name-display'),
     player2NameDisplay: document.getElementById('player2-name-display'),
+    player1CardAvatar: document.getElementById('player1-card-avatar'),
+    player2CardAvatar: document.getElementById('player2-card-avatar'),
 
     /* Buttons */
     rollDiceBtn: document.getElementById('roll-dice'),
@@ -630,6 +634,8 @@ function cacheElements() {
     playerSetup: document.getElementById('player-setup'),
     player1NameInput: document.getElementById('player1-name'),
     player2NameInput: document.getElementById('player2-name'),
+      player1AvatarSelection: document.getElementById('player1-avatar-selection'),
+      player2AvatarSelection: document.getElementById('player2-avatar-selection'),
     startGameBtn: document.getElementById('start-game'),
 
     /* Question modal */
@@ -651,6 +657,58 @@ function cacheElements() {
     diceSound: document.getElementById('dice-sound'),
     winSound: document.getElementById('win-sound'),
   });
+}
+
+function setupAvatarSelection() {
+  const mapBtnHandlers = (container, tokenElement, cardElement) => {
+    if (!container) return;
+    container.querySelectorAll('.avatar-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const avatar = btn.dataset.avatar;
+        setSelectedAvatar(container, avatar, tokenElement, cardElement);
+      });
+    });
+  };
+
+  mapBtnHandlers(elements.player1AvatarSelection, elements.player1, elements.player1CardAvatar);
+  mapBtnHandlers(elements.player2AvatarSelection, elements.player2, elements.player2CardAvatar);
+  syncAvatarPicker(0, getSelectedAvatar(elements.player1AvatarSelection, "assets/images/player11.png"));
+  syncAvatarPicker(1, getSelectedAvatar(elements.player2AvatarSelection, "assets/images/player22.png"));
+}
+
+function setSelectedAvatar(container, avatar, tokenElement, cardElement) {
+  if (!container || !avatar) return;
+
+  container.querySelectorAll('.avatar-option').forEach(btn => {
+    const isSelected = btn.dataset.avatar === avatar;
+    btn.classList.toggle('selected', isSelected);
+    btn.setAttribute('aria-pressed', String(isSelected));
+  });
+
+  if (tokenElement) tokenElement.src = avatar;
+  if (cardElement) cardElement.src = avatar;
+}
+
+function getSelectedAvatar(container, fallback) {
+  return container?.querySelector('.avatar-option.selected')?.dataset.avatar || fallback;
+}
+
+function applyPlayerAvatar(playerIndex, avatar) {
+  const player = gameState.players[playerIndex];
+  if (!player || !avatar) return;
+
+  player.avatar = avatar;
+  if (player.element) player.element.src = avatar;
+
+  const cardAvatar = playerIndex === 0 ? elements.player1CardAvatar : elements.player2CardAvatar;
+  if (cardAvatar) cardAvatar.src = avatar;
+}
+
+function syncAvatarPicker(playerIndex, avatar) {
+  const container = playerIndex === 0 ? elements.player1AvatarSelection : elements.player2AvatarSelection;
+  const tokenElement = playerIndex === 0 ? elements.player1 : elements.player2;
+  const cardElement = playerIndex === 0 ? elements.player1CardAvatar : elements.player2CardAvatar;
+  setSelectedAvatar(container, avatar, tokenElement, cardElement);
 }
 
 /* ============================================================================
@@ -956,7 +1014,8 @@ function showSetupModal() {
   currentRuleSlide = 0;
   updateCarouselSlide(0);
   elements.rulesCarousel.hidden = false;
-  elements.playerSetup.hidden = true;
+  /* Show player setup as well so name inputs are always reachable */
+  elements.playerSetup.hidden = false;
 }
 
 function hideSetupModal() {
@@ -980,7 +1039,7 @@ function hideQuestionModal() {
 
 function showWinnerModal(playerName, playerElement) {
   elements.winnerText.textContent = `${playerName} wins the game!`;
-  elements.winnerAvatar.src = playerElement.src;
+  elements.winnerAvatar.src = playerElement?.src || "";
   elements.winnerAvatar.alt = `${playerName}'s avatar`;
   elements.winnerModal.hidden = false;
   elements.winnerModal.classList.add('modal-active');
@@ -1249,6 +1308,7 @@ function finalizeTurn(newPosition) {
       players: gameState.players.map(p => ({
         name: p.name,
         position: p.position,
+        avatar: p.avatar,
         score: p.score,
         achievements: p.achievements,
       })),
@@ -1276,6 +1336,7 @@ function finalizeTurn(newPosition) {
     players: gameState.players.map(p => ({
       name: p.name,
       position: p.position,
+      avatar: p.avatar,
       score: p.score,
       achievements: p.achievements,
     })),
@@ -1294,28 +1355,24 @@ function advanceTurn() {
    ============================================================================ */
 
 function startGame() {
-  // Gather up to 4 player names from inputs; missing names become AI players
-  const inputNames = [];
-  if (elements.player1NameInput) inputNames.push(elements.player1NameInput.value.trim());
-  if (elements.player2NameInput) inputNames.push(elements.player2NameInput.value.trim());
-  // Pad the array to max 4 entries; empty entries will be treated as AI players in createInitialGameState
-  while (inputNames.length < 4) inputNames.push("");
+  const playerNames = [
+    elements.player1NameInput?.value.trim() || "Player 1",
+    elements.player2NameInput?.value.trim() || "Player 2",
+  ];
 
   /* Check if user wants to hide rules on future starts */
   if (elements.dontShowAgain.checked) {
     localStorage.setItem('showRulesOnStart', 'false');
   }
 
-  // Reinitialize gameState with up to 4 players (AI flags set inside createInitialGameState)
-  const playerNames = inputNames.filter(name => name);
   gameState = createInitialGameState(playerNames);
-  // Assign DOM element references for the first two visual players (additional AI players are non‑visual)
   gameState.players[0].element = elements.player1;
   gameState.players[1].element = elements.player2;
 
-  // Set provided names for the first two slots (AI slots keep generated names)
-  gameState.players[0].name = playerNames[0] || "Player 1";
-  gameState.players[1].name = playerNames[1] || "Player 2";
+  gameState.players[0].name = playerNames[0];
+  gameState.players[1].name = playerNames[1];
+  applyPlayerAvatar(0, getSelectedAvatar(elements.player1AvatarSelection, "assets/images/player11.png"));
+  applyPlayerAvatar(1, getSelectedAvatar(elements.player2AvatarSelection, "assets/images/player22.png"));
 
   // Update UI displays for the two visible players
   elements.currentPlayerName.textContent = gameState.players[0].name;
@@ -1343,13 +1400,20 @@ function startGame() {
 function resetGame() {
   hideWinnerModal();
   const playerNames = gameState.players.map(p => p.name);
+  const playerAvatars = gameState.players.map(p => p.avatar);
   gameState = createInitialGameState(playerNames);
   gameState.players[0].element = elements.player1;
   gameState.players[1].element = elements.player2;
+  applyPlayerAvatar(0, playerAvatars[0] || "assets/images/player11.png");
+  applyPlayerAvatar(1, playerAvatars[1] || "assets/images/player22.png");
+  syncAvatarPicker(0, gameState.players[0].avatar);
+  syncAvatarPicker(1, gameState.players[1].avatar);
 
   setDiceRolling(false);
   setDiceFace(1);
   elements.currentPlayerName.textContent = gameState.players[0].name;
+  elements.player1NameDisplay.textContent = gameState.players[0].name;
+  elements.player2NameDisplay.textContent = gameState.players[1].name;
   elements.rollDiceBtn.hidden = false;
   elements.rollDiceBtn.disabled = false;
   elements.restartBtn.hidden = true;
@@ -1373,6 +1437,7 @@ document.addEventListener('DOMContentLoaded', initGame);
 
 function initGame() {
   cacheElements();
+  setupAvatarSelection();
   // Initialize speech synthesis voices early so read-aloud works when requested
   speechManager.init();
   
@@ -1399,6 +1464,7 @@ function initGame() {
           if (sp) {
             p.name = sp.name;
             p.position = sp.position;
+            p.avatar = sp.avatar || p.avatar;
             p.score = sp.score;
             p.achievements = sp.achievements || [];
             // visual element for the first two players
@@ -1418,6 +1484,10 @@ function initGame() {
         elements.currentPlayerName.textContent = gameState.players[gameState.currentPlayer].name;
         elements.player1NameDisplay.textContent = gameState.players[0].name;
         elements.player2NameDisplay.textContent = gameState.players[1].name;
+        applyPlayerAvatar(0, gameState.players[0].avatar);
+        applyPlayerAvatar(1, gameState.players[1].avatar);
+        syncAvatarPicker(0, gameState.players[0].avatar);
+        syncAvatarPicker(1, gameState.players[1].avatar);
         gameState.players.forEach((player, idx) => updatePlayerPosition(idx, player.position));
         elements.rollDiceBtn.disabled = false;
       } else {

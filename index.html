@@ -133,7 +133,7 @@
       <div class="player-cards-container">
         <article class="player-card player-card-1">
           <div class="player-avatar-wrapper">
-            <img src="assets/images/player11.png" alt="" class="player-avatar">
+            <img id="player1-card-avatar" src="assets/images/player11.png" alt="" class="player-avatar">
           </div>
           <div class="player-card-info">
             <span class="player-label">Player 1</span>
@@ -143,7 +143,7 @@
 
         <article class="player-card player-card-2">
           <div class="player-avatar-wrapper">
-            <img src="assets/images/player22.png" alt="" class="player-avatar">
+            <img id="player2-card-avatar" src="assets/images/player22.png" alt="" class="player-avatar">
           </div>
           <div class="player-card-info">
             <span class="player-label">Player 2</span>
@@ -224,6 +224,29 @@
                 value="Player 1"
                 maxlength="20"
               >
+              <div class="avatar-selection" id="player1-avatar-selection" aria-label="Select avatar for Player 1">
+                <span class="avatar-label">Choose avatar:</span>
+                <div class="avatar-options">
+                  <button type="button" class="avatar-option selected" data-avatar="assets/images/player11.png" aria-label="Red token avatar"> 
+                    <img src="assets/images/player11.png" alt="Red token avatar"/>
+                  </button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/player22.png" aria-label="Yellow token avatar"> 
+                    <img src="assets/images/player22.png" alt="Yellow token avatar"/>
+                  </button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-1.svg" aria-label="Male avatar 1"> 
+                    <img src="assets/images/avatar-male-1.svg" alt="Male avatar 1"/>
+                  </button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-2.svg" aria-label="Male avatar 2"> 
+                    <img src="assets/images/avatar-male-2.svg" alt="Male avatar 2"/>
+                  </button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-female-1.svg" aria-label="Female avatar 1"> 
+                    <img src="assets/images/avatar-female-1.svg" alt="Female avatar 1"/>
+                  </button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-female-2.svg" aria-label="Female avatar 2"> 
+                    <img src="assets/images/avatar-female-2.svg" alt="Female avatar 2"/>
+                  </button>
+                </div>
+              </div>
             </div>
             <div class="input-group">
               <label for="player2-name">Player 2 Name</label>
@@ -234,6 +257,29 @@
                 value="Player 2"
                 maxlength="20"
               >
+              <div class="avatar-selection" id="player2-avatar-selection" aria-label="Select avatar for Player 2">
+                <span class="avatar-label">Choose avatar:</span>
+                <div class="avatar-options">
+                  <button type="button" class="avatar-option" data-avatar="assets/images/player11.png" aria-label="Red token avatar"> 
+                    <img src="assets/images/player11.png" alt="Red token avatar"/>
+                  </button>
+                  <button type="button" class="avatar-option selected" data-avatar="assets/images/player22.png" aria-label="Yellow token avatar"> 
+                    <img src="assets/images/player22.png" alt="Yellow token avatar"/>
+                  </button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-1.svg" aria-label="Male avatar 1"> 
+                    <img src="assets/images/avatar-male-1.svg" alt="Male avatar 1"/>
+                  </button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-2.svg" aria-label="Male avatar 2"> 
+                    <img src="assets/images/avatar-male-2.svg" alt="Male avatar 2"/>
+                  </button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-female-1.svg" aria-label="Female avatar 1"> 
+                    <img src="assets/images/avatar-female-1.svg" alt="Female avatar 1"/>
+                  </button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-female-2.svg" aria-label="Female avatar 2"> 
+                    <img src="assets/images/avatar-female-2.svg" alt="Female avatar 2"/>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
