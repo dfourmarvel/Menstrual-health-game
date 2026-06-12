@@ -1,5 +1,7 @@
 # Menstrual Health Awareness Game
 
+**Documentation:** See the consolidated project documentation at [/plans/DOCUMENTATION.md](/plans/DOCUMENTATION.md).
+
 This is a modern, interactive educational web application based on the classic Snakes & Ladders board game.
 
 ## What's Included
