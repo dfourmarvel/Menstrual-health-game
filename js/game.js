@@ -504,23 +504,36 @@ const speechManager = {
   utterance: null,
   isSupported: 'speechSynthesis' in window,
   isSpeaking: false,
+  voices: [],
   
   /* Get the best available voice from system */
   getBestVoice() {
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length === 0) return null;
-    
+    /* Use cached voices if available (voices may load asynchronously) */
+    let voices = this.voices.length ? this.voices : window.speechSynthesis.getVoices();
+    if (!voices || voices.length === 0) return null;
+
     /* Priority: Try to find a natural-sounding English voice */
     const preferredNames = ['Google US English', 'Microsoft Zira', 'Daniel', 'Samantha', 'Victoria', 'Karen'];
-    
     for (let preferred of preferredNames) {
       const match = voices.find(v => v.name.includes(preferred));
       if (match) return match;
     }
-    
+
     /* Fallback: Use first English voice */
-    const englishVoice = voices.find(v => v.lang.startsWith('en'));
+    const englishVoice = voices.find(v => v.lang && v.lang.startsWith && v.lang.startsWith('en'));
     return englishVoice || voices[0];
+  },
+
+  /* Initialize voice list and listen for changes */
+  init() {
+    try {
+      this.voices = window.speechSynthesis.getVoices() || [];
+      window.speechSynthesis.onvoiceschanged = () => {
+        this.voices = window.speechSynthesis.getVoices() || [];
+      };
+    } catch (e) {
+      this.voices = [];
+    }
   },
   
   speak(text) {
@@ -1360,6 +1373,8 @@ document.addEventListener('DOMContentLoaded', initGame);
 
 function initGame() {
   cacheElements();
+  // Initialize speech synthesis voices early so read-aloud works when requested
+  speechManager.init();
   
   /* Initialize audio source paths (if using local files) */
   if (elements.backgroundMusic) {
@@ -1408,7 +1423,7 @@ function initGame() {
       } else {
         // No saved game – start fresh
         showSetupModal();
-        if (!appPreferences.showRulesOnStart) {
+        if (!appState.showRulesOnStart) {
           moveToCarouselEnd();
         }
         elements.rollDiceBtn.disabled = true;
