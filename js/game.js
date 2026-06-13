@@ -618,6 +618,84 @@ const elements = {};
 
 function cacheElements() {
   Object.assign(elements, {
+    // Navbar
+    backBtn: document.getElementById('back-btn'),
+    rulesBtn: document.getElementById('rules-btn'),
+    themeBtn: document.getElementById('theme-btn'),
+    musicBtn: document.getElementById('music-btn'),
+    soundBtn: document.getElementById('sound-btn'),
+    readAloudBtn: document.getElementById('read-aloud-btn'),
+
+    // Game board & controls
+    boardImg: document.getElementById('board-img'),
+    player1: document.getElementById('player1'),
+    player2: document.getElementById('player2'),
+    player3: document.getElementById('player3'),
+    player4: document.getElementById('player4'),
+    diceCube: document.getElementById('dice-cube'),
+    diceValueDisplay: document.getElementById('dice-value-display'),
+    currentPlayerName: document.getElementById('current-player-name'),
+    // name displays for up to 4 players
+    player1NameDisplay: document.getElementById('player1-name-display'),
+    player2NameDisplay: document.getElementById('player2-name-display'),
+    player3NameDisplay: document.getElementById('player3-name-display'),
+    player4NameDisplay: document.getElementById('player4-name-display'),
+    player1CardAvatar: document.getElementById('player1-card-avatar'),
+    player2CardAvatar: document.getElementById('player2-card-avatar'),
+    player3CardAvatar: document.getElementById('player3-card-avatar'),
+    player4CardAvatar: document.getElementById('player4-card-avatar'),
+
+    // Buttons
+    rollDiceBtn: document.getElementById('roll-dice'),
+    restartBtn: document.getElementById('restart'),
+
+    // Modals
+    setupModal: document.getElementById('setup-modal'),
+    questionModal: document.getElementById('question-modal'),
+    winnerModal: document.getElementById('winner-modal'),
+
+    // Setup modal - Rules carousel
+    rulesCarousel: document.getElementById('rules-carousel'),
+    carouselSlides: document.getElementById('carousel-slides'),
+    carouselIndicators: document.getElementById('carousel-indicators'),
+    carouselPrev: document.getElementById('carousel-prev'),
+    carouselNext: document.getElementById('carousel-next'),
+    skipRules: document.getElementById('skip-rules'),
+    dontShowAgain: document.getElementById('dont-show-again'),
+
+    // Setup modal - Player setup
+    playerSetup: document.getElementById('player-setup'),
+    player1NameInput: document.getElementById('player1-name'),
+    player2NameInput: document.getElementById('player2-name'),
+    player3NameInput: document.getElementById('player3-name'),
+    player4NameInput: document.getElementById('player4-name'),
+    player1AvatarSelection: document.getElementById('player1-avatar-selection'),
+    player2AvatarSelection: document.getElementById('player2-avatar-selection'),
+    player3AvatarSelection: document.getElementById('player3-avatar-selection'),
+    player4AvatarSelection: document.getElementById('player4-avatar-selection'),
+    startGameBtn: document.getElementById('start-game'),
+
+    // Question modal
+    questionTitle: document.getElementById('question-title'),
+    questionText: document.getElementById('question-text'),
+    trueBtn: document.getElementById('true-btn'),
+    falseBtn: document.getElementById('false-btn'),
+
+    // Winner modal
+    winnerText: document.getElementById('winner-text'),
+    winnerAvatar: document.getElementById('winner-avatar'),
+    playAgainBtn: document.getElementById('play-again-btn'),
+
+    // Audio
+    backgroundMusic: document.getElementById('background-music'),
+    questionSound: document.getElementById('question-sound'),
+    snakeSound: document.getElementById('snake-sound'),
+    ladderSound: document.getElementById('ladder-sound'),
+    diceSound: document.getElementById('dice-sound'),
+    winSound: document.getElementById('win-sound'),
+  });
+}
+  Object.assign(elements, {
     /* Navbar */
     backBtn: document.getElementById('back-btn'),
     rulesBtn: document.getElementById('rules-btn'),
