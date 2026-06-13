@@ -478,7 +478,7 @@ const gameRules = [
 let gameState = createInitialGameState();
 
 function createInitialGameState(playerNames = ["Player 1", "Player 2"]) {
-  const defaultAvatars = ["assets/images/player11.png", "assets/images/player22.png", "assets/images/player33.png", "assets/images/player44.png"];
+  const defaultAvatars = ["assets/images/player11.png", "assets/images/player22.png", "assets/images/avatar-female-1.svg", "assets/images/avatar-male-1.svg"];
   // Build players array dynamically up to 4 players
   const players = [];
   const count = Math.min(playerNames.length, 4);
