@@ -478,14 +478,40 @@ const gameRules = [
 let gameState = createInitialGameState();
 
 function createInitialGameState(playerNames = ["Player 1", "Player 2"]) {
-  const defaultAvatars = ["assets/images/player11.png", "assets/images/player22.png"];
+  const defaultAvatars = ["assets/images/player11.png", "assets/images/player22.png", "assets/images/player33.png", "assets/images/player44.png"];
+  // Build players array dynamically up to 4 players
+  const players = [];
+  const count = Math.min(playerNames.length, 4);
+  for (let i = 0; i < count; i++) {
+    players.push({
+      name: playerNames[i] || `Player ${i + 1}`,
+      position: 0,
+      element: null,
+      avatar: defaultAvatars[i] || defaultAvatars[0],
+      hasStarted: false,
+      score: 0,
+      achievements: [],
+      isAI: false,
+    });
+  }
+  // Ensure at least two players for legacy UI (elements.player1/player2)
+  while (players.length < 2) {
+    const i = players.length;
+    players.push({
+      name: `Player ${i + 1}`,
+      position: 0,
+      element: null,
+      avatar: defaultAvatars[i] || defaultAvatars[0],
+      hasStarted: false,
+      score: 0,
+      achievements: [],
+      isAI: false,
+    });
+  }
 
   return {
     currentPlayer: 0,
-    players: [
-      { name: playerNames[0], position: 0, element: null, avatar: defaultAvatars[0], hasStarted: false, score: 0, achievements: [], isAI: false },
-      { name: playerNames[1], position: 0, element: null, avatar: defaultAvatars[1], hasStarted: false, score: 0, achievements: [], isAI: false },
-    ],
+    players,
     isGameOver: false,
     isQuestionActive: false,
     isRolling: false,
