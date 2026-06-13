@@ -1496,8 +1496,9 @@ function initGame() {
         if (!appState.showRulesOnStart) {
           moveToCarouselEnd();
         }
-        elements.rollDiceBtn.disabled = true;
-      }
+    // Roll dice button enabled after game start handled in startGame()
+}
+
     })
     .catch(err => {
       console.warn('Failed to load game state', err);
