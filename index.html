@@ -209,21 +209,58 @@
               <span class="checkbox-label">Don't show again</span>
             </label>
           </div>
-        </div>
-
         <!-- Player Setup Form -->
         <div class="player-setup" id="player-setup" hidden>
           <h3>Configure Players</h3>
+          <div class="player-count-section">
+            <label for="player-count">Number of Players:</label>
+            <select id="player-count">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
           <div class="player-inputs">
-            <div class="input-group">
+            <!-- Player 3 -->
+            <div class="input-group" id="player3-input-group" hidden>
+              <label for="player3-name">Player 3 Name</label>
+              <input type="text" id="player3-name" placeholder="Enter name" value="Player 3" maxlength="20" />
+              <div class="avatar-selection" id="player3-avatar-selection" aria-label="Select avatar for Player 3">
+                <span class="avatar-label">Choose avatar:</span>
+                <div class="avatar-options">
+                  <button type="button" class="avatar-option" data-avatar="assets/images/player11.png" aria-label="Red token avatar"> <img src="assets/images/player11.png" alt="Red token avatar"/></button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/player22.png" aria-label="Yellow token avatar"> <img src="assets/images/player22.png" alt="Yellow token avatar"/></button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-1.svg" aria-label="Male avatar 1"> <img src="assets/images/avatar-male-1.svg" alt="Male avatar 1"/></button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-2.svg" aria-label="Male avatar 2"> <img src="assets/images/avatar-male-2.svg" alt="Male avatar 2"/></button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-female-1.svg" aria-label="Female avatar 1"> <img src="assets/images/avatar-female-1.svg" alt="Female avatar 1"/></button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-female-2.svg" aria-label="Female avatar 2"> <img src="assets/images/avatar-female-2.svg" alt="Female avatar 2"/></button>
+                </div>
+              </div>
+              <label class="checkbox-wrapper"><input type="checkbox" class="ai-toggle" data-player="3" /> AI</label>
+            </div>
+            <!-- Player 4 -->
+            <div class="input-group" id="player4-input-group" hidden>
+              <label for="player4-name">Player 4 Name</label>
+              <input type="text" id="player4-name" placeholder="Enter name" value="Player 4" maxlength="20" />
+              <div class="avatar-selection" id="player4-avatar-selection" aria-label="Select avatar for Player 4">
+                <span class="avatar-label">Choose avatar:</span>
+                <div class="avatar-options">
+                  <button type="button" class="avatar-option" data-avatar="assets/images/player11.png" aria-label="Red token avatar"> <img src="assets/images/player11.png" alt="Red token avatar"/></button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/player22.png" aria-label="Yellow token avatar"> <img src="assets/images/player22.png" alt="Yellow token avatar"/></button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-1.svg" aria-label="Male avatar 1"> <img src="assets/images/avatar-male-1.svg" alt="Male avatar 1"/></button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-2.svg" aria-label="Male avatar 2"> <img src="assets/images/avatar-male-2.svg" alt="Male avatar 2"/></button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-female-1.svg" aria-label="Female avatar 1"> <img src="assets/images/avatar-female-1.svg" alt="Female avatar 1"/></button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/avatar-female-2.svg" aria-label="Female avatar 2"> <img src="assets/images/avatar-female-2.svg" alt="Female avatar 2"/></button>
+                </div>
+              </div>
+              <label class="checkbox-wrapper"><input type="checkbox" class="ai-toggle" data-player="4" /> AI</label>
+            </div>
+            <!-- Token images -->
+            <img id="player3" class="player-token player-token-3" src="assets/images/player11.png" alt="Player 3 token" />
+            <img id="player4" class="player-token player-token-4" src="assets/images/player22.png" alt="Player 4 token" />
               <label for="player1-name">Player 1 Name</label>
-              <input 
-                type="text" 
-                id="player1-name" 
-                placeholder="Enter name" 
-                value="Player 1"
-                maxlength="20"
-              >
+              <input type="text" id="player1-name" placeholder="Enter name" value="Player 1" maxlength="20" />
               <div class="avatar-selection" id="player1-avatar-selection" aria-label="Select avatar for Player 1">
                 <span class="avatar-label">Choose avatar:</span>
                 <div class="avatar-options">
@@ -247,16 +284,12 @@
                   </button>
                 </div>
               </div>
+              <label class="checkbox-wrapper"><input type="checkbox" class="ai-toggle" data-player="1" /> AI</label>
             </div>
+            <!-- Player 2 -->
             <div class="input-group">
               <label for="player2-name">Player 2 Name</label>
-              <input 
-                type="text" 
-                id="player2-name" 
-                placeholder="Enter name" 
-                value="Player 2"
-                maxlength="20"
-              >
+              <input type="text" id="player2-name" placeholder="Enter name" value="Player 2" maxlength="20" />
               <div class="avatar-selection" id="player2-avatar-selection" aria-label="Select avatar for Player 2">
                 <span class="avatar-label">Choose avatar:</span>
                 <div class="avatar-options">

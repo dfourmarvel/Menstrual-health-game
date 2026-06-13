@@ -477,7 +477,50 @@ const gameRules = [
 
 let gameState = createInitialGameState();
 
-function createInitialGameState(playerNames = ["Player 1", "Player 2"]) {
+function createInitialGameState(playerConfigs = []) {
+  const defaultAvatars = ["assets/images/player11.png", "assets/images/player22.png", "assets/images/avatar-female-1.svg", "assets/images/avatar-male-1.svg", "assets/images/avatar_ai_1781381406920.png"];
+  const players = [];
+  const count = Math.min(playerConfigs.length || 2, 4);
+  for (let i = 0; i < count; i++) {
+    const cfg = playerConfigs[i] || {};
+    const name = cfg.name || `Player ${i + 1}`;
+    const avatar = cfg.avatar || defaultAvatars[i] || defaultAvatars[0];
+    const isAI = cfg.isAI || false;
+    players.push({
+      name,
+      position: 0,
+      element: null,
+      avatar,
+      hasStarted: false,
+      score: 0,
+      achievements: [],
+      isAI,
+    });
+  }
+  // Ensure at least two players for legacy UI
+  while (players.length < 2) {
+    const i = players.length;
+    const name = `Player ${i + 1}`;
+    const avatar = defaultAvatars[i] || defaultAvatars[0];
+    players.push({
+      name,
+      position: 0,
+      element: null,
+      avatar,
+      hasStarted: false,
+      score: 0,
+      achievements: [],
+      isAI: false,
+    });
+  }
+  return {
+    currentPlayer: 0,
+    players,
+    isGameOver: false,
+    isQuestionActive: false,
+    isRolling: false,
+  };
+}
   const defaultAvatars = ["assets/images/player11.png", "assets/images/player22.png", "assets/images/avatar-female-1.svg", "assets/images/avatar-male-1.svg"];
   // Build players array dynamically up to 4 players
   const players = [];
