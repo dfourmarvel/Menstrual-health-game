@@ -7,7 +7,7 @@ async def run():
         page = await browser.new_page()
         msgs = []
         page.on('console', lambda msg: msgs.append(msg.text))
-        await page.goto('file:///C:/Users/hp/OneDrive/Documents/Menstrual-health-game/index.html')
+        await page.goto('http://localhost:8000/index.html')
         await page.wait_for_timeout(2000)
         print('Console:', msgs)
         await browser.close()
