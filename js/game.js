@@ -483,9 +483,9 @@ function createInitialGameState(playerConfigs = []) {
   const count = Math.min(playerConfigs.length || 2, 4);
   for (let i = 0; i < count; i++) {
     const cfg = playerConfigs[i] || {};
-    const name = cfg.name || `Player ${i + 1}`;
-    const avatar = cfg.avatar || defaultAvatars[i] || defaultAvatars[0];
-    const isAI = cfg.isAI || false;
+    const name = typeof cfg === 'string' ? cfg : cfg.name || `Player ${i + 1}`;
+    const avatar = typeof cfg === 'string' ? defaultAvatars[i] : cfg.avatar || defaultAvatars[i] || defaultAvatars[0];
+    const isAI = typeof cfg === 'string' ? false : cfg.isAI || false;
     players.push({
       name,
       position: 0,
@@ -513,45 +513,6 @@ function createInitialGameState(playerConfigs = []) {
       isAI: false,
     });
   }
-  return {
-    currentPlayer: 0,
-    players,
-    isGameOver: false,
-    isQuestionActive: false,
-    isRolling: false,
-  };
-}
-  const defaultAvatars = ["assets/images/player11.png", "assets/images/player22.png", "assets/images/avatar-female-1.svg", "assets/images/avatar-male-1.svg"];
-  // Build players array dynamically up to 4 players
-  const players = [];
-  const count = Math.min(playerNames.length, 4);
-  for (let i = 0; i < count; i++) {
-    players.push({
-      name: playerNames[i] || `Player ${i + 1}`,
-      position: 0,
-      element: null,
-      avatar: defaultAvatars[i] || defaultAvatars[0],
-      hasStarted: false,
-      score: 0,
-      achievements: [],
-      isAI: false,
-    });
-  }
-  // Ensure at least two players for legacy UI (elements.player1/player2)
-  while (players.length < 2) {
-    const i = players.length;
-    players.push({
-      name: `Player ${i + 1}`,
-      position: 0,
-      element: null,
-      avatar: defaultAvatars[i] || defaultAvatars[0],
-      hasStarted: false,
-      score: 0,
-      achievements: [],
-      isAI: false,
-    });
-  }
-
   return {
     currentPlayer: 0,
     players,
