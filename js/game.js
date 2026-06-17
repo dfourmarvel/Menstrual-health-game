@@ -25,7 +25,9 @@ const IMAGE_PATH = "assets/images";
 const AUDIO_PATH = "assets/audio";
 const QUESTION_SOURCE_PATH = "questions.md";
 
-/* Snakes: Landing position -> slide down to */
+/* Snakes: Landing position -> slide down to
+// Added startDifficulty config
+const START_DIFFICULTY = "medium"; */
 const snakes = {
   11: 10, 48: 28, 41: 23, 64: 44, 68: 31,
   88: 72, 91: 71, 94: 87, 98: 83,
@@ -1269,6 +1271,21 @@ function getBoardJump(position) {
 
 // Initialize a shuffled pool of questions for the current game session.
 function initializeQuestionPool() {
+  // Determine allowed difficulties based on START_DIFFICULTY (easy < medium < hard)
+  const difficultyOrder = ['easy','medium','hard'];
+  const minIndex = difficultyOrder.indexOf(START_DIFFICULTY);
+  const allowed = new Set(difficultyOrder.slice(minIndex));
+  // Use only true/false questions meeting difficulty criteria
+  const pool = questions.filter(q => q.type === 'true-false' && allowed.has(q.difficulty));
+  // Shuffle using Fisher‑Yates.
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  gameState.questionPool = pool; // array of question objects
+  gameState.usedQuestions = [];
+}
+
   // Use only true/false (auto‑gradable) questions for gameplay.
   const pool = questions.filter(q => q.type === 'true-false');
   // Shuffle using Fisher‑Yates.
@@ -1282,6 +1299,26 @@ function initializeQuestionPool() {
 
 // Retrieve the next question from the session pool, rebuilding if exhausted.
 function getNextQuestion() {
+  if (!gameState.questionPool || gameState.questionPool.length === 0) {
+    // Rebuild pool with difficulty filter
+    const difficultyOrder = ['easy','medium','hard'];
+    const minIndex = difficultyOrder.indexOf(START_DIFFICULTY);
+    const allowed = new Set(difficultyOrder.slice(minIndex));
+    const recent = gameState.usedQuestions.slice(-5);
+    const all = questions.filter(q => q.type === 'true-false' && allowed.has(q.difficulty));
+    const newPool = all.filter(q => !recent.includes(q));
+    for (let i = newPool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newPool[i], newPool[j]] = [newPool[j], newPool[i]];
+    }
+    gameState.questionPool = newPool;
+    gameState.usedQuestions = [];
+  }
+  const next = gameState.questionPool.shift();
+  gameState.usedQuestions.push(next);
+  return next;
+}
+
   if (!gameState.questionPool || gameState.questionPool.length === 0) {
     // Pool exhausted – rebuild while avoiding immediate repeats.
     const recent = gameState.usedQuestions.slice(-5); // keep last 5 used
