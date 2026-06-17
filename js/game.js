@@ -619,6 +619,7 @@ const speechManager = {
    ============================================================================ */
 
 const elements = {};
+let aiTurnTimer = null;
 
 function cacheElements() {
   Object.assign(elements, {
@@ -644,6 +645,10 @@ function cacheElements() {
     player2NameDisplay: document.getElementById('player2-name-display'),
     player3NameDisplay: document.getElementById('player3-name-display'),
     player4NameDisplay: document.getElementById('player4-name-display'),
+    player1Card: document.querySelector('.player-card-1'),
+    player2Card: document.querySelector('.player-card-2'),
+    player3Card: document.querySelector('.player-card-3'),
+    player4Card: document.querySelector('.player-card-4'),
     player1CardAvatar: document.getElementById('player1-card-avatar'),
     player2CardAvatar: document.getElementById('player2-card-avatar'),
     player3CardAvatar: document.getElementById('player3-card-avatar'),
@@ -673,10 +678,14 @@ function cacheElements() {
     player2NameInput: document.getElementById('player2-name'),
     player3NameInput: document.getElementById('player3-name'),
     player4NameInput: document.getElementById('player4-name'),
+    playerCountSelect: document.getElementById('player-count'),
+    player3InputGroup: document.getElementById('player3-input-group'),
+    player4InputGroup: document.getElementById('player4-input-group'),
     player1AvatarSelection: document.getElementById('player1-avatar-selection'),
     player2AvatarSelection: document.getElementById('player2-avatar-selection'),
     player3AvatarSelection: document.getElementById('player3-avatar-selection'),
     player4AvatarSelection: document.getElementById('player4-avatar-selection'),
+    aiToggles: document.querySelectorAll('.ai-toggle'),
     startGameBtn: document.getElementById('start-game'),
 
     // Question modal
@@ -713,8 +722,12 @@ function setupAvatarSelection() {
 
   mapBtnHandlers(elements.player1AvatarSelection, elements.player1, elements.player1CardAvatar);
   mapBtnHandlers(elements.player2AvatarSelection, elements.player2, elements.player2CardAvatar);
+  mapBtnHandlers(elements.player3AvatarSelection, elements.player3, elements.player3CardAvatar);
+  mapBtnHandlers(elements.player4AvatarSelection, elements.player4, elements.player4CardAvatar);
   syncAvatarPicker(0, getSelectedAvatar(elements.player1AvatarSelection, "assets/images/player11.png"));
   syncAvatarPicker(1, getSelectedAvatar(elements.player2AvatarSelection, "assets/images/player22.png"));
+  syncAvatarPicker(2, getSelectedAvatar(elements.player3AvatarSelection, "assets/images/avatar-female-1.svg"));
+  syncAvatarPicker(3, getSelectedAvatar(elements.player4AvatarSelection, "assets/images/avatar-male-1.svg"));
 }
 
 function setSelectedAvatar(container, avatar, tokenElement, cardElement) {
@@ -739,16 +752,33 @@ function applyPlayerAvatar(playerIndex, avatar) {
   if (!player || !avatar) return;
 
   player.avatar = avatar;
+  const token = [elements.player1, elements.player2, elements.player3, elements.player4][playerIndex];
   if (player.element) player.element.src = avatar;
+  if (token) token.src = avatar;
 
-  const cardAvatar = playerIndex === 0 ? elements.player1CardAvatar : elements.player2CardAvatar;
+  const cardAvatar = [
+    elements.player1CardAvatar,
+    elements.player2CardAvatar,
+    elements.player3CardAvatar,
+    elements.player4CardAvatar,
+  ][playerIndex];
   if (cardAvatar) cardAvatar.src = avatar;
 }
 
 function syncAvatarPicker(playerIndex, avatar) {
-  const container = playerIndex === 0 ? elements.player1AvatarSelection : elements.player2AvatarSelection;
-  const tokenElement = playerIndex === 0 ? elements.player1 : elements.player2;
-  const cardElement = playerIndex === 0 ? elements.player1CardAvatar : elements.player2CardAvatar;
+  const container = [
+    elements.player1AvatarSelection,
+    elements.player2AvatarSelection,
+    elements.player3AvatarSelection,
+    elements.player4AvatarSelection,
+  ][playerIndex];
+  const tokenElement = [elements.player1, elements.player2, elements.player3, elements.player4][playerIndex];
+  const cardElement = [
+    elements.player1CardAvatar,
+    elements.player2CardAvatar,
+    elements.player3CardAvatar,
+    elements.player4CardAvatar,
+  ][playerIndex];
   setSelectedAvatar(container, avatar, tokenElement, cardElement);
 }
 
@@ -758,6 +788,84 @@ function syncAvatarPicker(playerIndex, avatar) {
 
 function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function getPlayerToken(index) {
+  return [elements.player1, elements.player2, elements.player3, elements.player4][index] || null;
+}
+
+function getPlayerNameDisplay(index) {
+  return [
+    elements.player1NameDisplay,
+    elements.player2NameDisplay,
+    elements.player3NameDisplay,
+    elements.player4NameDisplay,
+  ][index] || null;
+}
+
+function getPlayerCard(index) {
+  return [
+    elements.player1Card,
+    elements.player2Card,
+    elements.player3Card,
+    elements.player4Card,
+  ][index] || null;
+}
+
+function updatePlayerSetupVisibility() {
+  const count = Number(elements.playerCountSelect?.value || 2);
+  if (elements.player3InputGroup) elements.player3InputGroup.hidden = count < 3;
+  if (elements.player4InputGroup) elements.player4InputGroup.hidden = count < 4;
+}
+
+function getAiSetting(playerNumber) {
+  return Boolean(document.querySelector(`.ai-toggle[data-player="${playerNumber}"]`)?.checked);
+}
+
+function updatePlayersUi() {
+  const activeCount = gameState.players.length;
+  for (let i = 0; i < 4; i++) {
+    const player = gameState.players[i];
+    const isActive = i < activeCount;
+    const token = getPlayerToken(i);
+    const card = getPlayerCard(i);
+    const nameDisplay = getPlayerNameDisplay(i);
+
+    if (token) {
+      token.hidden = !isActive;
+      if (isActive) {
+        token.alt = `${player.name} token`;
+        token.src = player.avatar;
+        player.element = token;
+        updatePlayerPosition(i, player.position);
+      }
+    }
+
+    if (card) card.hidden = !isActive;
+    if (nameDisplay && isActive) {
+      nameDisplay.textContent = player.isAI ? `${player.name} (AI)` : player.name;
+    }
+    if (isActive) applyPlayerAvatar(i, player.avatar);
+  }
+
+  elements.currentPlayerName.textContent = gameState.players[gameState.currentPlayer]?.name || "Player 1";
+}
+
+function showRulesStep() {
+  elements.setupModal.classList.add('modal-active');
+  elements.rulesCarousel.hidden = false;
+  elements.playerSetup.hidden = true;
+  elements.startGameBtn.hidden = true;
+  currentRuleSlide = 0;
+  updateCarouselSlide(0);
+}
+
+function showPlayerSetupStep() {
+  elements.setupModal.classList.add('modal-active');
+  elements.rulesCarousel.hidden = true;
+  elements.playerSetup.hidden = false;
+  elements.startGameBtn.hidden = false;
+  updatePlayerSetupVisibility();
 }
 
 /* ---------------------------------------------------------------
@@ -1039,10 +1147,7 @@ function updateCarouselSlide(slideIndex) {
 }
 
 function moveToCarouselEnd() {
-  /* Move to player setup */
-  currentRuleSlide = gameRules.length;
-  elements.rulesCarousel.hidden = true;
-  elements.playerSetup.hidden = false;
+  showPlayerSetupStep();
 }
 
 /* ============================================================================
@@ -1050,13 +1155,11 @@ function moveToCarouselEnd() {
    ============================================================================ */
 
 function showSetupModal() {
-  elements.setupModal.classList.add('modal-active');
-  /* Reset carousel */
-  currentRuleSlide = 0;
-  updateCarouselSlide(0);
-  elements.rulesCarousel.hidden = false;
-  /* Show player setup as well so name inputs are always reachable */
-  elements.playerSetup.hidden = false;
+  if (appState.showRulesOnStart) {
+    showRulesStep();
+  } else {
+    showPlayerSetupStep();
+  }
 }
 
 function hideSetupModal() {
@@ -1271,7 +1374,8 @@ async function handleTurn() {
     }
     gameState.isRolling = false;
     if (!gameState.isGameOver) {
-      elements.rollDiceBtn.disabled = false;
+      elements.rollDiceBtn.disabled = Boolean(gameState.players[gameState.currentPlayer].isAI);
+      scheduleAiTurnIfNeeded();
     }
     return;
   }
@@ -1300,7 +1404,8 @@ async function handleTurn() {
   if (!boardJump) {
     finalizeTurn(newPosition);
     gameState.isRolling = false;
-    elements.rollDiceBtn.disabled = false;
+    elements.rollDiceBtn.disabled = Boolean(gameState.players[gameState.currentPlayer].isAI);
+    scheduleAiTurnIfNeeded();
     return;
   }
 
@@ -1322,7 +1427,8 @@ async function handleTurn() {
     finalizeTurn(newPosition);
     gameState.isRolling = false;
     if (!gameState.isGameOver) {
-      elements.rollDiceBtn.disabled = false;
+      elements.rollDiceBtn.disabled = Boolean(gameState.players[gameState.currentPlayer].isAI);
+      scheduleAiTurnIfNeeded();
     }
   });
 }
@@ -1352,6 +1458,7 @@ function finalizeTurn(newPosition) {
         avatar: p.avatar,
         score: p.score,
         achievements: p.achievements,
+        isAI: p.isAI,
       })),
       currentPlayer: gameState.currentPlayer,
       timestamp: Date.now(),
@@ -1374,12 +1481,13 @@ function finalizeTurn(newPosition) {
   advanceTurn();
   // Persist ongoing game state after each turn
   persistCurrentGame({
-    players: gameState.players.map(p => ({
+      players: gameState.players.map(p => ({
       name: p.name,
       position: p.position,
       avatar: p.avatar,
       score: p.score,
       achievements: p.achievements,
+      isAI: p.isAI,
     })),
     currentPlayer: gameState.currentPlayer,
     questionPool: gameState.questionPool?.map(q => q.id) || [],
@@ -1387,8 +1495,23 @@ function finalizeTurn(newPosition) {
 }
 
 function advanceTurn() {
-  gameState.currentPlayer = 1 - gameState.currentPlayer;
+  gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
   elements.currentPlayerName.textContent = gameState.players[gameState.currentPlayer].name;
+  elements.rollDiceBtn.disabled = Boolean(gameState.players[gameState.currentPlayer].isAI);
+  scheduleAiTurnIfNeeded();
+}
+
+function scheduleAiTurnIfNeeded() {
+  clearTimeout(aiTurnTimer);
+  const currentPlayer = gameState.players[gameState.currentPlayer];
+  if (!currentPlayer?.isAI || gameState.isGameOver || gameState.isQuestionActive || gameState.isRolling) {
+    return;
+  }
+
+  elements.rollDiceBtn.disabled = true;
+  aiTurnTimer = setTimeout(() => {
+    handleTurn();
+  }, 800);
 }
 
 /* ============================================================================
@@ -1396,39 +1519,49 @@ function advanceTurn() {
    ============================================================================ */
 
 function startGame() {
-  const playerNames = [
-    elements.player1NameInput?.value.trim() || "Player 1",
-    elements.player2NameInput?.value.trim() || "Player 2",
+  clearTimeout(aiTurnTimer);
+  const playerCount = Number(elements.playerCountSelect?.value || 2);
+  const nameInputs = [
+    elements.player1NameInput,
+    elements.player2NameInput,
+    elements.player3NameInput,
+    elements.player4NameInput,
   ];
+  const avatarSelections = [
+    elements.player1AvatarSelection,
+    elements.player2AvatarSelection,
+    elements.player3AvatarSelection,
+    elements.player4AvatarSelection,
+  ];
+  const defaultAvatars = [
+    "assets/images/player11.png",
+    "assets/images/player22.png",
+    "assets/images/avatar-female-1.svg",
+    "assets/images/avatar-male-1.svg",
+  ];
+  const playerConfigs = Array.from({ length: playerCount }, (_, index) => ({
+    name: nameInputs[index]?.value.trim() || `Player ${index + 1}`,
+    avatar: getSelectedAvatar(avatarSelections[index], defaultAvatars[index]),
+    isAI: getAiSetting(index + 1),
+  }));
 
   /* Check if user wants to hide rules on future starts */
   if (elements.dontShowAgain.checked) {
     localStorage.setItem('showRulesOnStart', 'false');
+    appState.showRulesOnStart = false;
   }
 
-  gameState = createInitialGameState(playerNames);
-  gameState.players[0].element = elements.player1;
-  gameState.players[1].element = elements.player2;
-
-  gameState.players[0].name = playerNames[0];
-  gameState.players[1].name = playerNames[1];
-  applyPlayerAvatar(0, getSelectedAvatar(elements.player1AvatarSelection, "assets/images/player11.png"));
-  applyPlayerAvatar(1, getSelectedAvatar(elements.player2AvatarSelection, "assets/images/player22.png"));
-
-  // Update UI displays for the two visible players
-  elements.currentPlayerName.textContent = gameState.players[0].name;
-  elements.player1NameDisplay.textContent = gameState.players[0].name;
-  elements.player2NameDisplay.textContent = gameState.players[1].name;
+  gameState = createInitialGameState(playerConfigs);
+  gameState.players.forEach((player, index) => {
+    player.element = getPlayerToken(index);
+    player.position = 0;
+    player.hasStarted = false;
+  });
+  updatePlayersUi();
 
   hideSetupModal();
   
-  elements.rollDiceBtn.disabled = false;
-
-  gameState.players.forEach((player, index) => {
-    player.position = 0;
-    player.hasStarted = false;
-    updatePlayerPosition(index, 0);
-  });
+  elements.rollDiceBtn.disabled = gameState.players[0].isAI;
 
   gameState.currentPlayer = 0;
   gameState.isGameOver = false;
@@ -1436,27 +1569,28 @@ function startGame() {
   gameState.isRolling = false;
 
   playMusic(elements.backgroundMusic);
+  scheduleAiTurnIfNeeded();
 }
 
 function resetGame() {
+  clearTimeout(aiTurnTimer);
   hideWinnerModal();
-  const playerNames = gameState.players.map(p => p.name);
-  const playerAvatars = gameState.players.map(p => p.avatar);
-  gameState = createInitialGameState(playerNames);
-  gameState.players[0].element = elements.player1;
-  gameState.players[1].element = elements.player2;
-  applyPlayerAvatar(0, playerAvatars[0] || "assets/images/player11.png");
-  applyPlayerAvatar(1, playerAvatars[1] || "assets/images/player22.png");
-  syncAvatarPicker(0, gameState.players[0].avatar);
-  syncAvatarPicker(1, gameState.players[1].avatar);
+  const playerConfigs = gameState.players.map(p => ({
+    name: p.name,
+    avatar: p.avatar,
+    isAI: p.isAI,
+  }));
+  gameState = createInitialGameState(playerConfigs);
+  gameState.players.forEach((player, index) => {
+    player.element = getPlayerToken(index);
+    syncAvatarPicker(index, player.avatar);
+  });
 
   setDiceRolling(false);
   setDiceFace(1);
-  elements.currentPlayerName.textContent = gameState.players[0].name;
-  elements.player1NameDisplay.textContent = gameState.players[0].name;
-  elements.player2NameDisplay.textContent = gameState.players[1].name;
+  updatePlayersUi();
   elements.rollDiceBtn.hidden = false;
-  elements.rollDiceBtn.disabled = false;
+  elements.rollDiceBtn.disabled = gameState.players[0].isAI;
   elements.restartBtn.hidden = true;
 
   gameState.players.forEach((player, index) => {
@@ -1464,6 +1598,7 @@ function resetGame() {
   });
 
   playMusic(elements.backgroundMusic);
+  scheduleAiTurnIfNeeded();
 }
 
 function showRulesModal() {
@@ -1499,19 +1634,14 @@ function initGame() {
     })
     .then(saved => {
       if (saved) {
-        // --- Restore players ---
+        gameState = createInitialGameState(saved.players || []);
         gameState.players.forEach((p, i) => {
-          const sp = saved.players?.[i];
-          if (sp) {
-            p.name = sp.name;
-            p.position = sp.position;
-            p.avatar = sp.avatar || p.avatar;
-            p.score = sp.score;
-            p.achievements = sp.achievements || [];
-            // visual element for the first two players
-            if (i === 0) p.element = elements.player1;
-            if (i === 1) p.element = elements.player2;
-          }
+          const sp = saved.players?.[i] || {};
+          p.position = sp.position || 0;
+          p.score = sp.score || 0;
+          p.achievements = sp.achievements || [];
+          p.hasStarted = p.position > 0;
+          p.element = getPlayerToken(i);
         });
         gameState.currentPlayer = saved.currentPlayer ?? 0;
         // Restore the shuffled question pool (IDs only) to keep uniqueness
@@ -1521,16 +1651,14 @@ function initGame() {
             .map(id => allTrue.find(q => q.id === id))
             .filter(Boolean);
         }
-        // Update UI to reflect restored state
-        elements.currentPlayerName.textContent = gameState.players[gameState.currentPlayer].name;
-        elements.player1NameDisplay.textContent = gameState.players[0].name;
-        elements.player2NameDisplay.textContent = gameState.players[1].name;
-        applyPlayerAvatar(0, gameState.players[0].avatar);
-        applyPlayerAvatar(1, gameState.players[1].avatar);
-        syncAvatarPicker(0, gameState.players[0].avatar);
-        syncAvatarPicker(1, gameState.players[1].avatar);
-        gameState.players.forEach((player, idx) => updatePlayerPosition(idx, player.position));
-        elements.rollDiceBtn.disabled = false;
+        gameState.players.forEach((player, idx) => syncAvatarPicker(idx, player.avatar));
+        updatePlayersUi();
+        elements.rollDiceBtn.disabled = Boolean(gameState.players[gameState.currentPlayer]?.isAI);
+        if (appState.showRulesOnStart) {
+          showSetupModal();
+        } else {
+          scheduleAiTurnIfNeeded();
+        }
       } else {
         // No saved game – start fresh
         showSetupModal();

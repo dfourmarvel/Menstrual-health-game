@@ -77,6 +77,20 @@
             src="assets/images/player22.png" 
             alt="Player 2 token"
           >
+          <img
+            id="player3"
+            class="player-token player-token-3"
+            src="assets/images/avatar-female-1.svg"
+            alt="Player 3 token"
+            hidden
+          >
+          <img
+            id="player4"
+            class="player-token player-token-4"
+            src="assets/images/avatar-male-1.svg"
+            alt="Player 4 token"
+            hidden
+          >
         </div>
       </div>
 
@@ -172,6 +186,26 @@
           <div class="player-card-info">
             <span class="player-label">Player 2</span>
             <span id="player2-name-display" class="player-name">Player 2</span>
+          </div>
+        </article>
+
+        <article class="player-card player-card-3" hidden>
+          <div class="player-avatar-wrapper">
+            <img id="player3-card-avatar" src="assets/images/avatar-female-1.svg" alt="" class="player-avatar">
+          </div>
+          <div class="player-card-info">
+            <span class="player-label">Player 3</span>
+            <span id="player3-name-display" class="player-name">Player 3</span>
+          </div>
+        </article>
+
+        <article class="player-card player-card-4" hidden>
+          <div class="player-avatar-wrapper">
+            <img id="player4-card-avatar" src="assets/images/avatar-male-1.svg" alt="" class="player-avatar">
+          </div>
+          <div class="player-card-info">
+            <span class="player-label">Player 4</span>
+            <span id="player4-name-display" class="player-name">Player 4</span>
           </div>
         </article>
       </div>
@@ -282,9 +316,6 @@
               </div>
               <label class="checkbox-wrapper"><input type="checkbox" class="ai-toggle" data-player="4" /> AI</label>
             </div>
-            <!-- Token images -->
-            <img id="player3" class="player-token player-token-3" src="assets/images/player11.png" alt="Player 3 token" />
-            <img id="player4" class="player-token player-token-4" src="assets/images/player22.png" alt="Player 4 token" />
             <!-- Player 1 -->
             <div class="input-group">
               <label for="player1-name">Player 1 Name</label>
@@ -341,6 +372,7 @@
                   </button>
                 </div>
               </div>
+              <label class="checkbox-wrapper"><input type="checkbox" class="ai-toggle" data-player="2" /> AI</label>
             </div>
           </div>
         </div>
