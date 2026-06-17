@@ -25,9 +25,8 @@ const IMAGE_PATH = "assets/images";
 const AUDIO_PATH = "assets/audio";
 const QUESTION_SOURCE_PATH = "questions.md";
 
-/* Snakes: Landing position -> slide down to
-// Added startDifficulty config
-const START_DIFFICULTY = "medium"; */
+/* Snakes: Landing position -> slide down to */
+const START_DIFFICULTY = "medium";
 const snakes = {
   11: 10, 48: 28, 41: 23, 64: 44, 68: 31,
   88: 72, 91: 71, 94: 87, 98: 83,
