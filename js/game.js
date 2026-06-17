@@ -1600,8 +1600,6 @@ function initGame() {
   
   // Show setup modal on start (unless user disabled it) – now handled by loadCurrentGame
 
-  
-  elements.rollDiceBtn.disabled = true;
 }
 
 
