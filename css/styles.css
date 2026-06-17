@@ -487,8 +487,61 @@ button {
   perspective: 700px;
 }
 
+.dice-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  width: 100%;
+  margin-bottom: var(--spacing-xs);
+}
+
 .dice-value {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 12px;
+  min-width: 84px;
+  backdrop-filter: blur(8px);
+  color: white;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dice-value.value-rolling {
+  opacity: 0.3;
+  transform: scale(0.9);
+}
+
+.dice-value .rolled-label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  opacity: 0.8;
+  margin-bottom: 2px;
+}
+
+.dice-value .rolled-number {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .dice-number {
@@ -534,7 +587,8 @@ button {
 }
 
 .dice-cube.is-rolling {
-  animation: diceTumble 1s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+  /* Dynamic 3D rotation handled via JavaScript transition */
+  filter: drop-shadow(0 24px 28px rgba(15, 23, 42, 0.45));
 }
 
 @keyframes diceTumble {
