@@ -994,7 +994,13 @@ function setDiceFace(face) {
   );
   elements.diceCube.classList.add(`dice-face-${face}`);
   elements.diceCube.setAttribute('aria-label', `Dice showing ${face}`);
-  elements.diceValueDisplay.textContent = face;
+  
+  const numSpan = elements.diceValueDisplay?.querySelector('.rolled-number');
+  if (numSpan) {
+    numSpan.textContent = face;
+  } else if (elements.diceValueDisplay) {
+    elements.diceValueDisplay.textContent = face;
+  }
 }
 
 function setDiceRolling(isRolling) {
@@ -1232,25 +1238,58 @@ function updatePlayerPosition(playerIndex, position) {
 async function rollDice(options = {}) {
   return new Promise((resolve) => {
     playSound(elements.diceSound);
+    
+    // Add rolling state to value display
+    elements.diceValueDisplay?.classList.add('value-rolling');
     setDiceRolling(true);
-    let rolls = 0;
-    let randomFace = 1;
 
-    const rollInterval = setInterval(() => {
-      randomFace = Math.floor(Math.random() * 6) + 1;
+    // Determine the result face
+    let randomFace = Math.floor(Math.random() * 6) + 1;
+    if (options.preferredFace && Math.random() < options.preferredFaceChance) {
+      randomFace = options.preferredFace;
+    }
+
+    // Define base isometric angles for each face
+    const baseAngles = {
+      1: { x: -16, y: -22 },
+      2: { x: -16, y: 158 },
+      3: { x: -16, y: -112 },
+      4: { x: -16, y: 68 },
+      5: { x: -106, y: -22 },
+      6: { x: 74, y: -22 }
+    };
+
+    const target = baseAngles[randomFace];
+
+    // Add multiple full spins for realistic tumble effect
+    const spinX = target.x + (Math.floor(Math.random() * 3) + 3) * 360;
+    const spinY = target.y + (Math.floor(Math.random() * 3) + 3) * 360;
+    const spinZ = (Math.floor(Math.random() * 3) + 3) * 360;
+
+    // Apply smooth transition style and transform
+    elements.diceCube.style.transition = 'transform 1.2s cubic-bezier(0.2, 0.8, 0.25, 1)';
+    elements.diceCube.style.transform = `rotateX(${spinX}deg) rotateY(${spinY}deg) rotateZ(${spinZ}deg)`;
+
+    // Keep setDiceFace in sync for aria attributes & previewing
+    elements.diceCube.setAttribute('aria-label', `Dice showing ${randomFace}`);
+    const numSpan = elements.diceValueDisplay?.querySelector('.rolled-number');
+    if (numSpan) {
+      numSpan.textContent = randomFace;
+    }
+
+    setTimeout(() => {
+      // Once rolling ends, snap back to standard class-based rotation so the state is clean
+      elements.diceCube.style.transition = 'none';
+      elements.diceCube.style.transform = '';
+
       setDiceFace(randomFace);
-      rolls += 1;
+      setDiceRolling(false);
 
-      if (rolls >= DICE_ROLL_FRAMES) {
-        clearInterval(rollInterval);
-        if (options.preferredFace && Math.random() < options.preferredFaceChance) {
-          randomFace = options.preferredFace;
-          setDiceFace(randomFace);
-        }
-        setDiceRolling(false);
-        resolve(randomFace);
-      }
-    }, DICE_FRAME_DELAY);
+      // Show the value badge with a fade-in effect
+      elements.diceValueDisplay?.classList.remove('value-rolling');
+
+      resolve(randomFace);
+    }, 1200);
   });
 }
 
@@ -1285,17 +1324,6 @@ function initializeQuestionPool() {
   gameState.usedQuestions = [];
 }
 
-  // Use only true/false (auto‑gradable) questions for gameplay.
-  const pool = questions.filter(q => q.type === 'true-false');
-  // Shuffle using Fisher‑Yates.
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  gameState.questionPool = pool; // array of question objects
-  gameState.usedQuestions = [];
-}
-
 // Retrieve the next question from the session pool, rebuilding if exhausted.
 function getNextQuestion() {
   if (!gameState.questionPool || gameState.questionPool.length === 0) {
@@ -1306,24 +1334,6 @@ function getNextQuestion() {
     const recent = gameState.usedQuestions.slice(-5);
     const all = questions.filter(q => q.type === 'true-false' && allowed.has(q.difficulty));
     const newPool = all.filter(q => !recent.includes(q));
-    for (let i = newPool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newPool[i], newPool[j]] = [newPool[j], newPool[i]];
-    }
-    gameState.questionPool = newPool;
-    gameState.usedQuestions = [];
-  }
-  const next = gameState.questionPool.shift();
-  gameState.usedQuestions.push(next);
-  return next;
-}
-
-  if (!gameState.questionPool || gameState.questionPool.length === 0) {
-    // Pool exhausted – rebuild while avoiding immediate repeats.
-    const recent = gameState.usedQuestions.slice(-5); // keep last 5 used
-    const all = questions.filter(q => q.type === 'true-false');
-    const newPool = all.filter(q => !recent.includes(q));
-    // Shuffle new pool
     for (let i = newPool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [newPool[i], newPool[j]] = [newPool[j], newPool[i]];
