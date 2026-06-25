@@ -892,6 +892,42 @@ function openDB() {
   });
 }
 
+function idbRequest(request) {
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function transactionDone(tx) {
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error);
+  });
+}
+
+async function deleteCurrentRecord(store) {
+  const curIdx = store.index('current');
+  const curCursor = await idbRequest(curIdx.openCursor(IDBKeyRange.only(true)));
+  if (curCursor) {
+    curCursor.delete();
+  }
+}
+
+async function clearCurrentGame() {
+  if (!window.indexedDB) {
+    localStorage.removeItem('menstrualGame_current');
+    return;
+  }
+
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  const store = tx.objectStore(STORE_NAME);
+  await deleteCurrentRecord(store);
+  await transactionDone(tx);
+}
+
 async function persistCurrentGame(state) {
   if (!window.indexedDB) {
     localStorage.setItem('menstrualGame_current', JSON.stringify(state));
@@ -900,12 +936,9 @@ async function persistCurrentGame(state) {
   const db = await openDB();
   const tx = db.transaction(STORE_NAME, 'readwrite');
   const store = tx.objectStore(STORE_NAME);
-  // Remove old current record
-  const curIdx = store.index('current');
-  const curCursor = await curIdx.openCursor(IDBKeyRange.only(true));
-  if (curCursor) curCursor.delete();
-  await store.put({ timestamp: Date.now(), isCurrent: true, state });
-  await tx.complete;
+  await deleteCurrentRecord(store);
+  store.put({ timestamp: Date.now(), isCurrent: true, state });
+  await transactionDone(tx);
 }
 
 async function loadCurrentGame() {
@@ -916,7 +949,7 @@ async function loadCurrentGame() {
   const db = await openDB();
   const tx = db.transaction(STORE_NAME, 'readonly');
   const idx = tx.objectStore(STORE_NAME).index('current');
-  const cursor = await idx.openCursor(IDBKeyRange.only(true));
+  const cursor = await idbRequest(idx.openCursor(IDBKeyRange.only(true)));
   return cursor ? cursor.value.state : null;
 }
 
@@ -933,12 +966,9 @@ async function archiveFinishedGame(state) {
   const db = await openDB();
   const tx = db.transaction(STORE_NAME, 'readwrite');
   const store = tx.objectStore(STORE_NAME);
-  // Delete any existing current record (if still present)
-  const curIdx = store.index('current');
-  const curCursor = await curIdx.openCursor(IDBKeyRange.only(true));
-  if (curCursor) curCursor.delete();
-  await store.put({ timestamp: Date.now(), isCurrent: false, state });
-  await tx.complete;
+  await deleteCurrentRecord(store);
+  store.put({ timestamp: Date.now(), isCurrent: false, state });
+  await transactionDone(tx);
 }
 
 async function fetchGameHistory(limit = 10) {
@@ -950,16 +980,12 @@ async function fetchGameHistory(limit = 10) {
   }
   const db = await openDB();
   const tx = db.transaction(STORE_NAME, 'readonly');
-  const idx = tx.objectStore(STORE_NAME).index('byDate');
-  const result = [];
-  let cursor = await idx.openCursor(null, 'prev'); // newest first
-  while (cursor && result.length < limit) {
-    if (!cursor.value.isCurrent) {
-      result.push(cursor.value);
-    }
-    cursor = await cursor.continue();
-  }
-  return result;
+  const store = tx.objectStore(STORE_NAME);
+  const allGames = await idbRequest(store.getAll());
+  return allGames
+    .filter(game => !game.isCurrent)
+    .sort((a, b) => b.timestamp - a.timestamp)
+    .slice(0, limit);
 }
 
 
@@ -1128,7 +1154,7 @@ function updateCarouselSlide(slideIndex) {
   
   /* Update navigation buttons */
   elements.carouselPrev.disabled = currentRuleSlide === 0;
-  elements.carouselNext.disabled = currentRuleSlide === gameRules.length - 1;
+  elements.carouselNext.disabled = false;
   
   /* Read aloud the current rule */
   const currentRule = gameRules[currentRuleSlide];
@@ -1161,8 +1187,8 @@ function moveToCarouselEnd() {
    MODAL MANAGEMENT
    ============================================================================ */
 
-function showSetupModal() {
-  if (appState.showRulesOnStart) {
+function showSetupModal(forceRules = false) {
+  if (forceRules || appState.showRulesOnStart) {
     showRulesStep();
   } else {
     showPlayerSetupStep();
@@ -1171,6 +1197,7 @@ function showSetupModal() {
 
 function hideSetupModal() {
   elements.setupModal.classList.remove('modal-active');
+  speechManager.stop();
 }
 
 function showQuestionModal(questionText) {
@@ -1509,18 +1536,9 @@ function finalizeTurn(newPosition) {
       currentPlayer: gameState.currentPlayer,
       timestamp: Date.now(),
     });
-    // Remove current session data
-    if (window.indexedDB) {
-      openDB().then(db => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        const idx = tx.objectStore(STORE_NAME).index('current');
-        idx.openCursor(IDBKeyRange.only(true)).then(cursor => {
-          if (cursor) cursor.delete();
-        });
-      });
-    } else {
-      localStorage.removeItem('menstrualGame_current');
-    }
+    clearCurrentGame().catch(error => {
+      console.warn('Unable to clear current game', error);
+    });
     return;
   }
 
@@ -1558,6 +1576,23 @@ function scheduleAiTurnIfNeeded() {
   aiTurnTimer = setTimeout(() => {
     handleTurn();
   }, 800);
+}
+
+function setRollButtonForCurrentPlayer() {
+  if (gameState.isGameOver || gameState.isQuestionActive || gameState.isRolling) {
+    elements.rollDiceBtn.disabled = true;
+    return;
+  }
+
+  elements.rollDiceBtn.disabled = Boolean(gameState.players[gameState.currentPlayer]?.isAI);
+}
+
+function enableRollWhenQuestionsReady() {
+  elements.rollDiceBtn.disabled = true;
+  questionBankReady.finally(() => {
+    setRollButtonForCurrentPlayer();
+    scheduleAiTurnIfNeeded();
+  });
 }
 
 /* ============================================================================
@@ -1607,15 +1642,13 @@ function startGame() {
 
   hideSetupModal();
   
-  elements.rollDiceBtn.disabled = gameState.players[0].isAI;
-
   gameState.currentPlayer = 0;
   gameState.isGameOver = false;
   gameState.isQuestionActive = false;
   gameState.isRolling = false;
 
   playMusic(elements.backgroundMusic);
-  scheduleAiTurnIfNeeded();
+  enableRollWhenQuestionsReady();
 }
 
 function resetGame() {
@@ -1636,7 +1669,6 @@ function resetGame() {
   setDiceFace(1);
   updatePlayersUi();
   elements.rollDiceBtn.hidden = false;
-  elements.rollDiceBtn.disabled = gameState.players[0].isAI;
   elements.restartBtn.hidden = true;
 
   gameState.players.forEach((player, index) => {
@@ -1644,11 +1676,11 @@ function resetGame() {
   });
 
   playMusic(elements.backgroundMusic);
-  scheduleAiTurnIfNeeded();
+  enableRollWhenQuestionsReady();
 }
 
 function showRulesModal() {
-  showSetupModal();
+  showSetupModal(true);
 }
 
 /* ============================================================================
@@ -1670,6 +1702,12 @@ function initGame() {
     backgroundSource.type = 'audio/mpeg';
     elements.backgroundMusic.appendChild(backgroundSource);
   }
+
+  // Theme, audio, and carousel setup must be ready before the startup modal opens.
+  initializeTheme();
+  updateAudioButtons();
+  initializeCarousel();
+  showSetupModal();
   
   /* Load questions and then set up the session‑unique pool.
      After the pool is ready we also attempt to restore a previously saved game. */
@@ -1705,30 +1743,18 @@ function initGame() {
         } else {
           scheduleAiTurnIfNeeded();
         }
-      } else {
-        // No saved game – start fresh
-        showSetupModal();
-        if (!appState.showRulesOnStart) {
-          moveToCarouselEnd();
-        }
-    // Roll dice button enabled after game start handled in startGame()
-}
+      }
+      // Roll dice button enabled after game start handled in startGame()
 
     })
     .catch(err => {
       console.warn('Failed to load game state', err);
+      showSetupModal();
     });
   
   // Cache player elements for visual tokens
   gameState.players[0].element = elements.player1;
   gameState.players[1].element = elements.player2;
-  
-  // Theme & Audio initialization
-  initializeTheme();
-  updateAudioButtons();
-  
-  // Carousel setup
-  initializeCarousel();
   
   // Event Listeners - Navigation
   elements.backBtn.addEventListener('click', () => {
@@ -1743,6 +1769,11 @@ function initGame() {
   
   // Event Listeners - Game Controls
   elements.rollDiceBtn.addEventListener('click', handleTurn);
+  elements.diceCube.addEventListener('click', () => {
+    if (!elements.rollDiceBtn.disabled && !elements.rollDiceBtn.hidden) {
+      handleTurn();
+    }
+  });
   elements.restartBtn.addEventListener('click', resetGame);
   
   // Event Listeners - Rules Carousel
@@ -1764,10 +1795,7 @@ function initGame() {
   
   // Event Listeners - Game Setup
   elements.startGameBtn.addEventListener('click', (e) => { e.preventDefault(); startGame(); });
-  
-  // Event Listeners - Dice buttons (placeholders)
-  elements.trueBtn.addEventListener('click', () => {});
-  elements.falseBtn.addEventListener('click', () => {});
+  elements.playerCountSelect.addEventListener('change', updatePlayerSetupVisibility);
   
   // Play again button
   elements.playAgainBtn.addEventListener('click', resetGame);

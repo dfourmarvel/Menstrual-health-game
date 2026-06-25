@@ -4,7 +4,7 @@
   "description": "**Documentation:** See the consolidated project documentation at [/plans/DOCUMENTATION.md](/plans/DOCUMENTATION.md).",
   "main": "index.js",
   "scripts": {
-    "test": "npx playwright test"
+    "test": "node node_modules/@playwright/test/cli.js test"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/dfourmarvel/Menstrual-health-game#readme",
   "devDependencies": {
-    "@playwright/test": "^1.60.0",
-    "playwright": "^1.61.0"
+    "@playwright/test": "^1.60.0"
   }
 }
