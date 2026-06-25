@@ -372,6 +372,7 @@ button {
 }
 
 .icon-btn {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -393,6 +394,32 @@ button {
 .icon-btn svg {
   width: 20px;
   height: 20px;
+}
+
+.icon-btn::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 6px);
+  z-index: calc(var(--z-navbar) + 1);
+  transform: translateX(-50%) translateY(-4px);
+  padding: 4px 7px;
+  border-radius: 6px;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.icon-btn:hover::after,
+.icon-btn:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* ============================================================================
@@ -586,6 +613,8 @@ button {
   transform: rotateX(-20deg) rotateY(20deg);
   filter: drop-shadow(0 18px 22px rgba(15, 23, 42, 0.36));
   transition: transform var(--transition-base), box-shadow var(--transition-base);
+  cursor: pointer;
+  will-change: transform;
 }
 
 .dice-cube::after {
@@ -602,6 +631,7 @@ button {
 .dice-cube.is-rolling {
   /* Dynamic 3D rotation handled via JavaScript transition */
   filter: drop-shadow(0 24px 28px rgba(15, 23, 42, 0.45));
+  cursor: wait;
 }
 
 @keyframes diceTumble {

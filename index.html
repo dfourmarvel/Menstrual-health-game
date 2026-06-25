@@ -23,30 +23,38 @@
       </div>
 
       <div class="navbar-controls">
-        <button class="icon-btn" id="rules-btn" aria-label="Show game rules">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+        <button class="icon-btn" id="rules-btn" aria-label="Show game rules" title="Rules" data-tooltip="Rules">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 7v14"></path>
+            <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path>
           </svg>
         </button>
-        <button class="icon-btn" id="theme-btn" aria-label="Toggle theme">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364 1.636l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M19 12a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        <button class="icon-btn" id="theme-btn" aria-label="Toggle theme" title="Theme" data-tooltip="Theme">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
           </svg>
         </button>
-        <button class="icon-btn" id="music-btn" aria-label="Toggle music">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M9 18v-6a3 3 0 00-3-3H5a2 2 0 00-2 2v6a2 2 0 002 2h1a3 3 0 003-3zm0 0V9a3 3 0 013-3h1a2 2 0 012 2v6a2 2 0 01-2 2h-1a3 3 0 01-3-3z"/>
-            <path d="M14 7a4 4 0 014 4v6a2 2 0 002 2h0a2 2 0 002-2v-6a6 6 0 00-6-6h0"/>
+        <button class="icon-btn" id="music-btn" aria-label="Toggle music" title="Music" data-tooltip="Music">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
           </svg>
         </button>
-        <button class="icon-btn" id="sound-btn" aria-label="Toggle sound effects">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M13.5 4.06c0-1.336-1.616-2.256-2.73-1.72l-5.24 3.102A1 1 0 005 7.25v9.5a1 1 0 00.53.882l5.24 3.102c1.11.536 2.73-.384 2.73-1.72V4.06zM15.5 12a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+        <button class="icon-btn" id="sound-btn" aria-label="Toggle sound effects" title="Sound effects" data-tooltip="Sound">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H2v6h4l5 4z"></path>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
           </svg>
         </button>
-        <button class="icon-btn" id="read-aloud-btn" aria-label="Toggle read aloud">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5h4V7h2v5h4l-5 5z"/>
+        <button class="icon-btn" id="read-aloud-btn" aria-label="Toggle read aloud" title="Read aloud" data-tooltip="Read aloud">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 6v12"></path>
+            <path d="M8 9v6"></path>
+            <path d="M16 9v6"></path>
+            <path d="M4 11v2"></path>
+            <path d="M20 11v2"></path>
           </svg>
         </button>
       </div>
@@ -80,14 +88,14 @@
           <img
             id="player3"
             class="player-token player-token-3"
-            src="assets/images/avatar-female-1.svg"
+            src="assets/images/player11.png"
             alt="Player 3 token"
             hidden
           >
           <img
             id="player4"
             class="player-token player-token-4"
-            src="assets/images/avatar-male-1.svg"
+            src="assets/images/player22.png"
             alt="Player 4 token"
             hidden
           >
@@ -175,7 +183,7 @@
 
         <article class="player-card player-card-3" hidden>
           <div class="player-avatar-wrapper">
-            <img id="player3-card-avatar" src="assets/images/avatar-female-1.svg" alt="" class="player-avatar">
+            <img id="player3-card-avatar" src="assets/images/player11.png" alt="" class="player-avatar">
           </div>
           <div class="player-card-info">
             <span class="player-label">Player 3</span>
@@ -185,7 +193,7 @@
 
         <article class="player-card player-card-4" hidden>
           <div class="player-avatar-wrapper">
-            <img id="player4-card-avatar" src="assets/images/avatar-male-1.svg" alt="" class="player-avatar">
+            <img id="player4-card-avatar" src="assets/images/player22.png" alt="" class="player-avatar">
           </div>
           <div class="player-card-info">
             <span class="player-label">Player 4</span>
@@ -273,8 +281,8 @@
               <div class="avatar-selection" id="player3-avatar-selection" aria-label="Select avatar for Player 3">
                 <span class="avatar-label">Choose avatar:</span>
                 <div class="avatar-options">
-                  <button type="button" class="avatar-option" data-avatar="assets/images/player11.png" aria-label="Red token avatar"> <img src="assets/images/player11.png" alt="Red token avatar"/></button>
-                  <button type="button" class="avatar-option" data-avatar="assets/images/player22.png" aria-label="Yellow token avatar"> <img src="assets/images/player22.png" alt="Yellow token avatar"/></button>
+                  <button type="button" class="avatar-option selected" data-avatar="assets/images/player11.png" aria-label="3D masked blond avatar"> <img src="assets/images/player11.png" alt="3D masked blond avatar"/></button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/player22.png" aria-label="3D masked red-haired avatar"> <img src="assets/images/player22.png" alt="3D masked red-haired avatar"/></button>
                   <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-1.svg" aria-label="Male avatar 1"> <img src="assets/images/avatar-male-1.svg" alt="Male avatar 1"/></button>
                   <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-2.svg" aria-label="Male avatar 2"> <img src="assets/images/avatar-male-2.svg" alt="Male avatar 2"/></button>
                   <button type="button" class="avatar-option" data-avatar="assets/images/avatar-female-1.svg" aria-label="Female avatar 1"> <img src="assets/images/avatar-female-1.svg" alt="Female avatar 1"/></button>
@@ -290,8 +298,8 @@
               <div class="avatar-selection" id="player4-avatar-selection" aria-label="Select avatar for Player 4">
                 <span class="avatar-label">Choose avatar:</span>
                 <div class="avatar-options">
-                  <button type="button" class="avatar-option" data-avatar="assets/images/player11.png" aria-label="Red token avatar"> <img src="assets/images/player11.png" alt="Red token avatar"/></button>
-                  <button type="button" class="avatar-option" data-avatar="assets/images/player22.png" aria-label="Yellow token avatar"> <img src="assets/images/player22.png" alt="Yellow token avatar"/></button>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/player11.png" aria-label="3D masked blond avatar"> <img src="assets/images/player11.png" alt="3D masked blond avatar"/></button>
+                  <button type="button" class="avatar-option selected" data-avatar="assets/images/player22.png" aria-label="3D masked red-haired avatar"> <img src="assets/images/player22.png" alt="3D masked red-haired avatar"/></button>
                   <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-1.svg" aria-label="Male avatar 1"> <img src="assets/images/avatar-male-1.svg" alt="Male avatar 1"/></button>
                   <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-2.svg" aria-label="Male avatar 2"> <img src="assets/images/avatar-male-2.svg" alt="Male avatar 2"/></button>
                   <button type="button" class="avatar-option" data-avatar="assets/images/avatar-female-1.svg" aria-label="Female avatar 1"> <img src="assets/images/avatar-female-1.svg" alt="Female avatar 1"/></button>
@@ -307,11 +315,11 @@
               <div class="avatar-selection" id="player1-avatar-selection" aria-label="Select avatar for Player 1">
                 <span class="avatar-label">Choose avatar:</span>
                 <div class="avatar-options">
-                  <button type="button" class="avatar-option selected" data-avatar="assets/images/player11.png" aria-label="Red token avatar"> 
-                    <img src="assets/images/player11.png" alt="Red token avatar"/>
+                  <button type="button" class="avatar-option selected" data-avatar="assets/images/player11.png" aria-label="3D masked blond avatar"> 
+                    <img src="assets/images/player11.png" alt="3D masked blond avatar"/>
                   </button>
-                  <button type="button" class="avatar-option" data-avatar="assets/images/player22.png" aria-label="Yellow token avatar"> 
-                    <img src="assets/images/player22.png" alt="Yellow token avatar"/>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/player22.png" aria-label="3D masked red-haired avatar"> 
+                    <img src="assets/images/player22.png" alt="3D masked red-haired avatar"/>
                   </button>
                   <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-1.svg" aria-label="Male avatar 1"> 
                     <img src="assets/images/avatar-male-1.svg" alt="Male avatar 1"/>
@@ -336,11 +344,11 @@
               <div class="avatar-selection" id="player2-avatar-selection" aria-label="Select avatar for Player 2">
                 <span class="avatar-label">Choose avatar:</span>
                 <div class="avatar-options">
-                  <button type="button" class="avatar-option" data-avatar="assets/images/player11.png" aria-label="Red token avatar"> 
-                    <img src="assets/images/player11.png" alt="Red token avatar"/>
+                  <button type="button" class="avatar-option" data-avatar="assets/images/player11.png" aria-label="3D masked blond avatar"> 
+                    <img src="assets/images/player11.png" alt="3D masked blond avatar"/>
                   </button>
-                  <button type="button" class="avatar-option selected" data-avatar="assets/images/player22.png" aria-label="Yellow token avatar"> 
-                    <img src="assets/images/player22.png" alt="Yellow token avatar"/>
+                  <button type="button" class="avatar-option selected" data-avatar="assets/images/player22.png" aria-label="3D masked red-haired avatar"> 
+                    <img src="assets/images/player22.png" alt="3D masked red-haired avatar"/>
                   </button>
                   <button type="button" class="avatar-option" data-avatar="assets/images/avatar-male-1.svg" aria-label="Male avatar 1"> 
                     <img src="assets/images/avatar-male-1.svg" alt="Male avatar 1"/>

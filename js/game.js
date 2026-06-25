@@ -479,7 +479,12 @@ const gameRules = [
 let gameState = createInitialGameState();
 
 function createInitialGameState(playerConfigs = []) {
-  const defaultAvatars = ["assets/images/player11.png", "assets/images/player22.png", "assets/images/avatar-female-1.svg", "assets/images/avatar-male-1.svg", "assets/images/avatar_ai_1781381406920.png"];
+  const defaultAvatars = [
+    "assets/images/player11.png",
+    "assets/images/player22.png",
+    "assets/images/player11.png",
+    "assets/images/player22.png",
+  ];
   const players = [];
   const count = Math.min(playerConfigs.length || 2, 4);
   for (let i = 0; i < count; i++) {
@@ -520,6 +525,8 @@ function createInitialGameState(playerConfigs = []) {
     isGameOver: false,
     isQuestionActive: false,
     isRolling: false,
+    questionPool: [],
+    usedQuestions: [],
   };
 }
 
@@ -727,8 +734,8 @@ function setupAvatarSelection() {
   mapBtnHandlers(elements.player4AvatarSelection, elements.player4, elements.player4CardAvatar);
   syncAvatarPicker(0, getSelectedAvatar(elements.player1AvatarSelection, "assets/images/player11.png"));
   syncAvatarPicker(1, getSelectedAvatar(elements.player2AvatarSelection, "assets/images/player22.png"));
-  syncAvatarPicker(2, getSelectedAvatar(elements.player3AvatarSelection, "assets/images/avatar-female-1.svg"));
-  syncAvatarPicker(3, getSelectedAvatar(elements.player4AvatarSelection, "assets/images/avatar-male-1.svg"));
+  syncAvatarPicker(2, getSelectedAvatar(elements.player3AvatarSelection, "assets/images/player11.png"));
+  syncAvatarPicker(3, getSelectedAvatar(elements.player4AvatarSelection, "assets/images/player22.png"));
 }
 
 function setSelectedAvatar(container, avatar, tokenElement, cardElement) {
@@ -1419,91 +1426,86 @@ async function handleTurn() {
     return;
   }
 
-  await questionBankReady;
-  if (questions.length === 0) {
-    loadFallbackQuestions();
-  }
-
   gameState.isRolling = true;
   elements.rollDiceBtn.disabled = true;
 
-  const currentPlayer = gameState.players[gameState.currentPlayer];
-
-  /* Opening roll: must roll 6 to start */
-  if (!currentPlayer.hasStarted) {
-    const earnedEntryBoost = await askEntryQuestion();
-    const diceValue = await rollDice(
-      earnedEntryBoost
-        ? { preferredFace: 6, preferredFaceChance: ENTRY_CORRECT_SIX_CHANCE }
-        : {}
-    );
-
-    if (diceValue === 6) {
-      currentPlayer.hasStarted = true;
-      currentPlayer.position = 1;
-      updatePlayerPosition(gameState.currentPlayer, 1);
-    } else {
-      advanceTurn();
+  try {
+    await questionBankReady;
+    if (questions.length === 0) {
+      loadFallbackQuestions();
     }
-    gameState.isRolling = false;
-    if (!gameState.isGameOver) {
-      elements.rollDiceBtn.disabled = Boolean(gameState.players[gameState.currentPlayer].isAI);
-      scheduleAiTurnIfNeeded();
+
+    const currentPlayer = gameState.players[gameState.currentPlayer];
+
+    /* Opening roll: must roll 6 to start */
+    if (!currentPlayer.hasStarted) {
+      const earnedEntryBoost = await askEntryQuestion();
+      const diceValue = await rollDice(
+        earnedEntryBoost
+          ? { preferredFace: 6, preferredFaceChance: ENTRY_CORRECT_SIX_CHANCE }
+          : {}
+      );
+
+      if (diceValue === 6) {
+        currentPlayer.hasStarted = true;
+        currentPlayer.position = 1;
+        updatePlayerPosition(gameState.currentPlayer, 1);
+      } else {
+        advanceTurn();
+      }
+      completeTurnInteraction();
+      return;
     }
-    return;
-  }
 
-  const diceValue = await rollDice();
+    const diceValue = await rollDice();
 
-  /* Normal move */
-  let newPosition = currentPlayer.position + diceValue;
+    /* Normal move */
+    let newPosition = currentPlayer.position + diceValue;
   
-  /* Bounce back if overshoot (player bounces back from 100) */
-  if (newPosition > 100) {
-    newPosition = 100 - (newPosition - 100);
-  }
-
-  await movePlayer(newPosition);
-
-  /* Check if won */
-  if (newPosition === 100) {
-    finalizeTurn(newPosition);
-    gameState.isRolling = false;
-    return;
-  }
-
-  /* Check for snake/ladder */
-  const boardJump = getBoardJump(newPosition);
-  if (!boardJump) {
-    finalizeTurn(newPosition);
-    gameState.isRolling = false;
-    elements.rollDiceBtn.disabled = Boolean(gameState.players[gameState.currentPlayer].isAI);
-    scheduleAiTurnIfNeeded();
-    return;
-  }
-
-  /* Show preview of destination */
-  updatePlayerPosition(gameState.currentPlayer, boardJump.newPosition);
-
-  /* Ask health question */
-  showQuestion((correct) => {
-    if (correct && boardJump.type === "ladder") {
-      newPosition = boardJump.newPosition;
-      playSound(elements.ladderSound);
+    /* Bounce back if overshoot (player bounces back from 100) */
+    if (newPosition > 100) {
+      newPosition = 100 - (newPosition - 100);
     }
 
-    if (!correct && boardJump.type === "snake") {
-      newPosition = boardJump.newPosition;
-      playSound(elements.snakeSound);
+    await movePlayer(newPosition);
+
+    /* Check if won */
+    if (newPosition === 100) {
+      finalizeTurn(newPosition);
+      completeTurnInteraction();
+      return;
     }
 
-    finalizeTurn(newPosition);
-    gameState.isRolling = false;
-    if (!gameState.isGameOver) {
-      elements.rollDiceBtn.disabled = Boolean(gameState.players[gameState.currentPlayer].isAI);
-      scheduleAiTurnIfNeeded();
+    /* Check for snake/ladder */
+    const boardJump = getBoardJump(newPosition);
+    if (!boardJump) {
+      finalizeTurn(newPosition);
+      completeTurnInteraction();
+      return;
     }
-  });
+
+    /* Show preview of destination */
+    updatePlayerPosition(gameState.currentPlayer, boardJump.newPosition);
+
+    /* Ask health question */
+    showQuestion((correct) => {
+      if (correct && boardJump.type === "ladder") {
+        newPosition = boardJump.newPosition;
+        playSound(elements.ladderSound);
+      }
+
+      if (!correct && boardJump.type === "snake") {
+        newPosition = boardJump.newPosition;
+        playSound(elements.snakeSound);
+      }
+
+      finalizeTurn(newPosition);
+      completeTurnInteraction();
+    });
+  } catch (error) {
+    console.error('Unable to complete turn', error);
+    completeTurnInteraction();
+  }
 }
 
 async function movePlayer(position) {
@@ -1561,7 +1563,7 @@ function finalizeTurn(newPosition) {
 function advanceTurn() {
   gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
   elements.currentPlayerName.textContent = gameState.players[gameState.currentPlayer].name;
-  elements.rollDiceBtn.disabled = Boolean(gameState.players[gameState.currentPlayer].isAI);
+  setRollButtonForCurrentPlayer();
   scheduleAiTurnIfNeeded();
 }
 
@@ -1595,6 +1597,16 @@ function enableRollWhenQuestionsReady() {
   });
 }
 
+function completeTurnInteraction() {
+  gameState.isRolling = false;
+  setDiceRolling(false);
+
+  if (!gameState.isGameOver) {
+    setRollButtonForCurrentPlayer();
+    scheduleAiTurnIfNeeded();
+  }
+}
+
 /* ============================================================================
    GAME SETUP & INITIALIZATION
    ============================================================================ */
@@ -1617,8 +1629,8 @@ function startGame() {
   const defaultAvatars = [
     "assets/images/player11.png",
     "assets/images/player22.png",
-    "assets/images/avatar-female-1.svg",
-    "assets/images/avatar-male-1.svg",
+    "assets/images/player11.png",
+    "assets/images/player22.png",
   ];
   const playerConfigs = Array.from({ length: playerCount }, (_, index) => ({
     name: nameInputs[index]?.value.trim() || `Player ${index + 1}`,
@@ -1737,7 +1749,7 @@ function initGame() {
         }
         gameState.players.forEach((player, idx) => syncAvatarPicker(idx, player.avatar));
         updatePlayersUi();
-        elements.rollDiceBtn.disabled = Boolean(gameState.players[gameState.currentPlayer]?.isAI);
+        setRollButtonForCurrentPlayer();
         if (appState.showRulesOnStart) {
           showSetupModal();
         } else {
