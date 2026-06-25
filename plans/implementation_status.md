@@ -1,34 +1,24 @@
-# Implementation Status
+# Current Project State
 
-## Features from `plan.md` that are **already implemented**
+## Summary
 
-| Feature | Location in codebase | Notes |
-|---|---|---|
-| Basic vanilla stack (HTML, CSS, JS) | `index.html`, `css/styles.css`, `js/game.js` | Uses plain files, no build step. |
-| Game board with snakes & ladders | `js/game.js` (snakes & ladders objects) | Logic present for movement. |
-| Dice UI with 3‑D cube visual | `index.html` → `<div id="dice-cube" class="dice-cube dice-face-1">` and CSS classes for faces | Cube exists and animates via JS. |
-| Roll Dice button functionality | `js/game.js` – element `roll-dice` wired via `elements.rollDiceBtn.addEventListener('click', handleTurn)` | Button triggers roll, disables during turn. |
-| Two‑player token rendering | `index.html` tokens `#player1` and `#player2` plus player cards in HTML | Hard‑coded two players are functional. |
-| Local persistence (localStorage/IndexedDB stub) | `js/game.js` – `saveGameState`, `loadGameState` helpers | Saves basic game state across refreshes. |
-| Audio controls (music & SFX) | `js/game.js` – audio toggle elements `music-btn`, `sound-btn` | Toggles persisted. |
-| Theme toggle (light/dark) | `js/game.js` – `theme-btn` handling with `data-theme` attribute | Persists theme. |
-| Rules carousel modal | `index.html` modal markup + JS generation of slides | User can step through rules. |
-| Read‑aloud toggle | `js/game.js` – `read-aloud-btn` handling | Accessible speech output. |
-| Question parsing from `questions.md` | `js/game.js` – `loadQuestionsFromMarkdown`, `parseQuestionsMarkdown` | Dynamic loading at runtime. |
-| Basic player turn flow, extra turn on a 6 | `js/game.js` – turn handling logic | Works for two players. |
-| Restart button | `index.html` → `#restart` with JS handler | Resets game state. |
-| Winner flow and modal | `js/game.js` – winner detection and UI updates | Displays winner message. |
+The project is a static menstrual health board game. The cleanup pass is complete: generated folders are ignored and untracked, duplicate scratch tests and stale docs were removed, gameplay fixes are in place, and the Playwright suite passes.
 
-## Features **planned but not yet present**
-- Support for 1‑4 dynamic players (dynamic `players` array).
-- AI opponent implementation.
-- Session‑unique question pools with history tracking.
-- Local profiles and e‑reward inventory persistence.
-- Settings panel with full accessibility options (difficulty, reduced motion, timer).
-- Multilingual (i18n) scaffolding.
-- Dashboard with progress charts.
-- PWA install/offline support.
-- Cloud backend (Supabase) and teacher mode.
-- React/TypeScript migration (V2 stack).
+## Fixed In Current Cleanup Pass
 
-*This status file lives in `/plans/implementation_status.md` for easy hand‑off to the next engineer.*
+- Added `.gitignore`.
+- Added `.prettierignore`.
+- Added `.kiloignore`.
+- Reworked the dice markup and styles so it renders as a 3D cube with pips.
+- Fixed the rules carousel so the final slide can continue to setup.
+- Fixed the navbar rules button so it always opens the rules screen.
+- Wired the player-count dropdown so Player 3 and Player 4 setup fields appear when selected.
+- Added board-token offsets for four players so shared tiles are readable.
+- Fixed IndexedDB request handling so saves, loads, history, and current-game cleanup use proper promise wrappers.
+- Standardized Playwright tests on `tests/*.spec.ts` with a local static server.
+- Set Playwright to one worker for reliable local Chromium runs.
+- Removed duplicate root tests, scratch Playwright scripts, stale docs, tracked `node_modules/`, and tracked test output.
+
+## Remaining Work
+
+- Optional future pass: optimize large image assets.
