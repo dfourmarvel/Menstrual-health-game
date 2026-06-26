@@ -677,7 +677,6 @@ function cacheElements() {
     player2: document.getElementById('player2'),
     player3: document.getElementById('player3'),
     player4: document.getElementById('player4'),
-    diceCube: document.getElementById('dice-cube'),
     diceValueDisplay: document.getElementById('dice-value-display'),
     currentPlayerName: document.getElementById('current-player-name'),
     // name displays for up to 4 players
@@ -1052,20 +1051,226 @@ function stopMusic(audio) {
   audio.currentTime = 0;
 }
 
-function setDiceFace(face) {
-  if (!elements.diceCube) return;
+/* Three.js 3D Dice Simulation Setup */
+let dice3D = {
+  scene: null,
+  camera: null,
+  renderer: null,
+  diceMesh: null,
+  isRolling: false,
+  targetRotation: { x: 0, y: 0, z: 0 },
+  currentRotation: { x: 0, y: 0, z: 0 },
+  animationFrameId: null,
+  rollStartTime: 0,
+  rollDuration: 1400,
+  startRotation: { x: 0, y: 0, z: 0 },
+  tumbleSpeeds: { x: 0, y: 0, z: 0 },
+};
 
-  elements.diceCube.classList.remove(
-    'dice-face-1',
-    'dice-face-2',
-    'dice-face-3',
-    'dice-face-4',
-    'dice-face-5',
-    'dice-face-6'
-  );
-  elements.diceCube.classList.add(`dice-face-${face}`);
-  elements.diceCube.setAttribute('aria-label', `Dice showing ${face}`);
-  
+function init3DDice() {
+  const container = document.getElementById('dice-canvas-container');
+  if (!container) return;
+
+  // Clear container
+  container.innerHTML = '';
+
+  const width = container.clientWidth || 120;
+  const height = container.clientHeight || 120;
+
+  // Scene
+  dice3D.scene = new THREE.Scene();
+
+  // Camera
+  dice3D.camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+  dice3D.camera.position.set(0, 0, 4.5);
+
+  // Renderer
+  dice3D.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  dice3D.renderer.setSize(width, height);
+  dice3D.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  dice3D.renderer.shadowMap.enabled = true;
+  container.appendChild(dice3D.renderer.domElement);
+
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+  dice3D.scene.add(ambientLight);
+
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  dirLight.position.set(5, 5, 5);
+  dirLight.castShadow = true;
+  dice3D.scene.add(dirLight);
+
+  const dirLight2 = new THREE.DirectionalLight(0x818cf8, 0.4);
+  dirLight2.position.set(-5, -5, 2);
+  dice3D.scene.add(dirLight2);
+
+  // Create Dice Materials
+  const materials = [];
+  for (let face = 1; face <= 6; face++) {
+    materials.push(new THREE.MeshStandardMaterial({
+      map: createDiceFaceTexture(face),
+      roughness: 0.15,
+      metalness: 0.05
+    }));
+  }
+
+  // BoxGeometry
+  const geometry = new THREE.BoxGeometry(1.6, 1.6, 1.6);
+  dice3D.diceMesh = new THREE.Mesh(geometry, materials);
+  dice3D.diceMesh.castShadow = true;
+  dice3D.scene.add(dice3D.diceMesh);
+
+  // Default rotation facing 1
+  setDice3DFaceAngle(1);
+
+  // Resize listener
+  const resizeObserver = new ResizeObserver(() => {
+    if (!container || !dice3D.renderer || !dice3D.camera) return;
+    const w = container.clientWidth || 120;
+    const h = container.clientHeight || 120;
+    dice3D.camera.aspect = w / h;
+    dice3D.camera.updateProjectionMatrix();
+    dice3D.renderer.setSize(w, h);
+  });
+  resizeObserver.observe(container);
+
+  // Start static render loop
+  renderStatic();
+}
+
+function renderStatic() {
+  if (!dice3D.isRolling && dice3D.renderer && dice3D.scene && dice3D.camera) {
+    dice3D.renderer.render(dice3D.scene, dice3D.camera);
+  }
+}
+
+// Draw the canvas texture for rounded corners and pips
+function createDiceFaceTexture(faceValue) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+
+  // Background/Face Fill with Rounded Borders
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, 256, 256);
+
+  // Subtle border shading
+  ctx.strokeStyle = '#cbd5e1';
+  ctx.lineWidth = 16;
+  ctx.strokeRect(0, 0, 256, 256);
+
+  // Ambient shading on edges
+  const gradient = ctx.createRadialGradient(128, 128, 10, 128, 128, 180);
+  gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+  gradient.addColorStop(1, 'rgba(226, 232, 240, 0.6)');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(8, 8, 240, 240);
+
+  // Draw Pips
+  ctx.fillStyle = '#1e293b';
+  const pipRadius = 22;
+
+  const positions = {
+    tl: [65, 65],
+    tr: [191, 65],
+    ml: [65, 128],
+    mc: [128, 128],
+    mr: [191, 128],
+    bl: [65, 191],
+    br: [191, 191]
+  };
+
+  const pipsForFace = {
+    1: ['mc'],
+    2: ['tl', 'br'],
+    3: ['tl', 'mc', 'br'],
+    4: ['tl', 'tr', 'bl', 'br'],
+    5: ['tl', 'tr', 'mc', 'bl', 'br'],
+    6: ['tl', 'tr', 'ml', 'mr', 'bl', 'br']
+  };
+
+  const activePips = pipsForFace[faceValue] || [];
+  activePips.forEach(posKey => {
+    const [x, y] = positions[posKey];
+    ctx.beginPath();
+    ctx.arc(x, y, pipRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Specular highlight on pips
+    ctx.beginPath();
+    ctx.fillStyle = '#ffffff';
+    ctx.arc(x - 5, y - 5, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#1e293b'; // restore
+  });
+
+  return new THREE.CanvasTexture(canvas);
+}
+
+// Map rolled integers to exact Euler rotations
+function getEulerForFace(face) {
+  // Three.js order: right, left, top, bottom, front, back
+  // Front: 1, Back: 2, Right: 3, Left: 4, Top: 5, Bottom: 6
+  // We match standard texture mapping
+  switch (face) {
+    case 1: return { x: 0, y: 0, z: 0 };
+    case 2: return { x: 0, y: Math.PI, z: 0 };
+    case 3: return { x: 0, y: -Math.PI / 2, z: 0 };
+    case 4: return { x: 0, y: Math.PI / 2, z: 0 };
+    case 5: return { x: -Math.PI / 2, y: 0, z: 0 };
+    case 6: return { x: Math.PI / 2, y: 0, z: 0 };
+    default: return { x: 0, y: 0, z: 0 };
+  }
+}
+
+function setDice3DFaceAngle(face) {
+  if (!dice3D.diceMesh) return;
+  const rot = getEulerForFace(face);
+  dice3D.diceMesh.rotation.set(rot.x, rot.y, rot.z);
+  dice3D.currentRotation = { ...rot };
+}
+
+function animateRoll(timestamp) {
+  if (!dice3D.rollStartTime) {
+    dice3D.rollStartTime = timestamp;
+  }
+
+  const elapsed = timestamp - dice3D.rollStartTime;
+  const progress = Math.min(elapsed / dice3D.rollDuration, 1);
+
+  // Easing: Cubic Out for deceleration
+  const t = progress;
+  const easeOut = 1 - Math.pow(1 - t, 3);
+
+  // Update rotation with tumbling effect
+  if (progress < 1) {
+    // Add realistic tumble rotation which decays over time
+    const decay = 1 - easeOut;
+    dice3D.diceMesh.rotation.x = dice3D.startRotation.x + (dice3D.targetRotation.x - dice3D.startRotation.x) * easeOut + Math.sin(t * Math.PI * 3.5) * 2.5 * decay;
+    dice3D.diceMesh.rotation.y = dice3D.startRotation.y + (dice3D.targetRotation.y - dice3D.startRotation.y) * easeOut + Math.cos(t * Math.PI * 3.5) * 2.5 * decay;
+    dice3D.diceMesh.rotation.z = dice3D.startRotation.z + (dice3D.targetRotation.z - dice3D.startRotation.z) * easeOut + Math.sin(t * Math.PI * 2) * 1.5 * decay;
+
+    // Simulate jumping/tumble path by modifying Z position slightly
+    dice3D.diceMesh.position.z = Math.sin(t * Math.PI) * 0.8 * decay;
+
+    dice3D.renderer.render(dice3D.scene, dice3D.camera);
+    dice3D.animationFrameId = requestAnimationFrame(animateRoll);
+  } else {
+    // Settle rotation exactly on target
+    dice3D.diceMesh.rotation.set(dice3D.targetRotation.x, dice3D.targetRotation.y, dice3D.targetRotation.z);
+    dice3D.diceMesh.position.set(0, 0, 0);
+    dice3D.currentRotation = { ...dice3D.targetRotation };
+    dice3D.renderer.render(dice3D.scene, dice3D.camera);
+    dice3D.isRolling = false;
+    cancelAnimationFrame(dice3D.animationFrameId);
+  }
+}
+
+function setDiceFace(face) {
+  setDice3DFaceAngle(face);
+  renderStatic();
+
   const numSpan = elements.diceValueDisplay?.querySelector('.rolled-number');
   if (numSpan) {
     numSpan.textContent = face;
@@ -1075,7 +1280,72 @@ function setDiceFace(face) {
 }
 
 function setDiceRolling(isRolling) {
-  elements.diceCube?.classList.toggle('is-rolling', isRolling);
+  // Handled internally in 3D loop
+}
+
+async function rollDice(options = {}) {
+  return new Promise((resolve) => {
+    playSound(elements.diceSound);
+
+    // Add rolling state to value display
+    elements.diceValueDisplay?.classList.add('value-rolling');
+
+    // Determine target face
+    let randomFace = Math.floor(Math.random() * 6) + 1;
+    if (options.preferredFace && Math.random() < options.preferredFaceChance) {
+      randomFace = options.preferredFace;
+    }
+
+    if (!dice3D.diceMesh) {
+      // Fallback if Three.js failed to load
+      setTimeout(() => {
+        setDiceFace(randomFace);
+        elements.diceValueDisplay?.classList.remove('value-rolling');
+        resolve(randomFace);
+      }, 1200);
+      return;
+    }
+
+    // Cancel active animations
+    if (dice3D.animationFrameId) {
+      cancelAnimationFrame(dice3D.animationFrameId);
+    }
+
+    // Capture starting rotation
+    dice3D.startRotation = {
+      x: dice3D.diceMesh.rotation.x,
+      y: dice3D.diceMesh.rotation.y,
+      z: dice3D.diceMesh.rotation.z
+    };
+
+    // Calculate target rotation with multiples of 2PI for spinning
+    const targetEuler = getEulerForFace(randomFace);
+    const spinsX = (Math.floor(Math.random() * 3) + 2) * Math.PI * 2;
+    const spinsY = (Math.floor(Math.random() * 3) + 2) * Math.PI * 2;
+
+    dice3D.targetRotation = {
+      x: targetEuler.x + spinsX,
+      y: targetEuler.y + spinsY,
+      z: targetEuler.z
+    };
+
+    dice3D.rollStartTime = 0;
+    dice3D.isRolling = true;
+
+    // Start animation loop
+    requestAnimationFrame(animateRoll);
+
+    // Sync aria labels and preview rolled number
+    const numSpan = elements.diceValueDisplay?.querySelector('.rolled-number');
+    if (numSpan) {
+      numSpan.textContent = randomFace;
+    }
+
+    setTimeout(() => {
+      elements.diceValueDisplay?.classList.remove('value-rolling');
+      resolve(randomFace);
+    }, dice3D.rollDuration);
+  });
 }
 
 /* ============================================================================
@@ -1307,63 +1577,7 @@ function updatePlayerPosition(playerIndex, position) {
   }
 }
 
-async function rollDice(options = {}) {
-  return new Promise((resolve) => {
-    playSound(elements.diceSound);
-    
-    // Add rolling state to value display
-    elements.diceValueDisplay?.classList.add('value-rolling');
-    setDiceRolling(true);
 
-    // Determine the result face
-    let randomFace = Math.floor(Math.random() * 6) + 1;
-    if (options.preferredFace && Math.random() < options.preferredFaceChance) {
-      randomFace = options.preferredFace;
-    }
-
-    // Define base isometric angles for each face
-    const baseAngles = {
-      1: { x: -16, y: -22 },
-      2: { x: -16, y: 158 },
-      3: { x: -16, y: -112 },
-      4: { x: -16, y: 68 },
-      5: { x: -106, y: -22 },
-      6: { x: 74, y: -22 }
-    };
-
-    const target = baseAngles[randomFace];
-
-    // Add multiple full spins for realistic tumble effect
-    const spinX = target.x + (Math.floor(Math.random() * 3) + 3) * 360;
-    const spinY = target.y + (Math.floor(Math.random() * 3) + 3) * 360;
-    const spinZ = (Math.floor(Math.random() * 3) + 3) * 360;
-
-    // Apply smooth transition style and transform
-    elements.diceCube.style.transition = 'transform 1.2s cubic-bezier(0.2, 0.8, 0.25, 1)';
-    elements.diceCube.style.transform = `rotateX(${spinX}deg) rotateY(${spinY}deg) rotateZ(${spinZ}deg)`;
-
-    // Keep setDiceFace in sync for aria attributes & previewing
-    elements.diceCube.setAttribute('aria-label', `Dice showing ${randomFace}`);
-    const numSpan = elements.diceValueDisplay?.querySelector('.rolled-number');
-    if (numSpan) {
-      numSpan.textContent = randomFace;
-    }
-
-    setTimeout(() => {
-      // Once rolling ends, snap back to standard class-based rotation so the state is clean
-      elements.diceCube.style.transition = 'none';
-      elements.diceCube.style.transform = '';
-
-      setDiceFace(randomFace);
-      setDiceRolling(false);
-
-      // Show the value badge with a fade-in effect
-      elements.diceValueDisplay?.classList.remove('value-rolling');
-
-      resolve(randomFace);
-    }, 1200);
-  });
-}
 
 function getBoardJump(position) {
   if (snakes[position]) {
@@ -1916,13 +2130,22 @@ function initGame() {
   elements.soundBtn.addEventListener('click', toggleSound);
   elements.readAloudBtn?.addEventListener('click', toggleReadAloud);
   
+  // Initialize 3D Dice canvas
+  init3DDice();
+
   // Event Listeners - Game Controls
   elements.rollDiceBtn.addEventListener('click', handleTurn);
-  elements.diceCube.addEventListener('click', () => {
-    if (!elements.rollDiceBtn.disabled && !elements.rollDiceBtn.hidden) {
-      handleTurn();
-    }
-  });
+  
+  // Make 3D Dice container clickable to roll
+  const diceContainer = document.getElementById('dice-canvas-container');
+  if (diceContainer) {
+    diceContainer.style.cursor = 'pointer';
+    diceContainer.addEventListener('click', () => {
+      if (!elements.rollDiceBtn.disabled && !elements.rollDiceBtn.hidden) {
+        handleTurn();
+      }
+    });
+  }
   elements.restartBtn.addEventListener('click', resetGame);
   
   // Event Listeners - Rules Carousel
