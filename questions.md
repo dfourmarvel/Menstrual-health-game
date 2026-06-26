@@ -57,7 +57,11 @@ _"Prioritizing Safety and Wellness in Menstrual Health"_
 - **True or False: Menstruation is a sign of good health in women.**  
    **Answer:** True
 - **What is the average length of a menstrual cycle?**  
-   **Answer:** The average menstrual cycle is 28 days, though it can range from 21 to 35 days.
+A) 21 days
+B) 28 days
+C) 35 days
+D) 40 days
+**Answer:** B
 - **True or False: A menstrual cycle of 28 days is standard for all women.**  
    **Answer:** False
 - **What is ovulation, and when does it occur in a menstrual cycle?**  
@@ -69,7 +73,11 @@ _"Prioritizing Safety and Wellness in Menstrual Health"_
 - **True or False: Menstruation typically starts after the first physical signs of puberty, such as breast development.**  
    **Answer:** True
 - **What are the main hormones involved in regulating menstruation?**  
-   **Answer:** Estrogen and progesterone are the main hormones involved in regulating the menstrual cycle.
+A) Insulin and Glucagon
+B) Estrogen and Progesterone
+C) Testosterone and Adrenaline
+D) Thyroxine and Melatonin
+**Answer:** B
 - **True or False: Progesterone levels peak just before menstruation begins.**  
    **Answer:** True
 - **What is the menstrual flow?**  
@@ -83,7 +91,11 @@ _"Prioritizing Safety and Wellness in Menstrual Health"_
 - **What is the difference between PMS and menstruation?**  
    **Answer:** PMS refers to the symptoms that occur before menstruation, while menstruation is the actual shedding of the uterine lining.
 - **What is menarche?**  
-   **Answer:** Menarche is the first menstrual period, marking the beginning of a woman's reproductive life.
+A) The end of a woman's reproductive life
+B) The first menstrual period
+C) Heavy menstrual bleeding
+D) Painful menstruation
+**Answer:** B
 - **True or False: Menarche usually occurs around the age of 13.**  
    **Answer:** True
 - **What is menopause?**  
