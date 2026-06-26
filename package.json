@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/dfourmarvel/Menstrual-health-game#readme",
   "devDependencies": {
-    "@playwright/test": "^1.60.0"
+    "@playwright/test": "^1.60.0",
+    "sharp": "^0.33.0"
   }
 }

@@ -65,14 +65,16 @@
   <div class="app-container">
     <!-- Game Board Section -->
     <section class="game-section" aria-label="Game play area">
-      <div class="board-wrapper">
-        <div class="game-board" aria-label="Snakes and ladders board">
-          <img 
-            src="assets/images/menstrual-maze-board.png" 
-            alt="Menstrual Maze Cycle of Knowledge game board" 
-            id="board-img"
-            class="board-image"
-          >
+<picture>
+  <source srcset="assets/images/menstrual-maze-board.webp" type="image/webp">
+  <img src="assets/images/menstrual-maze-board.png"
+       srcset="assets/images/menstrual-maze-board-600.png 600w, assets/images/menstrual-maze-board.webp 1200w"
+       sizes="(max-width: 600px) 600px, 1200px"
+       alt="Menstrual Maze Cycle of Knowledge game board"
+       id="board-img"
+       class="board-image"
+       loading="lazy">
+</picture>
           <img 
             id="player1" 
             class="player-token player-token-1" 
