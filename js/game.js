@@ -582,43 +582,44 @@ const speechManager = {
     /* Cancel any ongoing speech */
     this.stop();
     
-    this.utterance = new SpeechSynthesisUtterance(text);
-    
-    /* Natural voice settings */
-    this.utterance.rate = 0.9;      /* Clear but natural speed */
-    this.utterance.pitch = 0.95;    /* Slightly warm and natural */
-    this.utterance.volume = 1;      /* Full volume */
-    
-    /* Use the best available system voice */
-    const voice = this.getBestVoice();
-    if (voice) {
-      this.utterance.voice = voice;
-    }
-    
-    this.utterance.onstart = () => {
-      this.isSpeaking = true;
-      elements.readAloudBtn?.classList.add('btn-active');
-    };
-    
-    this.utterance.onend = () => {
-      this.isSpeaking = false;
-      elements.readAloudBtn?.classList.remove('btn-active');
-    };
-    
-    this.utterance.onerror = () => {
-      this.isSpeaking = false;
-      elements.readAloudBtn?.classList.remove('btn-active');
-    };
-    
-    window.speechSynthesis.speak(this.utterance);
+    // Minimal timeout to let the cancellation register before starting new speech
+    setTimeout(() => {
+      this.utterance = new SpeechSynthesisUtterance(text);
+      
+      /* Natural voice settings */
+      this.utterance.rate = 0.9;      /* Clear but natural speed */
+      this.utterance.pitch = 0.95;    /* Slightly warm and natural */
+      this.utterance.volume = 1;      /* Full volume */
+      
+      /* Use the best available system voice */
+      const voice = this.getBestVoice();
+      if (voice) {
+        this.utterance.voice = voice;
+      }
+      
+      this.utterance.onstart = () => {
+        this.isSpeaking = true;
+        elements.readAloudBtn?.classList.add('btn-active');
+      };
+      
+      this.utterance.onend = () => {
+        this.isSpeaking = false;
+        elements.readAloudBtn?.classList.remove('btn-active');
+      };
+      
+      this.utterance.onerror = () => {
+        this.isSpeaking = false;
+        elements.readAloudBtn?.classList.remove('btn-active');
+      };
+      
+      window.speechSynthesis.speak(this.utterance);
+    }, 50);
   },
   
   stop() {
-    if (window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel();
-      this.isSpeaking = false;
-      elements.readAloudBtn?.classList.remove('btn-active');
-    }
+    window.speechSynthesis.cancel();
+    this.isSpeaking = false;
+    elements.readAloudBtn?.classList.remove('btn-active');
   }
 };
 
@@ -701,6 +702,11 @@ function cacheElements() {
     questionText: document.getElementById('question-text'),
     trueBtn: document.getElementById('true-btn'),
     falseBtn: document.getElementById('false-btn'),
+    questionFeedback: document.getElementById('question-feedback'),
+    feedbackIcon: document.getElementById('feedback-icon'),
+    feedbackMessage: document.getElementById('feedback-message'),
+    feedbackExplanation: document.getElementById('feedback-explanation'),
+    continueBtn: document.getElementById('continue-btn'),
 
     // Winner modal
     winnerText: document.getElementById('winner-text'),
@@ -1380,6 +1386,34 @@ function getNextQuestion() {
   return next;
 }
 
+function getExplanationForQuestion(q) {
+  if (!q) return "";
+  const idx = questions.indexOf(q);
+  // Try to find a nearby Q&A question that can serve as an explanation
+  // Look at idx - 1 first, then idx + 1, then search within +/- 3 range
+  for (let offset of [-1, 1, -2, 2, -3, 3]) {
+    const neighborIdx = idx + offset;
+    if (neighborIdx >= 0 && neighborIdx < questions.length) {
+      const neighbor = questions[neighborIdx];
+      if (neighbor && neighbor.type === 'qa') {
+        // Check if they share some keywords to be sure they are related
+        const qWords = q.question.toLowerCase().split(/\W+/).filter(w => w.length > 3);
+        const nWords = neighbor.question.toLowerCase().split(/\W+/).filter(w => w.length > 3);
+        const common = qWords.filter(w => nWords.includes(w));
+        if (common.length >= 1) {
+          return neighbor.answerText;
+        }
+      }
+    }
+  }
+  // Fallback: if no close match, just describe the correct statement
+  if (q.answer === true) {
+    return `${q.question.replace(/^True or False:\s*/i, '')} is correct.`;
+  } else {
+    return `The statement "${q.question.replace(/^True or False:\s*/i, '')}" is actually false.`;
+  }
+}
+
 function showQuestion(callback) {
   // If the current player is AI, answer automatically without UI
   const currentPlayer = gameState.players[gameState.currentPlayer];
@@ -1397,19 +1431,60 @@ function showQuestion(callback) {
   // Get a unique question for this turn.
   const nextQuestion = getNextQuestion();
 
+  // Reset the UI to initial question state
+  elements.questionFeedback.classList.add('hidden');
+  elements.continueBtn.classList.add('hidden');
+  elements.trueBtn.classList.remove('hidden');
+  elements.falseBtn.classList.remove('hidden');
+
   showQuestionModal(nextQuestion.question);
   gameState.isQuestionActive = true;
 
-  function handleAnswer(answer) {
-    hideQuestionModal();
-    gameState.isQuestionActive = false;
+  function handleSelect(answer) {
     elements.trueBtn.removeEventListener('click', onTrue);
     elements.falseBtn.removeEventListener('click', onFalse);
-    callback(answer === nextQuestion.answer);
+    
+    // Hide True/False buttons
+    elements.trueBtn.classList.add('hidden');
+    elements.falseBtn.classList.add('hidden');
+    
+    const isCorrect = (answer === nextQuestion.answer);
+    const explanation = getExplanationForQuestion(nextQuestion);
+    
+    // Set feedback content
+    if (isCorrect) {
+      elements.questionFeedback.classList.remove('feedback-incorrect');
+      elements.questionFeedback.classList.add('feedback-correct');
+      elements.feedbackIcon.textContent = "🎉";
+      elements.feedbackMessage.textContent = "Correct – well done!";
+    } else {
+      elements.questionFeedback.classList.remove('feedback-correct');
+      elements.questionFeedback.classList.add('feedback-incorrect');
+      elements.feedbackIcon.textContent = "❌";
+      elements.feedbackMessage.textContent = "Incorrect – better luck next time.";
+    }
+    
+    elements.feedbackExplanation.textContent = explanation;
+    elements.questionFeedback.classList.remove('hidden');
+    elements.continueBtn.classList.remove('hidden');
+    
+    // Speak feedback and explanation
+    const feedbackText = (isCorrect ? "Correct – well done! " : "Incorrect – better luck next time. ") + explanation;
+    speechManager.speak(feedbackText);
+    
+    function onContinue() {
+      elements.continueBtn.removeEventListener('click', onContinue);
+      speechManager.stop();
+      hideQuestionModal();
+      gameState.isQuestionActive = false;
+      callback(isCorrect);
+    }
+    
+    elements.continueBtn.addEventListener('click', onContinue);
   }
 
-  function onTrue() { handleAnswer(true); }
-  function onFalse() { handleAnswer(false); }
+  function onTrue() { handleSelect(true); }
+  function onFalse() { handleSelect(false); }
 
   elements.trueBtn.addEventListener('click', onTrue);
   elements.falseBtn.addEventListener('click', onFalse);
