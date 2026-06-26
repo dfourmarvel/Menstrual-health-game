@@ -246,8 +246,8 @@ button {
 .player-token {
   position: absolute;
   z-index: 10;
-  width: 6%;
-  height: 6%;
+  width: 10%;
+  height: 10%;
   object-fit: contain;
   transition: left var(--transition-base),
               bottom var(--transition-base);
@@ -468,8 +468,8 @@ button {
 .player-token {
   position: absolute;
   z-index: 10;
-  width: 6%;
-  height: 6%;
+  width: 10%;
+  height: 10%;
   object-fit: contain;
   transition: left var(--transition-base),
               bottom var(--transition-base);

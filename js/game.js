@@ -446,15 +446,15 @@ function categorizeQuestionsByDifficulty() {
 function loadFallbackQuestions() {
   questions = [
     { question: "Menstruation is the monthly shedding of the uterine lining.", answer: true, type: 'true-false', difficulty: 'easy' },
-    { question: "True or False: Menstruation is a sign of good health in women.", answer: true, type: 'true-false', difficulty: 'easy' },
-    { question: "What is the average length of a menstrual cycle?", answer: "28 days (though it can range from 21 to 35 days)", type: 'qa', difficulty: 'easy' },
+    { question: "What is the average length of a menstrual cycle?", options: [{label: 'A', text: '21 days'}, {label: 'B', text: '28 days'}, {label: 'C', text: '35 days'}, {label: 'D', text: '40 days'}], answer: "B", type: 'mcq', difficulty: 'easy' },
     { question: "True or False: A menstrual cycle of 28 days is standard for all women.", answer: false, type: 'true-false', difficulty: 'easy' },
-    { question: "What is ovulation, and when does it occur in a menstrual cycle?", answer: "Ovulation is the release of an egg from the ovary, usually around the 14th day of a 28-day cycle", type: 'qa', difficulty: 'easy' },
+    { question: "Which hormone is primarily responsible for preparing the uterine lining for pregnancy?", options: [{label: 'A', text: 'Insulin'}, {label: 'B', text: 'Estrogen'}, {label: 'C', text: 'Testosterone'}, {label: 'D', text: 'Melatonin'}], answer: "B", type: 'mcq', difficulty: 'easy' },
     { question: "True or False: Using unclean cloths during menstruation can lead to infections.", answer: true, type: 'true-false', difficulty: 'medium' },
-    { question: "What are the most common menstrual hygiene products?", answer: "Sanitary pads, tampons, menstrual cups, and reusable cloth pads", type: 'qa', difficulty: 'medium' },
+    { question: "What are the most common menstrual hygiene products?", options: [{label: 'A', text: 'Sanitary pads, tampons, and menstrual cups'}, {label: 'B', text: 'Paper towels and tissues'}, {label: 'C', text: 'Cotton balls'}, {label: 'D', text: 'Sponges'}], answer: "A", type: 'mcq', difficulty: 'medium' },
     { question: "True or False: Leaving a tampon in for too long can increase the risk of toxic shock syndrome (TSS).", answer: true, type: 'true-false', difficulty: 'medium' },
-    { question: "What is endometriosis, and how can it impact menstruation?", answer: "Endometriosis is tissue similar to uterine lining growing outside the uterus, leading to painful periods and heavy bleeding", type: 'qa', difficulty: 'hard' },
+    { question: "Which of the following can help alleviate menstrual cramps?", options: [{label: 'A', text: 'Eating very salty foods'}, {label: 'B', text: 'Drinking icy cold water'}, {label: 'C', text: 'Applying heat to the abdomen'}, {label: 'D', text: 'Avoiding all physical movement'}], answer: "C", type: 'mcq', difficulty: 'hard' },
     { question: "True or False: PCOS can lead to menstrual irregularities and infertility.", answer: true, type: 'true-false', difficulty: 'hard' },
+    { question: "What is endometriosis?", options: [{label: 'A', text: 'A normal part of the menstrual cycle'}, {label: 'B', text: 'Tissue similar to the uterine lining growing outside the uterus'}, {label: 'C', text: 'A type of menstrual product'}, {label: 'D', text: 'A hormonal medication'}], answer: "B", type: 'mcq', difficulty: 'hard' },
   ];
   
   difficultyLevels.easy = questions.filter(q => q.difficulty === 'easy');
@@ -1294,7 +1294,7 @@ function getPositionCoordinates(position) {
 
   return {
     x: col * CELL_SIZE + CELL_SIZE / 2,
-    y: row * CELL_SIZE + CELL_SIZE / 2,
+    y: (row * 8.8) + 4.4,
   };
 }
 
