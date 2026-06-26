@@ -158,7 +158,7 @@ function cleanMarkdownText(text) {
     .replace(/^\s*\d+[.)]\s*/, '')
     .replace(/\*\*/g, '')
     .replace(/[_`]/g, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(/[ \t]{2,}/g, ' ')
     .trim();
 }
 
@@ -206,11 +206,26 @@ function parseBulletQuestion(line, allLines, lineIndex, section, difficulty, que
   const questionMatch = line.match(/^[-*]\s+\*\*(.+?)\*\*\s*$/);
   if (!questionMatch || /^answer:/i.test(questionMatch[1])) return null;
 
+  let cursor = lineIndex + 1;
+  const questionLines = [questionMatch[1]];
+
+  while (cursor < allLines.length) {
+    const currentLine = normalizeMarkdownLine(allLines[cursor]);
+    if (!currentLine) {
+      cursor++;
+      continue;
+    }
+    if (isAnswerLine(currentLine)) break;
+    if (isQuestionStart(currentLine) || getSectionHeading(currentLine)) return null;
+    questionLines.push(currentLine);
+    cursor++;
+  }
+
   const answerInfo = findAnswerAfterLine(allLines, lineIndex + 1);
   if (!answerInfo) return null;
 
   return {
-    question: buildQuestionRecord(questionMatch[1], answerInfo.answer, {
+    question: buildQuestionRecord(questionLines.join('\n'), answerInfo.answer, {
       section,
       difficulty,
       sourceLine: lineIndex + 1,
@@ -350,17 +365,33 @@ function isExplanationLine(line) {
 }
 
 function buildQuestionRecord(questionText, answerText, metadata) {
-  const cleanedQuestion = cleanMarkdownText(questionText).replace(/^Question:\s*/i, '');
+  let cleanedQuestion = cleanMarkdownText(questionText).replace(/^Question:\s*/i, '');
   const cleanedAnswer = cleanMarkdownText(answerText);
   const normalizedAnswer = cleanedAnswer.toLowerCase();
-  const isTrueFalse = /^true\b/i.test(cleanedQuestion) || /^(true|false)\b/i.test(normalizedAnswer);
+  
+  let options = [];
+  let isMcq = false;
+  let mcqAnswer = cleanedAnswer;
+
+  const optionRegex = /(?:^|\n|\s+)([A-E])\)\s+(.+?)(?=(?:\n|\s+)[A-E]\)\s+|$)/gi;
+  const matchArray = [...cleanedQuestion.matchAll(optionRegex)];
+  
+  if (matchArray.length >= 2) {
+    isMcq = true;
+    options = matchArray.map(match => ({ label: match[1].toUpperCase(), text: match[2].trim() }));
+    cleanedQuestion = cleanedQuestion.substring(0, matchArray[0].index).trim();
+    mcqAnswer = mcqAnswer.toUpperCase();
+  }
+
+  const isTrueFalse = !isMcq && (/^true\b/i.test(cleanedQuestion) || /^(true|false)\b/i.test(normalizedAnswer));
 
   return {
     id: `q-${metadata.order}`,
     question: cleanedQuestion,
-    answer: isTrueFalse ? normalizedAnswer.startsWith('true') : cleanedAnswer,
+    options: options,
+    answer: isMcq ? mcqAnswer : (isTrueFalse ? normalizedAnswer.startsWith('true') : cleanedAnswer),
     answerText: cleanedAnswer,
-    type: isTrueFalse ? 'true-false' : 'qa',
+    type: isMcq ? 'mcq' : (isTrueFalse ? 'true-false' : 'qa'),
     section: metadata.section,
     difficulty: metadata.difficulty,
     sourceLine: metadata.sourceLine,
@@ -700,6 +731,7 @@ function cacheElements() {
     // Question modal
     questionTitle: document.getElementById('question-title'),
     questionText: document.getElementById('question-text'),
+    mcqOptions: document.getElementById('mcq-options'),
     trueBtn: document.getElementById('true-btn'),
     falseBtn: document.getElementById('false-btn'),
     questionFeedback: document.getElementById('question-feedback'),
@@ -1353,8 +1385,8 @@ function initializeQuestionPool() {
   const difficultyOrder = ['easy','medium','hard'];
   const minIndex = difficultyOrder.indexOf(START_DIFFICULTY);
   const allowed = new Set(difficultyOrder.slice(minIndex));
-  // Use only true/false questions meeting difficulty criteria
-  const pool = questions.filter(q => q.type === 'true-false' && allowed.has(q.difficulty));
+  // Use true/false and mcq questions meeting difficulty criteria
+  const pool = questions.filter(q => (q.type === 'true-false' || q.type === 'mcq') && allowed.has(q.difficulty));
   // Shuffle using Fisher‑Yates.
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -1372,7 +1404,7 @@ function getNextQuestion() {
     const minIndex = difficultyOrder.indexOf(START_DIFFICULTY);
     const allowed = new Set(difficultyOrder.slice(minIndex));
     const recent = gameState.usedQuestions.slice(-5);
-    const all = questions.filter(q => q.type === 'true-false' && allowed.has(q.difficulty));
+    const all = questions.filter(q => (q.type === 'true-false' || q.type === 'mcq') && allowed.has(q.difficulty));
     const newPool = all.filter(q => !recent.includes(q));
     for (let i = newPool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -1434,19 +1466,52 @@ function showQuestion(callback) {
   // Reset the UI to initial question state
   elements.questionFeedback.classList.add('hidden');
   elements.continueBtn.classList.add('hidden');
-  elements.trueBtn.classList.remove('hidden');
-  elements.falseBtn.classList.remove('hidden');
+  elements.mcqOptions.innerHTML = '';
+  
+  if (nextQuestion.type === 'mcq') {
+    elements.trueBtn.classList.add('hidden');
+    elements.falseBtn.classList.add('hidden');
+    elements.mcqOptions.classList.remove('hidden');
+    
+    nextQuestion.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-mcq-option';
+      btn.textContent = `${opt.label}) ${opt.text}`;
+      btn.dataset.answer = opt.label;
+      elements.mcqOptions.appendChild(btn);
+      
+      btn.addEventListener('click', () => handleSelect(opt.label, btn));
+    });
+  } else {
+    elements.mcqOptions.classList.add('hidden');
+    elements.trueBtn.classList.remove('hidden');
+    elements.falseBtn.classList.remove('hidden');
+    elements.trueBtn.addEventListener('click', onTrue);
+    elements.falseBtn.addEventListener('click', onFalse);
+  }
 
   showQuestionModal(nextQuestion.question);
   gameState.isQuestionActive = true;
 
-  function handleSelect(answer) {
-    elements.trueBtn.removeEventListener('click', onTrue);
-    elements.falseBtn.removeEventListener('click', onFalse);
-    
-    // Hide True/False buttons
-    elements.trueBtn.classList.add('hidden');
-    elements.falseBtn.classList.add('hidden');
+  function handleSelect(answer, clickedBtn = null) {
+    if (nextQuestion.type === 'mcq') {
+      const buttons = elements.mcqOptions.querySelectorAll('button');
+      buttons.forEach(b => {
+        b.disabled = true;
+        if (b.dataset.answer === nextQuestion.answer) {
+          b.classList.add('correct');
+        } else if (b === clickedBtn) {
+          b.classList.add('incorrect');
+        }
+      });
+    } else {
+      elements.trueBtn.removeEventListener('click', onTrue);
+      elements.falseBtn.removeEventListener('click', onFalse);
+      
+      // Hide True/False buttons
+      elements.trueBtn.classList.add('hidden');
+      elements.falseBtn.classList.add('hidden');
+    }
     
     const isCorrect = (answer === nextQuestion.answer);
     const explanation = getExplanationForQuestion(nextQuestion);
@@ -1485,9 +1550,6 @@ function showQuestion(callback) {
 
   function onTrue() { handleSelect(true); }
   function onFalse() { handleSelect(false); }
-
-  elements.trueBtn.addEventListener('click', onTrue);
-  elements.falseBtn.addEventListener('click', onFalse);
 }
 
 function askEntryQuestion() {
