@@ -386,6 +386,15 @@
 
       <div class="modal-body">
         <p id="question-text" class="question-text"></p>
+        
+        <!-- Question Feedback Section -->
+        <div id="question-feedback" class="feedback hidden" aria-live="polite">
+          <div class="feedback-status">
+            <span id="feedback-icon" class="feedback-icon"></span>
+            <span id="feedback-message" class="feedback-message"></span>
+          </div>
+          <p id="feedback-explanation" class="feedback-explanation"></p>
+        </div>
       </div>
 
       <div class="modal-footer modal-footer-question">
@@ -394,6 +403,9 @@
         </button>
         <button id="false-btn" class="btn btn-answer btn-false" type="button">
           <span>False</span>
+        </button>
+        <button id="continue-btn" class="btn btn-primary hidden" type="button">
+          <span>Continue</span>
         </button>
       </div>
     </div>

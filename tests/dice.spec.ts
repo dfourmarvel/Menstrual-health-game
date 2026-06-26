@@ -15,6 +15,8 @@ async function answerQuestionIfShown(page) {
 
   if (shown) {
     await page.locator('#true-btn').click();
+    await page.locator('#continue-btn').waitFor({ state: 'visible', timeout: 2000 });
+    await page.locator('#continue-btn').click();
   }
 }
 
