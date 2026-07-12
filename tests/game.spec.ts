@@ -40,3 +40,19 @@ test('supports selecting four players during setup', async ({ page }) => {
   await expect(page.locator('#player4')).toBeVisible();
   await expect(page.locator('#roll-dice')).toBeEnabled();
 });
+
+test('loads questions from the markdown bank and shows explanations', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.locator('#skip-rules').click();
+  await page.locator('#start-game').click();
+
+  await page.locator('#roll-dice').click();
+
+  await expect(page.locator('#question-modal')).toBeVisible();
+  await expect(page.locator('#question-text')).toContainText(/Menstruation/i);
+
+  await page.locator('#true-btn').click();
+
+  await expect(page.locator('#question-feedback')).toBeVisible();
+  await expect(page.locator('#feedback-explanation')).not.toHaveText('');
+});

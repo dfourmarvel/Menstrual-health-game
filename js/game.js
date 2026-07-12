@@ -23,7 +23,7 @@ const DICE_FRAME_DELAY = 50;
 const ENTRY_CORRECT_SIX_CHANCE = 0.65;
 const IMAGE_PATH = "assets/images";
 const AUDIO_PATH = "assets/audio";
-const QUESTION_SOURCE_PATH = "questions.md";
+const QUESTION_SOURCE_PATH = "Menstrual_Health%20questions.md";
 
 /* Snakes: Landing position -> slide down to */
 const START_DIFFICULTY = "medium";
@@ -100,6 +100,12 @@ async function loadQuestionsFromMarkdown() {
  * @returns {Array} Array of question objects with {question, answer, type, section, difficulty}
  */
 function parseQuestionsMarkdown(markdown) {
+  const structuredQuestions = parseStructuredQuestionMarkdown(markdown);
+  if (structuredQuestions.length > 0) {
+    applyOrderBasedDifficulty(structuredQuestions);
+    return structuredQuestions;
+  }
+
   const parsedQuestions = [];
   const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
   let currentSection = 'Introduction';
@@ -143,6 +149,142 @@ function parseQuestionsMarkdown(markdown) {
 
   applyOrderBasedDifficulty(parsedQuestions);
   return parsedQuestions;
+}
+
+function parseStructuredQuestionMarkdown(markdown) {
+  const parsedQuestions = [];
+  const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
+  let currentSection = 'Introduction';
+  let currentDifficulty = 'easy';
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = normalizeMarkdownLine(lines[i]);
+    const block = parseStructuredQuestionBlock(lines, i, currentSection, currentDifficulty, parsedQuestions.length);
+    if (block) {
+      parsedQuestions.push(...block.questions);
+      i = block.nextIndex;
+      continue;
+    }
+
+    const heading = getSectionHeading(line);
+    if (heading) {
+      currentSection = heading;
+      currentDifficulty = inferDifficultyFromSection(currentSection, parsedQuestions.length);
+      i++;
+      continue;
+    }
+
+    i++;
+  }
+
+  return parsedQuestions;
+}
+
+function parseStructuredQuestionBlock(allLines, lineIndex, section, difficulty, questionIndex) {
+  const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
+  if (!/^###\s+TF-/i.test(currentLine)) {
+    return null;
+  }
+
+  const blockLines = [];
+  let cursor = lineIndex + 1;
+  while (cursor < allLines.length) {
+    const line = normalizeMarkdownLine(allLines[cursor]);
+    if (!line) {
+      cursor++;
+      continue;
+    }
+    if (/^###\s+/i.test(line)) break;
+    blockLines.push(line);
+    cursor++;
+  }
+
+  const questions = [];
+  let nextOrder = questionIndex + 1;
+
+  const tfQuestion = buildStructuredTrueFalseQuestion(blockLines, section, difficulty, nextOrder, lineIndex + 1);
+  if (tfQuestion) {
+    questions.push(tfQuestion);
+    nextOrder += 1;
+  }
+
+  const mcqQuestion = buildStructuredMcqQuestion(blockLines, section, difficulty, nextOrder, lineIndex + 1);
+  if (mcqQuestion) {
+    questions.push(mcqQuestion);
+  }
+
+  return { questions, nextIndex: cursor };
+}
+
+function buildStructuredTrueFalseQuestion(blockLines, section, difficulty, order, sourceLine) {
+  const promptIndex = blockLines.findIndex(line => /^\*\*True or False:\*\*/i.test(line) || /^True or False:/i.test(line));
+  if (promptIndex === -1) return null;
+
+  const answerLine = blockLines.find(line => /^\*\*(?:Answer|Correct Answer):\*\*/i.test(line) || /^(?:Answer|Correct Answer):/i.test(line));
+  if (!answerLine) return null;
+
+  const promptText = blockLines[promptIndex]
+    .replace(/^\*\*True or False:\*\*/i, '')
+    .replace(/^True or False:/i, '')
+    .trim();
+
+  const answerValue = extractStructuredAnswerValue(answerLine);
+  if (answerValue === null) return null;
+
+  const explanation = extractStructuredExplanation(blockLines);
+  return buildQuestionRecord(`True or False: ${promptText}`, String(answerValue), {
+    section,
+    difficulty,
+    sourceLine,
+    order,
+    explanation,
+  });
+}
+
+function buildStructuredMcqQuestion(blockLines, section, difficulty, order, sourceLine) {
+  const headingIndex = blockLines.findIndex(line => /^\*\*MCQ-\d+/i.test(line) || /^MCQ-\d+/i.test(line));
+  if (headingIndex === -1) return null;
+
+  const answerLine = blockLines.find(line => /^\*\*(?:Answer|Correct Answer):\*\*/i.test(line) || /^(?:Answer|Correct Answer):/i.test(line));
+  if (!answerLine) return null;
+
+  const headingLine = blockLines[headingIndex];
+  const promptText = headingLine
+    .replace(/^\*\*MCQ-\d+\.?/i, '')
+    .replace(/^MCQ-\d+\.?/i, '')
+    .replace(/\*\*/g, '')
+    .trim();
+
+  const optionLines = blockLines.filter(line => /^[-*]?\s*[A-E]\)\s+/i.test(line));
+  const questionText = [promptText, ...optionLines].join('\n');
+  const answerValue = extractStructuredAnswerValue(answerLine);
+  if (answerValue === null) return null;
+
+  const explanation = extractStructuredExplanation(blockLines);
+  return buildQuestionRecord(questionText, String(answerValue), {
+    section,
+    difficulty,
+    sourceLine,
+    order,
+    explanation,
+  });
+}
+
+function extractStructuredAnswerValue(line) {
+  const match = line.match(/^(?:\*\*(?:Answer|Correct Answer):\*\*|(?:Answer|Correct Answer):)\s*(.+)$/i);
+  if (!match) return null;
+
+  const raw = cleanMarkdownText(match[1]).replace(/^✅\s*/i, '').replace(/^❌\s*/i, '').trim();
+  if (/^true$/i.test(raw)) return true;
+  if (/^false$/i.test(raw)) return false;
+  return raw.toUpperCase();
+}
+
+function extractStructuredExplanation(blockLines) {
+  const explanationLine = blockLines.find(line => /^\*\*Explanation:\*\*/i.test(line) || /^Explanation:/i.test(line));
+  if (!explanationLine) return '';
+  return cleanMarkdownText(explanationLine.replace(/^\*\*Explanation:\*\*/i, '').replace(/^Explanation:/i, '').trim());
 }
 
 function normalizeMarkdownLine(line) {
@@ -391,6 +533,7 @@ function buildQuestionRecord(questionText, answerText, metadata) {
     options: options,
     answer: isMcq ? mcqAnswer : (isTrueFalse ? normalizedAnswer.startsWith('true') : cleanedAnswer),
     answerText: cleanedAnswer,
+    explanation: metadata.explanation || '',
     type: isMcq ? 'mcq' : (isTrueFalse ? 'true-false' : 'qa'),
     section: metadata.section,
     difficulty: metadata.difficulty,
@@ -1634,6 +1777,8 @@ function getNextQuestion() {
 
 function getExplanationForQuestion(q) {
   if (!q) return "";
+  if (q.explanation) return q.explanation;
+
   const idx = questions.indexOf(q);
   // Try to find a nearby Q&A question that can serve as an explanation
   // Look at idx - 1 first, then idx + 1, then search within +/- 3 range
