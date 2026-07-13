@@ -1403,11 +1403,6 @@ button {
     padding: var(--spacing-md);
   }
 
-  .dice-cube {
-    --pip-size: 11px;
-    --dice-size: 68px;
-  }
-
   .modal-footer {
     flex-direction: column;
   }

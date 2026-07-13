@@ -26,7 +26,9 @@ const AUDIO_PATH = "assets/audio";
 const QUESTION_SOURCE_PATH = "Menstrual_Health%20questions.md";
 
 /* Snakes: Landing position -> slide down to */
-const START_DIFFICULTY = "medium";
+/* Minimum difficulty allowed in the question pool (easy < medium < hard).
+   "easy" includes every difficulty so the pool draws from the whole bank. */
+const START_DIFFICULTY = "easy";
 const snakes = {
   11: 10, 48: 28, 41: 23, 64: 44, 68: 31,
   88: 72, 91: 71, 94: 87, 98: 83,
@@ -40,7 +42,7 @@ const ladders = {
   85: 100, 58: 100,
 };
 
-/* Questions array - will be populated dynamically from questions.md */
+/* Questions array - will be populated dynamically from the question bank */
 let questions = [];
 let questionBankReady = Promise.resolve();
 let questionBankMetadata = {
@@ -59,18 +61,18 @@ const difficultyLevels = {
 
 /* 
  * QUESTION PARSER & LOADER
- * Parses questions.md at runtime to build the question bank
+ * Parses the question bank at runtime to build the question bank
  */
 
 /**
- * Parse the questions.md file and extract questions with answers
+ * Parse the the question bank file and extract questions with answers
  * Categorizes them by difficulty based on section headings
  */
 async function loadQuestionsFromMarkdown() {
   try {
     const response = await fetch(QUESTION_SOURCE_PATH);
     if (!response.ok) {
-      console.warn('Could not load questions.md, using fallback questions');
+      console.warn('Could not load the question bank, using fallback questions');
       loadFallbackQuestions();
       return;
     }
@@ -79,16 +81,16 @@ async function loadQuestionsFromMarkdown() {
     const parsedQuestions = parseQuestionsMarkdown(markdown);
     
     if (parsedQuestions.length === 0) {
-      console.warn('No questions parsed from questions.md, using fallback questions');
+      console.warn('No questions parsed from the question bank, using fallback questions');
       loadFallbackQuestions();
       return;
     }
 
     questions = parsedQuestions;
-    console.log(`Loaded ${questions.length} questions from questions.md`);
+    console.log(`Loaded ${questions.length} questions from the question bank`);
     categorizeQuestionsByDifficulty();
   } catch (error) {
-    console.warn('Error loading questions.md:', error);
+    console.warn('Error loading the question bank:', error);
     loadFallbackQuestions();
   }
 }
@@ -96,197 +98,223 @@ async function loadQuestionsFromMarkdown() {
 /**
  * Parse markdown text to extract questions and answers
  * Recognizes both True/False and Q&A format questions
- * @param {string} markdown - The markdown content from questions.md
+ * @param {string} markdown - The markdown content from the question bank
  * @returns {Array} Array of question objects with {question, answer, type, section, difficulty}
  */
 function parseQuestionsMarkdown(markdown) {
-  const structuredQuestions = parseStructuredQuestionMarkdown(markdown);
-  if (structuredQuestions.length > 0) {
-    applyOrderBasedDifficulty(structuredQuestions);
-    return structuredQuestions;
-  }
-
-  const parsedQuestions = [];
   const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
-  let currentSection = 'Introduction';
-  let currentDifficulty = 'easy';
-  let i = 0;
+  const questions = [];
+  const seen = new Set();
+  let section = 'Section 1';
+  let difficulty = 'easy';
+  let block = [];
 
-  while (i < lines.length) {
-    const line = normalizeMarkdownLine(lines[i]);
-    const heading = getSectionHeading(line);
+  const flushBlock = () => {
+    if (block.length) {
+      buildRecordsFromBlock(block, section, difficulty).forEach(record => {
+        const key = `${record.type}::${record.question.toLowerCase().replace(/\s+/g, ' ').trim()}`;
+        if (record.question && !seen.has(key)) {
+          seen.add(key);
+          record.id = `q-${questions.length + 1}`;
+          questions.push(record);
+        }
+      });
+    }
+    block = [];
+  };
 
-    if (heading) {
-      currentSection = heading;
-      currentDifficulty = inferDifficultyFromSection(currentSection, parsedQuestions.length);
-      i++;
+  for (const rawLine of lines) {
+    const line = normalizeMarkdownLine(rawLine);
+    const sectionMatch = line.match(/^##\s+(SECTION[^#].*)$/i);
+    if (sectionMatch) {
+      flushBlock();
+      section = cleanMarkdownText(sectionMatch[1]);
+      difficulty = sectionDifficulty(section);
       continue;
     }
-
-    const bulletQuestion = parseBulletQuestion(line, lines, i, currentSection, currentDifficulty, parsedQuestions.length);
-    if (bulletQuestion) {
-      parsedQuestions.push(bulletQuestion.question);
-      i = bulletQuestion.nextIndex;
+    if (/^-{3,}$/.test(line)) {
+      flushBlock();
       continue;
     }
-
-    const blockQuestion = parseQuestionBlock(lines, i, currentSection, currentDifficulty, parsedQuestions.length);
-    if (blockQuestion) {
-      parsedQuestions.push(blockQuestion.question);
-      i = blockQuestion.nextIndex;
-      continue;
-    }
-
-    const inlineQuestions = parseInlineQuestionPairs(line, currentSection, currentDifficulty, parsedQuestions.length);
-    if (inlineQuestions.length > 0) {
-      parsedQuestions.push(...inlineQuestions);
-      i++;
-      continue;
-    }
-
-    i++;
+    block.push(line);
   }
+  flushBlock();
 
-  applyOrderBasedDifficulty(parsedQuestions);
-  return parsedQuestions;
+  return questions;
 }
 
-function parseStructuredQuestionMarkdown(markdown) {
-  const parsedQuestions = [];
-  const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
-  let currentSection = 'Introduction';
-  let currentDifficulty = 'easy';
-  let i = 0;
-
-  while (i < lines.length) {
-    const line = normalizeMarkdownLine(lines[i]);
-    const block = parseStructuredQuestionBlock(lines, i, currentSection, currentDifficulty, parsedQuestions.length);
-    if (block) {
-      parsedQuestions.push(...block.questions);
-      i = block.nextIndex;
-      continue;
-    }
-
-    const heading = getSectionHeading(line);
-    if (heading) {
-      currentSection = heading;
-      currentDifficulty = inferDifficultyFromSection(currentSection, parsedQuestions.length);
-      i++;
-      continue;
-    }
-
-    i++;
-  }
-
-  return parsedQuestions;
+/* Map a section title to a difficulty bucket used by the question pool. */
+function sectionDifficulty(sectionTitle) {
+  const title = sectionTitle.toLowerCase();
+  if (/section\s*4|clinical|sba/.test(title)) return 'hard';
+  if (/section\s*3|wash|period poverty/.test(title)) return 'medium';
+  return 'easy';
 }
 
-function parseStructuredQuestionBlock(allLines, lineIndex, section, difficulty, questionIndex) {
-  const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
-  if (!/^###\s+TF-/i.test(currentLine)) {
+/*
+ * Turn a single markdown block (delimited by --- rules) into question records.
+ * A block may yield a True/False record, a multiple-choice record, or both.
+ */
+function buildRecordsFromBlock(blockLines, section, difficulty) {
+  const lines = blockLines.map(line => line.trim()).filter(Boolean);
+  if (!lines.length) return [];
+
+  const statement = getBlockStatement(lines);
+  const records = [];
+
+  const trueFalse = extractTrueFalseRecord(lines, statement, section, difficulty);
+  if (trueFalse) records.push(trueFalse);
+
+  /* Section 2 MCQs are auto-generated with truncated/generic options, so they
+     are skipped for quality; its True/False statements are still included. */
+  if (!/section\s*2/i.test(section)) {
+    const mcq = extractMcqRecord(lines, statement, section, difficulty);
+    if (mcq) records.push(mcq);
+  }
+
+  return records;
+}
+
+/* Extract the statement/prompt text from a block's heading line. */
+function getBlockStatement(lines) {
+  const heading = lines[0] || '';
+  let match;
+  if ((match = heading.match(/^###\s+TF-\d+\.?\s*(.+)$/i))) return match[1].trim();
+  if ((match = heading.match(/^###\s+Q\d+\.?\s*(.+)$/i))) return match[1].trim();
+  if ((match = heading.match(/^\*\*\d+\.\s*(.+?)\*\*\s*$/))) return cleanMarkdownText(match[1]);
+  return '';
+}
+
+/* Interpret an answer line as a boolean, using ✅/❌ markers or true/false words. */
+function answerToBool(text) {
+  if (/✅/.test(text) || /\btrue\b/i.test(text)) return true;
+  if (/❌/.test(text) || /\bfalse\b/i.test(text)) return false;
+  return null;
+}
+
+function extractTrueFalseRecord(lines, statement, section, difficulty) {
+  let boolAnswer = null;
+  let tfStatement = statement;
+
+  const inlineIndex = lines.findIndex(line => /^\*\*True\/False Answer:\*\*/i.test(line));
+  const promptIndex = lines.findIndex(line => /^\*\*True or False:\*\*/i.test(line));
+
+  if (inlineIndex !== -1) {
+    /* Sections 2 & 3: the statement is the heading; the answer is inline. */
+    boolAnswer = answerToBool(lines[inlineIndex]);
+  } else if (promptIndex !== -1) {
+    /* Section 1: the statement follows the prompt; answer is the next Answer line. */
+    tfStatement = lines[promptIndex].replace(/^\*\*True or False:\*\*/i, '').trim();
+    const answerIndex = lines.findIndex((line, i) => i > promptIndex && /^\*\*Answer:\*\*/i.test(line));
+    if (answerIndex !== -1) boolAnswer = answerToBool(lines[answerIndex]);
+  } else {
     return null;
   }
 
-  const blockLines = [];
-  let cursor = lineIndex + 1;
-  while (cursor < allLines.length) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) {
-      cursor++;
-      continue;
+  tfStatement = (tfStatement || '').replace(/^True or False:\s*/i, '').trim();
+  if (boolAnswer === null || !tfStatement) return null;
+
+  return {
+    id: '',
+    question: tfStatement,
+    options: [],
+    answer: boolAnswer,
+    answerText: boolAnswer ? 'True' : 'False',
+    explanation: getBlockExplanation(lines, 'first'),
+    type: 'true-false',
+    section,
+    difficulty,
+  };
+}
+
+function extractMcqRecord(lines, statement, section, difficulty) {
+  /* Options appear as "- A) text" (S1/S3) or "- **A.** text" (S4); ✅ marks the answer. */
+  const optionPattern = /^-\s*(?:\*\*)?([A-E])[.)](?:\*\*)?\s*(.+?)\s*$/;
+  const options = [];
+  const seenLabels = new Set();
+  let firstOptionIndex = -1;
+
+  lines.forEach((line, index) => {
+    const match = line.match(optionPattern);
+    if (!match) return;
+    if (firstOptionIndex === -1) firstOptionIndex = index;
+    const label = match[1].toUpperCase();
+    if (seenLabels.has(label)) return; /* dedupe repeated correct-answer lines (S4) */
+    seenLabels.add(label);
+    const rawText = match[2];
+    options.push({
+      label,
+      text: cleanMarkdownText(rawText.replace(/[✅❌]/g, '')).trim(),
+      correct: /✅/.test(rawText),
+    });
+  });
+
+  if (options.length < 2) return null;
+
+  let answer = options.find(option => option.correct)?.label || null;
+  if (!answer) {
+    const answerLine = lines.slice(firstOptionIndex).find(line => /^\*\*?Answer:/i.test(line));
+    const letterMatch = answerLine && answerLine.match(/\b([A-E])\b/i);
+    if (letterMatch) answer = letterMatch[1].toUpperCase();
+  }
+  if (!answer) return null;
+
+  let prompt = '';
+  const mcqIndex = lines.findIndex(line => /^\*\*MCQ/i.test(line));
+  if (mcqIndex !== -1) {
+    prompt = lines[mcqIndex]
+      .replace(/^\*\*MCQ[-:]?\s*(?:Q?\d+)?\.?\s*/i, '')
+      .replace(/\*\*/g, '')
+      .replace(/^[:.]\s*/, '')
+      .trim();
+  }
+  if (!prompt) {
+    /* Section 4: the prompt is the bold scenario line before the options. */
+    for (let i = 0; i < firstOptionIndex; i++) {
+      const line = lines[i];
+      if (/^\*\*.+\*\*$/.test(line) && !/^\*\*(Answer|Explanation|MCQ|True)/i.test(line)) {
+        // Strip the bold markers first so cleanMarkdownText can't mistake a
+        // leading "**" for a bullet and leave a stray asterisk behind.
+        prompt = cleanMarkdownText(line.replace(/\*\*/g, ''));
+        break;
+      }
     }
-    if (/^###\s+/i.test(line)) break;
-    blockLines.push(line);
-    cursor++;
+  }
+  if (!prompt) prompt = statement;
+  if (!prompt) return null;
+
+  /* Skip auto-generated template MCQs ("Which statement about X is correct?" /
+     "Which of the following is correct regarding X?"): their options are generic
+     filler and their answers are unreliable. The trailing "is correct?" keeps
+     this from catching real questions like "…is scientifically accurate?". */
+  if (/^which statement about .+ is correct\?\s*$/i.test(prompt) || /^which of the following is correct regarding/i.test(prompt)) {
+    return null;
   }
 
-  const questions = [];
-  let nextOrder = questionIndex + 1;
-
-  const tfQuestion = buildStructuredTrueFalseQuestion(blockLines, section, difficulty, nextOrder, lineIndex + 1);
-  if (tfQuestion) {
-    questions.push(tfQuestion);
-    nextOrder += 1;
-  }
-
-  const mcqQuestion = buildStructuredMcqQuestion(blockLines, section, difficulty, nextOrder, lineIndex + 1);
-  if (mcqQuestion) {
-    questions.push(mcqQuestion);
-  }
-
-  return { questions, nextIndex: cursor };
-}
-
-function buildStructuredTrueFalseQuestion(blockLines, section, difficulty, order, sourceLine) {
-  const promptIndex = blockLines.findIndex(line => /^\*\*True or False:\*\*/i.test(line) || /^True or False:/i.test(line));
-  if (promptIndex === -1) return null;
-
-  const answerLine = blockLines.find(line => /^\*\*(?:Answer|Correct Answer):\*\*/i.test(line) || /^(?:Answer|Correct Answer):/i.test(line));
-  if (!answerLine) return null;
-
-  const promptText = blockLines[promptIndex]
-    .replace(/^\*\*True or False:\*\*/i, '')
-    .replace(/^True or False:/i, '')
-    .trim();
-
-  const answerValue = extractStructuredAnswerValue(answerLine);
-  if (answerValue === null) return null;
-
-  const explanation = extractStructuredExplanation(blockLines);
-  return buildQuestionRecord(`True or False: ${promptText}`, String(answerValue), {
+  return {
+    id: '',
+    question: prompt,
+    options: options.map(option => ({ label: option.label, text: option.text })),
+    answer,
+    answerText: answer,
+    explanation: getBlockExplanation(lines, 'last'),
+    type: 'mcq',
     section,
     difficulty,
-    sourceLine,
-    order,
-    explanation,
-  });
+  };
 }
 
-function buildStructuredMcqQuestion(blockLines, section, difficulty, order, sourceLine) {
-  const headingIndex = blockLines.findIndex(line => /^\*\*MCQ-\d+/i.test(line) || /^MCQ-\d+/i.test(line));
-  if (headingIndex === -1) return null;
-
-  const answerLine = blockLines.find(line => /^\*\*(?:Answer|Correct Answer):\*\*/i.test(line) || /^(?:Answer|Correct Answer):/i.test(line));
-  if (!answerLine) return null;
-
-  const headingLine = blockLines[headingIndex];
-  const promptText = headingLine
-    .replace(/^\*\*MCQ-\d+\.?/i, '')
-    .replace(/^MCQ-\d+\.?/i, '')
-    .replace(/\*\*/g, '')
-    .trim();
-
-  const optionLines = blockLines.filter(line => /^[-*]?\s*[A-E]\)\s+/i.test(line));
-  const questionText = [promptText, ...optionLines].join('\n');
-  const answerValue = extractStructuredAnswerValue(answerLine);
-  if (answerValue === null) return null;
-
-  const explanation = extractStructuredExplanation(blockLines);
-  return buildQuestionRecord(questionText, String(answerValue), {
-    section,
-    difficulty,
-    sourceLine,
-    order,
-    explanation,
-  });
+/* Pull an explanation from a block; blocks may hold one for the TF and one for the MCQ. */
+function getBlockExplanation(lines, which) {
+  const explanations = lines
+    .filter(line => /^\*\*Explanation:\*\*/i.test(line))
+    .map(line => cleanMarkdownText(line.replace(/^\*\*Explanation:\*\*/i, '')))
+    .filter(text => text && !/^(true|false)$/i.test(text));
+  if (!explanations.length) return '';
+  return which === 'last' ? explanations[explanations.length - 1] : explanations[0];
 }
 
-function extractStructuredAnswerValue(line) {
-  const match = line.match(/^(?:\*\*(?:Answer|Correct Answer):\*\*|(?:Answer|Correct Answer):)\s*(.+)$/i);
-  if (!match) return null;
-
-  const raw = cleanMarkdownText(match[1]).replace(/^✅\s*/i, '').replace(/^❌\s*/i, '').trim();
-  if (/^true$/i.test(raw)) return true;
-  if (/^false$/i.test(raw)) return false;
-  return raw.toUpperCase();
-}
-
-function extractStructuredExplanation(blockLines) {
-  const explanationLine = blockLines.find(line => /^\*\*Explanation:\*\*/i.test(line) || /^Explanation:/i.test(line));
-  if (!explanationLine) return '';
-  return cleanMarkdownText(explanationLine.replace(/^\*\*Explanation:\*\*/i, '').replace(/^Explanation:/i, '').trim());
-}
-
+/* ---- shared markdown helpers ---- */
 function normalizeMarkdownLine(line) {
   return line
     .replace(/<[^>]+>/g, '')
@@ -302,262 +330,6 @@ function cleanMarkdownText(text) {
     .replace(/[_`]/g, '')
     .replace(/[ \t]{2,}/g, ' ')
     .trim();
-}
-
-function getSectionHeading(line) {
-  if (!line) return null;
-
-  const hashHeading = line.match(/^#{1,6}\s+(.+)$/);
-  if (hashHeading) {
-    return cleanMarkdownText(hashHeading[1]);
-  }
-
-  const boldHeading = line.match(/^\*\*([^*]+)\*\*$/);
-  if (!boldHeading) return null;
-
-  const heading = cleanMarkdownText(boldHeading[1]);
-  if (/^(answer|correct answer|explanation|question\s*\d*|questions?\s*\d*|q\d+\.|\d+\\?[.)]\s*)/i.test(heading)) {
-    return null;
-  }
-  if (heading.length > 95 || heading.endsWith('?') || /^true or false:/i.test(heading)) {
-    return null;
-  }
-
-  return heading;
-}
-
-function inferDifficultyFromSection(section, questionCount) {
-  const sectionText = section.toLowerCase();
-
-  if (/basic|understanding|questions?\s*1\s*[-–]\s*50/.test(sectionText)) {
-    return 'easy';
-  }
-  if (/intermediate|questions?\s*51\s*[-–]\s*100|period poverty|wash/.test(sectionText)) {
-    return 'medium';
-  }
-  if (/advanced|family|specialist|evidence|management|secondary|chronic|neuromodulation|mcq|sba|questions?\s*10\d|questions?\s*15\d|questions?\s*20\d|questions?\s*25\d/.test(sectionText)) {
-    return 'hard';
-  }
-
-  if (questionCount < 120) return 'easy';
-  if (questionCount < 260) return 'medium';
-  return 'hard';
-}
-
-function parseBulletQuestion(line, allLines, lineIndex, section, difficulty, questionIndex) {
-  const questionMatch = line.match(/^[-*]\s+\*\*(.+?)\*\*\s*$/);
-  if (!questionMatch || /^answer:/i.test(questionMatch[1])) return null;
-
-  let cursor = lineIndex + 1;
-  const questionLines = [questionMatch[1]];
-
-  while (cursor < allLines.length) {
-    const currentLine = normalizeMarkdownLine(allLines[cursor]);
-    if (!currentLine) {
-      cursor++;
-      continue;
-    }
-    if (isAnswerLine(currentLine)) break;
-    if (isQuestionStart(currentLine) || getSectionHeading(currentLine)) return null;
-    questionLines.push(currentLine);
-    cursor++;
-  }
-
-  const answerInfo = findAnswerAfterLine(allLines, lineIndex + 1);
-  if (!answerInfo) return null;
-
-  return {
-    question: buildQuestionRecord(questionLines.join('\n'), answerInfo.answer, {
-      section,
-      difficulty,
-      sourceLine: lineIndex + 1,
-      order: questionIndex + 1,
-    }),
-    nextIndex: answerInfo.nextIndex,
-  };
-}
-
-function parseQuestionBlock(allLines, lineIndex, section, difficulty, questionIndex) {
-  const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
-  const questionNumberMatch = currentLine.match(/^\*\*Question\s+(\d+)\*\*\s*$/i);
-  const namedQuestionMatch = currentLine.match(/^\*\*Question:\*\*\s*(.+)$/i);
-  const shortQuestionMatch = currentLine.match(/^\*\*Q(\d+)\.\*\*\s*(.+)$/i);
-  const numberedBoldMatch = currentLine.match(/^\*\*(\d+)\\?[.)]\s*(.+?)\*\*\s*$/);
-  if (!questionNumberMatch && !namedQuestionMatch && !shortQuestionMatch && !numberedBoldMatch) return null;
-
-  const inlineQuestionText = namedQuestionMatch?.[1] || shortQuestionMatch?.[2] || numberedBoldMatch?.[2] || '';
-  const questionLines = inlineQuestionText ? [inlineQuestionText] : [];
-  let cursor = lineIndex + 1;
-
-  while (cursor < allLines.length) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) {
-      cursor++;
-      continue;
-    }
-    if (isAnswerLine(line)) break;
-    if (isQuestionStart(line) || getSectionHeading(line)) return null;
-    questionLines.push(line);
-    cursor++;
-  }
-
-  const answerInfo = findAnswerAfterLine(allLines, cursor);
-  if (!answerInfo || questionLines.length === 0) return null;
-
-  return {
-    question: buildQuestionRecord(questionLines.join(' '), answerInfo.answer, {
-      section,
-      difficulty,
-      sourceLine: lineIndex + 1,
-      order: questionIndex + 1,
-      questionNumber: Number(questionNumberMatch?.[1] || shortQuestionMatch?.[1] || numberedBoldMatch?.[1]) || null,
-    }),
-    nextIndex: answerInfo.nextIndex,
-  };
-}
-
-function parseInlineQuestionPairs(line, section, difficulty, questionIndex) {
-  const inlinePattern = /(?:^|\s)(?:\d+[.)]\s*)?\*\*(.+?)\*\*\s*(?:\*\*Answer:\*\*|Answer:)\s*([^*]+?)(?=\s+\d+[.)]\s*\*\*|$)/gi;
-  const parsed = [];
-  let match;
-
-  while ((match = inlinePattern.exec(line)) !== null) {
-    parsed.push(buildQuestionRecord(match[1], match[2], {
-      section,
-      difficulty,
-      sourceLine: null,
-      order: questionIndex + parsed.length + 1,
-    }));
-  }
-
-  return parsed;
-}
-
-function findAnswerAfterLine(allLines, startIndex) {
-  for (let cursor = startIndex; cursor < allLines.length; cursor++) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) continue;
-    if (isQuestionStart(line) || getSectionHeading(line)) return null;
-    if (!isAnswerLine(line)) continue;
-
-    const answer = extractAnswer(line, allLines, cursor);
-    if (!answer.value) return null;
-    return {
-      answer: answer.value,
-      nextIndex: answer.nextIndex,
-    };
-  }
-
-  return null;
-}
-
-function extractAnswer(answerLine, allLines, lineIndex) {
-  let answer = answerLine
-    .replace(/^\*\*(Correct\s+Answer|Answer):\*\*:?\s*/i, '')
-    .replace(/^\*\*(Correct\s+Answer|Answer):?\*\*\s*/i, '')
-    .replace(/^(Correct\s+Answer|Answer):\s*/i, '')
-    .trim();
-
-  let cursor = lineIndex + 1;
-
-  while (!answer && cursor < allLines.length) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) {
-      cursor++;
-      continue;
-    }
-    if (isQuestionStart(line) || isExplanationLine(line) || getSectionHeading(line)) break;
-    answer = line;
-    cursor++;
-    break;
-  }
-
-  while (cursor < allLines.length) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) {
-      cursor++;
-      continue;
-    }
-    if (isQuestionStart(line) || isAnswerLine(line) || isExplanationLine(line) || getSectionHeading(line)) break;
-    answer = `${answer} ${line}`;
-    cursor++;
-  }
-
-  return {
-    value: cleanMarkdownText(answer),
-    nextIndex: cursor,
-  };
-}
-
-function isQuestionStart(line) {
-  return /^[-*]\s+\*\*.+\*\*/.test(line) ||
-    /^\*\*Question\s+\d+\*\*/i.test(line) ||
-    /^\*\*Question:\*\*/i.test(line) ||
-    /^\*\*Q\d+\.\*\*/i.test(line) ||
-    /^\*\*\d+\\?[.)]\s+.+\*\*/.test(line);
-}
-
-function isAnswerLine(line) {
-  return /^\*\*(Correct\s+Answer|Answer):?\*\*/i.test(line) ||
-    /^(Correct\s+Answer|Answer):/i.test(line);
-}
-
-function isExplanationLine(line) {
-  return /^\*\*Explanation:?\*\*/i.test(line) || /^Explanation:?/i.test(line);
-}
-
-function buildQuestionRecord(questionText, answerText, metadata) {
-  let cleanedQuestion = cleanMarkdownText(questionText).replace(/^Question:\s*/i, '');
-  const cleanedAnswer = cleanMarkdownText(answerText);
-  const normalizedAnswer = cleanedAnswer.toLowerCase();
-  
-  let options = [];
-  let isMcq = false;
-  let mcqAnswer = cleanedAnswer;
-
-  const optionRegex = /(?:^|\n|\s+)([A-E])\)\s+(.+?)(?=(?:\n|\s+)[A-E]\)\s+|$)/gi;
-  const matchArray = [...cleanedQuestion.matchAll(optionRegex)];
-  
-  if (matchArray.length >= 2) {
-    isMcq = true;
-    options = matchArray.map(match => ({ label: match[1].toUpperCase(), text: match[2].trim() }));
-    cleanedQuestion = cleanedQuestion.substring(0, matchArray[0].index).trim();
-    mcqAnswer = mcqAnswer.toUpperCase();
-  }
-
-  const isTrueFalse = !isMcq && (/^true\b/i.test(cleanedQuestion) || /^(true|false)\b/i.test(normalizedAnswer));
-
-  return {
-    id: `q-${metadata.order}`,
-    question: cleanedQuestion,
-    options: options,
-    answer: isMcq ? mcqAnswer : (isTrueFalse ? normalizedAnswer.startsWith('true') : cleanedAnswer),
-    answerText: cleanedAnswer,
-    explanation: metadata.explanation || '',
-    type: isMcq ? 'mcq' : (isTrueFalse ? 'true-false' : 'qa'),
-    section: metadata.section,
-    difficulty: metadata.difficulty,
-    sourceLine: metadata.sourceLine,
-    questionNumber: metadata.questionNumber || null,
-  };
-}
-
-function applyOrderBasedDifficulty(parsedQuestions) {
-  const total = parsedQuestions.length;
-  if (total === 0) return;
-
-  parsedQuestions.forEach((question, index) => {
-    if (question.difficulty) return;
-
-    const progress = index / total;
-    if (progress < 0.34) {
-      question.difficulty = 'easy';
-    } else if (progress < 0.67) {
-      question.difficulty = 'medium';
-    } else {
-      question.difficulty = 'hard';
-    }
-  });
 }
 
 /**
@@ -1096,7 +868,7 @@ function transactionDone(tx) {
 
 async function deleteCurrentRecord(store) {
   const curIdx = store.index('current');
-  const curCursor = await idbRequest(curIdx.openCursor(IDBKeyRange.only(true)));
+  const curCursor = await idbRequest(curIdx.openCursor(IDBKeyRange.only(1)));
   if (curCursor) {
     curCursor.delete();
   }
@@ -1124,7 +896,7 @@ async function persistCurrentGame(state) {
   const tx = db.transaction(STORE_NAME, 'readwrite');
   const store = tx.objectStore(STORE_NAME);
   await deleteCurrentRecord(store);
-  store.put({ timestamp: Date.now(), isCurrent: true, state });
+  store.put({ timestamp: Date.now(), isCurrent: 1, state });
   await transactionDone(tx);
 }
 
@@ -1136,7 +908,7 @@ async function loadCurrentGame() {
   const db = await openDB();
   const tx = db.transaction(STORE_NAME, 'readonly');
   const idx = tx.objectStore(STORE_NAME).index('current');
-  const cursor = await idbRequest(idx.openCursor(IDBKeyRange.only(true)));
+  const cursor = await idbRequest(idx.openCursor(IDBKeyRange.only(1)));
   return cursor ? cursor.value.state : null;
 }
 
@@ -1154,7 +926,7 @@ async function archiveFinishedGame(state) {
   const tx = db.transaction(STORE_NAME, 'readwrite');
   const store = tx.objectStore(STORE_NAME);
   await deleteCurrentRecord(store);
-  store.put({ timestamp: Date.now(), isCurrent: false, state });
+  store.put({ timestamp: Date.now(), isCurrent: 0, state });
   await transactionDone(tx);
 }
 
@@ -1736,43 +1508,46 @@ function getBoardJump(position) {
 // QUESTION HANDLING – session‑unique question pool
 // ---------------------------------------------------------------------------
 
+// Build the list of pool-eligible questions, honouring the difficulty floor but
+// never returning an empty list when the bank has usable questions.
+function getEligibleQuestions() {
+  const difficultyOrder = ['easy', 'medium', 'hard'];
+  const minIndex = Math.max(0, difficultyOrder.indexOf(START_DIFFICULTY));
+  const allowed = new Set(difficultyOrder.slice(minIndex));
+  const isPlayable = q => q && (q.type === 'true-false' || q.type === 'mcq');
+  const filtered = questions.filter(q => isPlayable(q) && allowed.has(q.difficulty));
+  // Fall back to every playable question if the difficulty filter empties the pool.
+  return filtered.length ? filtered : questions.filter(isPlayable);
+}
+
+function shuffleInPlace(list) {
+  for (let i = list.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  return list;
+}
+
 // Initialize a shuffled pool of questions for the current game session.
 function initializeQuestionPool() {
-  // Determine allowed difficulties based on START_DIFFICULTY (easy < medium < hard)
-  const difficultyOrder = ['easy','medium','hard'];
-  const minIndex = difficultyOrder.indexOf(START_DIFFICULTY);
-  const allowed = new Set(difficultyOrder.slice(minIndex));
-  // Use true/false and mcq questions meeting difficulty criteria
-  const pool = questions.filter(q => (q.type === 'true-false' || q.type === 'mcq') && allowed.has(q.difficulty));
-  // Shuffle using Fisher‑Yates.
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  gameState.questionPool = pool; // array of question objects
+  gameState.questionPool = shuffleInPlace(getEligibleQuestions().slice());
   gameState.usedQuestions = [];
 }
 
 // Retrieve the next question from the session pool, rebuilding if exhausted.
 function getNextQuestion() {
   if (!gameState.questionPool || gameState.questionPool.length === 0) {
-    // Rebuild pool with difficulty filter
-    const difficultyOrder = ['easy','medium','hard'];
-    const minIndex = difficultyOrder.indexOf(START_DIFFICULTY);
-    const allowed = new Set(difficultyOrder.slice(minIndex));
     const recent = gameState.usedQuestions.slice(-5);
-    const all = questions.filter(q => (q.type === 'true-false' || q.type === 'mcq') && allowed.has(q.difficulty));
-    const newPool = all.filter(q => !recent.includes(q));
-    for (let i = newPool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newPool[i], newPool[j]] = [newPool[j], newPool[i]];
-    }
-    gameState.questionPool = newPool;
+    const eligible = getEligibleQuestions();
+    // Avoid repeating the most recent questions unless that would empty the pool.
+    let newPool = eligible.filter(q => !recent.includes(q));
+    if (newPool.length === 0) newPool = eligible.slice();
+    gameState.questionPool = shuffleInPlace(newPool);
     gameState.usedQuestions = [];
   }
   const next = gameState.questionPool.shift();
-  gameState.usedQuestions.push(next);
-  return next;
+  if (next) gameState.usedQuestions.push(next);
+  return next || null;
 }
 
 function getExplanationForQuestion(q) {
@@ -1820,7 +1595,20 @@ function showQuestion(callback) {
   }
 
   // Get a unique question for this turn.
-  const nextQuestion = getNextQuestion();
+  let nextQuestion = getNextQuestion();
+
+  // Safety net: if the pool could not supply a question, rebuild from fallbacks
+  // rather than crashing on an undefined question.
+  if (!nextQuestion) {
+    loadFallbackQuestions();
+    initializeQuestionPool();
+    nextQuestion = getNextQuestion();
+  }
+  if (!nextQuestion) {
+    console.warn('No question available to display; skipping question.');
+    callback(false);
+    return;
+  }
 
   // Reset the UI to initial question state
   elements.questionFeedback.classList.add('hidden');
@@ -2238,9 +2026,9 @@ function initGame() {
         gameState.currentPlayer = saved.currentPlayer ?? 0;
         // Restore the shuffled question pool (IDs only) to keep uniqueness
         if (saved.questionPool?.length) {
-          const allTrue = questions.filter(q => q.type === 'true-false');
+          const byId = new Map(questions.map(q => [q.id, q]));
           gameState.questionPool = saved.questionPool
-            .map(id => allTrue.find(q => q.id === id))
+            .map(id => byId.get(id))
             .filter(Boolean);
         }
         gameState.players.forEach((player, idx) => syncAvatarPicker(idx, player.avatar));

@@ -32,7 +32,7 @@
 
 **True or False:** A menstrual cycle of 28 days is standard for all women
 
-**Answer:** ✅ True
+**Answer:** ❌ False
 **MCQ-2. What is the normal range of a menstrual cycle?**
 
 - A) Always exactly 28 days
@@ -88,7 +88,7 @@
 
 - A) At the start of menstruation
 - B) At the end of menstruation
-- C) Just before menstruation begins ✅
+- C) During the mid-luteal phase ✅
 - D) During ovulation only
 
 **Answer:** C
@@ -100,7 +100,7 @@
 
 **True or False:** A typical menstrual period lasts between 3 to 7 days
 
-**Answer:** ❌ False
+**Answer:** ✅ True
 **MCQ-6. How long does a typical menstrual period last?**
 
 - A) 1–2 days
@@ -117,7 +117,7 @@
 
 **True or False:** PMS (premenstrual syndrome) is the same as menstruation
 
-**Answer:** ✅ True
+**Answer:** ❌ False
 **MCQ-7. What is PMS?**
 
 - A) The same process as menstruation
@@ -134,7 +134,7 @@
 
 **True or False:** Menarche usually occurs around the age of 13
 
-**Answer:** ❌ False
+**Answer:** ✅ True
 **MCQ-8. At approximately what age does menarche occur?**
 
 - A) Age 5–8
@@ -185,7 +185,7 @@
 
 **True or False:** Stress can cause menstrual irregularities
 
-**Answer:** ❌ False
+**Answer:** ✅ True
 **MCQ-11. What can cause menstrual irregularities?**
 
 - A) Eye colour and height
@@ -202,7 +202,7 @@
 
 **True or False:** Heavy periods (menorrhagia) are a sign of good health
 
-**Answer:** ✅ True
+**Answer:** ❌ False
 **MCQ-12. What does menorrhagia indicate?**
 
 - A) It is a sign of peak health
@@ -219,7 +219,7 @@
 
 **True or False:** Oligomenorrhea can be caused by stress, weight changes, or hormonal imbalances
 
-**Answer:** ❌ False
+**Answer:** ✅ True
 **MCQ-13. What causes oligomenorrhea?**
 
 - A) Too much exercise alone
@@ -236,7 +236,7 @@
 
 **True or False:** Dysmenorrhea is a common experience for women during menstruation
 
-**Answer:** ❌ False
+**Answer:** ✅ True
 **MCQ-14. How common is dysmenorrhea?**
 
 - A) Rare — fewer than 5% of women
@@ -253,7 +253,7 @@
 
 **True or False:** Menstrual cramps are only caused by physical factors
 
-**Answer:** ✅ True
+**Answer:** ❌ False
 **MCQ-15. What causes menstrual cramps?**
 
 - A) Only physical factors like exercise
@@ -270,7 +270,7 @@
 
 **True or False:** A missed period is always an indication of pregnancy
 
-**Answer:** ✅ True
+**Answer:** ❌ False
 **MCQ-16. Does a missed period always mean pregnancy?**
 
 - A) Yes — always
@@ -457,7 +457,7 @@
 
 **True or False:** Wearing the same pad or tampon for an entire day is unhealthy
 
-**Answer:** ❌ False
+**Answer:** ✅ True
 **MCQ-27. How often should pads or tampons be changed?**
 
 - A) Once a day
@@ -491,7 +491,7 @@
 
 **True or False:** Menstrual cups are only suitable for women who have given birth
 
-**Answer:** ✅ True
+**Answer:** ❌ False
 **MCQ-29. Who can use menstrual cups?**
 
 - A) Only women who have given birth
@@ -1713,3190 +1713,1001 @@
 
 
 ## SECTION 2: Family, Education & Community Questions (1–200)
-
 ---
 
 **1. Why is it important for the entire family to support a young girl during her first menstruation?**
 
 **Answer:** Family support helps reduce feelings of fear, confusion, and embarrassment, making the experience more positive and ensuring that the girl feels comfortable with her new bodily changes.
-
-**MCQ: Why is it important for the entire family to support a young girl during her first menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Family support helps reduce feelings of fear, confusion, and embarrassment, maki... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **2. Family support is crucial during a girl’s first menstruation to reduce anxiety and confusion**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Family support is crucial during a girl’s first menstruation to reduce anxiety and confusion"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **3. How can fathers support their daughters during menstruation?**
 
 **Answer:** Fathers can provide emotional support, ensure that their daughters have access to necessary menstrual products, and encourage open conversations about menstrual health.
-
-**MCQ: How can fathers support their daughters during menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Fathers can provide emotional support, ensure that their daughters have access t... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **4. Fathers can play a role in supporting their daughters during menstruation by ensuring access to menstrual products**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Fathers can play a role in supporting their daughters during menstruation by ensuring access to menstrual products"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **5. Why should brothers be involved in learning about menstruation?**
 
 **Answer:** Brothers can help reduce stigma by showing understanding and offering support to their sisters, contributing to a positive environment for open discussions about menstruation.
-
-**MCQ: Why should brothers be involved in learning about menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Brothers can help reduce stigma by showing understanding and offering support to... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **6. Involving brothers in menstrual health education can help reduce stigma and promote understanding**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Involving brothers in menstrual health education can help reduce stigma and promote understanding"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **7. How can a mother support her daughter when she first starts menstruating?**
 
 **Answer:** A mother can offer guidance, provide menstrual products, ensure privacy, and talk about the changes happening in her body to help the daughter feel confident and prepared.
-
-**MCQ: How can a mother support her daughter when she first starts menstruating?**
-
-- A) This has no relevance to menstrual health
-- B) A mother can offer guidance, provide menstrual products, ensure privacy, and tal... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **8. Mothers can help daughters understand and prepare for menstruation by providing support and open communication**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Mothers can help daughters understand and prepare for menstruation by providing support and open communication"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **9. What impact does destigmatizing menstruation have on girls' education?**
 
 **Answer:** Destigmatizing menstruation can increase confidence, reduce absenteeism, and encourage girls to attend school without fear or shame related to their menstrual cycle.
-
-**MCQ: What impact does destigmatizing menstruation have on girls' education?**
-
-- A) This has no relevance to menstrual health
-- B) Destigmatizing menstruation can increase confidence, reduce absenteeism, and enc... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **10. Destigmatizing menstruation helps girls attend school regularly and confidently**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Destigmatizing menstruation helps girls attend school regularly and confidently"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **11. How can a family encourage a girl to talk about her menstruation openly?**
 
 **Answer:** Families can create a comfortable, non-judgmental environment, normalize conversations about menstruation, and make sure that menstrual products are accessible.
-
-**MCQ: How can a family encourage a girl to talk about her menstruation openly?**
-
-- A) This has no relevance to menstrual health
-- B) Families can create a comfortable, non-judgmental environment, normalize convers... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **12. Creating a supportive and non-judgmental environment encourages girls to talk about menstruation openly**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Creating a supportive and non-judgmental environment encourages girls to talk about menstruation openly"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **13. How can families help reduce school absenteeism caused by menstruation?**
 
 **Answer:** By ensuring that girls have access to sanitary products, providing emotional support, and educating the community to reduce stigma, families can minimize the impact of menstruation on school attendance.
-
-**MCQ: How can families help reduce school absenteeism caused by menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) By ensuring that girls have access to sanitary products, providing emotional sup... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **14. Providing sanitary products and emotional support can reduce school absenteeism due to menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Providing sanitary products and emotional support can reduce school absenteeism due to menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **15. Why is it important to educate men and boys about menstruation?**
 
 **Answer:** Educating men and boys helps reduce stigma, promotes empathy and support for menstruating girls and women, and encourages active participation in creating an inclusive environment.
-
-**MCQ: Why is it important to educate men and boys about menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Educating men and boys helps reduce stigma, promotes empathy and support for men... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **16. Men and boys should be educated about menstruation to reduce stigma and encourage empathy**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Men and boys should be educated about menstruation to reduce stigma and encourage empathy"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **17. How can schools help educate boys about menstruation?**
 
 **Answer:** Schools can include menstruation education in the curriculum, offer workshops for boys, and foster a culture of empathy and respect for menstruating peers.
-
-**MCQ: How can schools help educate boys about menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Schools can include menstruation education in the curriculum, offer workshops fo... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **18. Schools can help educate boys about menstruation to reduce stigma and encourage respect for menstruating girls**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Schools can help educate boys about menstruation to reduce stigma and encourage respect for menstruating girls"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **19. What role can community leaders play in reducing menstruation-related stigma?**
 
 **Answer:** Community leaders can promote open discussions, support education campaigns, and encourage families to talk about menstruation without shame, fostering an inclusive environment.
-
-**MCQ: What role can community leaders play in reducing menstruation-related stigma?**
-
-- A) This has no relevance to menstrual health
-- B) Community leaders can promote open discussions, support education campaigns, and... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **20. Community leaders can help reduce stigma and promote open discussions about menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Community leaders can help reduce stigma and promote open discussions about menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **21. Why is it important for boys to understand the menstrual cycle?**
 
 **Answer:** Understanding the menstrual cycle allows boys to be more empathetic, supportive, and active participants in reducing stigma and supporting menstruating individuals.
-
-**MCQ: Why is it important for boys to understand the menstrual cycle?**
-
-- A) This has no relevance to menstrual health
-- B) Understanding the menstrual cycle allows boys to be more empathetic, supportive,... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **22. Understanding the menstrual cycle helps boys be more empathetic and supportive**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Understanding the menstrual cycle helps boys be more empathetic and supportive"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **23. How can a positive attitude towards menstruation reduce teenage pregnancy?**
 
 **Answer:** A positive attitude encourages open discussions, better understanding of sexual health, and reduces shame, which can prevent risky behaviors that may lead to early pregnancies.
-
-**MCQ: How can a positive attitude towards menstruation reduce teenage pregnancy?**
-
-- A) This has no relevance to menstrual health
-- B) A positive attitude encourages open discussions, better understanding of sexual ... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **24. A positive attitude towards menstruation can reduce teenage pregnancy by encouraging open communication and understanding of sexual health**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "A positive attitude towards menstruation can reduce teenage pregnancy by encouraging open communication and understanding of sexual health"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **25. How can schools improve access to menstrual products for girls?**
 
 **Answer:** Schools can provide free or subsidized sanitary products, set up dispensers in bathrooms, and ensure privacy and comfort for girls during their menstrual cycles.
-
-**MCQ: How can schools improve access to menstrual products for girls?**
-
-- A) This has no relevance to menstrual health
-- B) Schools can provide free or subsidized sanitary products, set up dispensers in b... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **26. Providing free or subsidized sanitary products in schools can improve access for girls**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Providing free or subsidized sanitary products in schools can improve access for girls"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **27. How can fathers help ensure their daughters’ menstrual health?**
 
 **Answer:** Fathers can ensure their daughters have access to sanitary products, support their emotional needs, and help create an environment where menstruation is not stigmatized.
-
-**MCQ: How can fathers help ensure their daughters’ menstrual health?**
-
-- A) This has no relevance to menstrual health
-- B) Fathers can ensure their daughters have access to sanitary products, support the... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **28. Fathers can help improve their daughters' menstrual health by providing support and access to menstrual products**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Fathers can help improve their daughters' menstrual health by providing support and access to menstrual products"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **29. How can improving access to sanitary products help prevent school dropout?**
 
 **Answer:** By ensuring that girls have the necessary sanitary products, they are less likely to miss school due to menstruation-related concerns, reducing the risk of dropping out.
-
-**MCQ: How can improving access to sanitary products help prevent school dropout?**
-
-- A) This has no relevance to menstrual health
-- B) By ensuring that girls have the necessary sanitary products, they are less likel... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **30. Access to sanitary products can prevent school dropout by reducing menstrual-related absenteeism**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Access to sanitary products can prevent school dropout by reducing menstrual-related absenteeism"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **31. What role does financial support play in improving menstrual health for girls?**
 
 **Answer:** Financial support ensures that girls can afford menstrual products, reducing the likelihood of them using unhygienic alternatives or missing school during their menstrual cycle.
-
-**MCQ: What role does financial support play in improving menstrual health for girls?**
-
-- A) This has no relevance to menstrual health
-- B) Financial support ensures that girls can afford menstrual products, reducing the... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **32. Financial support can improve menstrual health by ensuring girls have access to hygienic menstrual products**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Financial support can improve menstrual health by ensuring girls have access to hygienic menstrual products"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **33. How can extended family members (aunts, uncles, etc.) contribute to menstrual health education?**
 
 **Answer:** Extended family members can reinforce positive attitudes towards menstruation, offer advice, and support girls in maintaining their menstrual health.
-
-**MCQ: How can extended family members (aunts, uncles, etc.) contribute to menstrual health education?**
-
-- A) This has no relevance to menstrual health
-- B) Extended family members can reinforce positive attitudes towards menstruation, o... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **34. Extended family members can reinforce menstrual health education and provide additional support**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Extended family members can reinforce menstrual health education and provide additional support"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **35. Why is it important for male teachers to be educated about menstruation?**
 
 **Answer:** Male teachers should be educated to create a supportive, stigma-free classroom environment, offer help if necessary, and be allies in reducing menstruation-related shame.
-
-**MCQ: Why is it important for male teachers to be educated about menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Male teachers should be educated to create a supportive, stigma-free classroom e... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **36. Male teachers should be educated to reduce stigma and support menstruating students**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Male teachers should be educated to reduce stigma and support menstruating students"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **37. How can menstrual health education help reduce gender inequality?**
 
 **Answer:** Educating both men and women about menstruation helps normalize the process, encourages empathy, and reduces gender-based stigma and discrimination.
-
-**MCQ: How can menstrual health education help reduce gender inequality?**
-
-- A) This has no relevance to menstrual health
-- B) Educating both men and women about menstruation helps normalize the process, enc... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **38. Menstrual health education for both genders helps reduce gender inequality**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Menstrual health education for both genders helps reduce gender inequality"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **39. How does culture influence attitudes towards menstruation?**
 
 **Answer:** Cultural beliefs and taboos can perpetuate shame and secrecy around menstruation, making it harder for girls to discuss or manage their menstrual health effectively.
-
-**MCQ: How does culture influence attitudes towards menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Cultural beliefs and taboos can perpetuate shame and secrecy around menstruation... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **40. Cultural beliefs can contribute to stigma and secrecy about menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Cultural beliefs can contribute to stigma and secrecy about menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **41. How can a supportive family environment improve a girl’s confidence during menstruation?**
 
 **Answer:** A supportive family environment encourages open communication, reduces embarrassment, and ensures that girls feel comfortable and empowered during menstruation.
-
-**MCQ: How can a supportive family environment improve a girl’s confidence during menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) A supportive family environment encourages open communication, reduces embarrass... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **42. A supportive family environment helps boost a girl’s confidence during menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "A supportive family environment helps boost a girl’s confidence during menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **43. How can a father talk to his daughter about menstruation?**
 
 **Answer:** A father can approach the topic with empathy, respect, and a willingness to listen, offering guidance without making the daughter feel uncomfortable or embarrassed.
-
-**MCQ: How can a father talk to his daughter about menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) A father can approach the topic with empathy, respect, and a willingness to list... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **44. Fathers can talk to their daughters about menstruation with empathy and respect**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Fathers can talk to their daughters about menstruation with empathy and respect"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **45. What is the importance of men and boys being allies in menstrual health education?**
 
 **Answer:** Men and boys who are allies can help create an inclusive environment where menstruation is not stigmatized, leading to better support for girls and women.
-
-**MCQ: What is the importance of men and boys being allies in menstrual health education?**
-
-- A) This has no relevance to menstrual health
-- B) Men and boys who are allies can help create an inclusive environment where menst... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **46. Men and boys who are allies in menstrual health education can help reduce stigma and create an inclusive environment**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Men and boys who are allies in menstrual health education can help reduce stigma and create an inclusive environment"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **47. What are some cultural practices that support menstruating girls?**
 
 **Answer:** Some cultures have rituals and ceremonies that mark the start of menstruation, offering girls emotional support and encouragement as they transition into adulthood.
-
-**MCQ: What are some cultural practices that support menstruating girls?**
-
-- A) This has no relevance to menstrual health
-- B) Some cultures have rituals and ceremonies that mark the start of menstruation, o... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **48. Cultural practices can offer emotional support and encouragement to menstruating girls**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Cultural practices can offer emotional support and encouragement to menstruating girls"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **49. How can governments help improve access to menstrual products for school girls?**
 
 **Answer:** Governments can provide funding for schools to supply free or subsidized menstrual products, ensuring that all girls have access to the products they need.
-
-**MCQ: How can governments help improve access to menstrual products for school girls?**
-
-- A) This has no relevance to menstrual health
-- B) Governments can provide funding for schools to supply free or subsidized menstru... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **51. How can the government reduce the cost of sanitary products for girls?**
 
 **Answer:** Governments can subsidize sanitary products, offer tax exemptions, or provide free menstrual products in schools, public facilities, and communities to ensure accessibility.
-
-**MCQ: How can the government reduce the cost of sanitary products for girls?**
-
-- A) This has no relevance to menstrual health
-- B) Governments can subsidize sanitary products, offer tax exemptions, or provide fr... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **52. Governments can reduce the cost of sanitary products by offering subsidies or providing them for free in schools and public facilities**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Governments can reduce the cost of sanitary products by offering subsidies or providing them for free in schools and public facilities"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **53. What role do community health workers play in menstrual health education?**
 
 **Answer:** Community health workers can provide education, distribute sanitary products, and offer counseling on menstrual health, especially in rural or underserved areas.
-
-**MCQ: What role do community health workers play in menstrual health education?**
-
-- A) This has no relevance to menstrual health
-- B) Community health workers can provide education, distribute sanitary products, an... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **54. Community health workers can distribute sanitary products and provide menstrual health education**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Community health workers can distribute sanitary products and provide menstrual health education"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **55. Why should schools implement menstrual health programs?**
 
 **Answer:** Schools should implement menstrual health programs to educate students, reduce stigma, improve school attendance, and ensure that girls feel comfortable managing their menstrual health.
-
-**MCQ: Why should schools implement menstrual health programs?**
-
-- A) This has no relevance to menstrual health
-- B) Schools should implement menstrual health programs to educate students, reduce s... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **56. Menstrual health programs in schools can help reduce stigma and improve attendance**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Menstrual health programs in schools can help reduce stigma and improve attendance"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **57. What is one benefit of reducing the stigma around menstruation in schools?**
 
 **Answer:** Reducing stigma encourages open conversations, helps girls feel supported, and decreases the number of school days missed due to menstrual concerns.
-
-**MCQ: What is one benefit of reducing the stigma around menstruation in schools?**
-
-- A) This has no relevance to menstrual health
-- B) Reducing stigma encourages open conversations, helps girls feel supported, and d... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **58. Reducing stigma around menstruation can lead to improved school attendance**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Reducing stigma around menstruation can lead to improved school attendance"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **59. How can boys in the community be educated about the menstrual cycle?**
 
 **Answer:** Boys can be educated through school programs, workshops, and community outreach to help them understand the menstrual cycle, support girls, and reduce stigma.
-
-**MCQ: How can boys in the community be educated about the menstrual cycle?**
-
-- A) This has no relevance to menstrual health
-- B) Boys can be educated through school programs, workshops, and community outreach ... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **60. Educating boys about the menstrual cycle can reduce stigma and improve support for girls**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Educating boys about the menstrual cycle can reduce stigma and improve support for girls"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **61. Why should menstrual health be included in both male and female health education?**
 
 **Answer:** Including menstrual health in both male and female education promotes gender equality, reduces stigma, and encourages mutual understanding and respect.
-
-**MCQ: Why should menstrual health be included in both male and female health education?**
-
-- A) This has no relevance to menstrual health
-- B) Including menstrual health in both male and female education promotes gender equ... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **62. Including menstrual health in both male and female education promotes gender equality and reduces stigma**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Including menstrual health in both male and female education promotes gender equality and reduces stigma"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **63. How can fathers help reduce menstruation-related absenteeism in their daughters?**
 
 **Answer:** Fathers can ensure that their daughters have access to sanitary products and provide emotional support, so they do not feel embarrassed or uncomfortable attending school during menstruation.
-
-**MCQ: How can fathers help reduce menstruation-related absenteeism in their daughters?**
-
-- A) This has no relevance to menstrual health
-- B) Fathers can ensure that their daughters have access to sanitary products and pro... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **64. Fathers can help reduce absenteeism by providing menstrual products and emotional support**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Fathers can help reduce absenteeism by providing menstrual products and emotional support"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **65. What can communities do to increase awareness of menstrual health and its impact on education?**
 
 **Answer:** Communities can hold awareness campaigns, provide accessible menstrual products, and create safe spaces for open discussions about menstrual health.
-
-**MCQ: What can communities do to increase awareness of menstrual health and its impact on education?**
-
-- A) This has no relevance to menstrual health
-- B) Communities can hold awareness campaigns, provide accessible menstrual products,... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **66. Communities can increase awareness of menstrual health through campaigns and discussions**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Communities can increase awareness of menstrual health through campaigns and discussions"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **67. How can peer support help reduce the stigma associated with menstruation?**
 
 **Answer:** Peer support helps girls feel less isolated, more confident, and encourages open conversations about menstruation, reducing embarrassment and fear.
-
-**MCQ: How can peer support help reduce the stigma associated with menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Peer support helps girls feel less isolated, more confident, and encourages open... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **68. Peer support helps reduce stigma and encourages open conversations about menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Peer support helps reduce stigma and encourages open conversations about menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **69. What is the impact of providing sanitary products in schools on girls' education?**
 
 **Answer:** Providing sanitary products in schools ensures that girls can attend school regularly, participate in class, and avoid missing school during their menstruation.
-
-**MCQ: What is the impact of providing sanitary products in schools on girls' education?**
-
-- A) This has no relevance to menstrual health
-- B) Providing sanitary products in schools ensures that girls can attend school regu... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **70. Providing sanitary products in schools can improve girls' school attendance and participation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Providing sanitary products in schools can improve girls' school attendance and participation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **71. Why is it important for men to understand the social and psychological effects of menstruation on girls?**
 
 **Answer:** Understanding the social and psychological effects of menstruation allows men to be more empathetic, supportive, and involved in reducing stigma and supporting menstruating girls.
-
-**MCQ: Why is it important for men to understand the social and psychological effects of menstruation on girls?**
-
-- A) This has no relevance to menstrual health
-- B) Understanding the social and psychological effects of menstruation allows men to... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **72. Understanding the psychological effects of menstruation allows men to offer better support to girls**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Understanding the psychological effects of menstruation allows men to offer better support to girls"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **73. How can increasing access to sanitary products reduce teenage pregnancies?**
 
 **Answer:** Increased access to sanitary products allows girls to stay in school, where they can receive education on sexual health, reducing the likelihood of early pregnancies.
-
-**MCQ: How can increasing access to sanitary products reduce teenage pregnancies?**
-
-- A) This has no relevance to menstrual health
-- B) Increased access to sanitary products allows girls to stay in school, where they... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **74. Providing access to sanitary products can reduce teenage pregnancies by keeping girls in school and educating them on sexual health**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Providing access to sanitary products can reduce teenage pregnancies by keeping girls in school and educating them on sexual health"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **75. What is the link between menstrual health and gender equality?**
 
 **Answer:** Menstrual health is directly linked to gender equality because girls who lack access to menstrual products or face stigma are at a higher risk of missing school, which affects their opportunities for education and future success.
-
-**MCQ: What is the link between menstrual health and gender equality?**
-
-- A) This has no relevance to menstrual health
-- B) Menstrual health is directly linked to gender equality because girls who lack ac... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **76. Menstrual health is linked to gender equality because it affects girls' access to education**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Menstrual health is linked to gender equality because it affects girls' access to education"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **77. How can male involvement in menstrual health education help reduce period poverty?**
 
 **Answer:** Male involvement in menstrual health education can help raise awareness about period poverty, encourage more community support, and ensure equitable access to menstrual products for girls.
-
-**MCQ: How can male involvement in menstrual health education help reduce period poverty?**
-
-- A) This has no relevance to menstrual health
-- B) Male involvement in menstrual health education can help raise awareness about pe... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **78. Male involvement in menstrual health education can help reduce period poverty**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Male involvement in menstrual health education can help reduce period poverty"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **79. How can girls benefit from discussing menstrual health with their fathers?**
 
 **Answer:** Discussing menstrual health with fathers helps normalize the process, creates a safe space for questions, and ensures that girls feel supported during menstruation.
-
-**MCQ: How can girls benefit from discussing menstrual health with their fathers?**
-
-- A) This has no relevance to menstrual health
-- B) Discussing menstrual health with fathers helps normalize the process, creates a ... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **80. Discussing menstrual health with fathers helps normalize the process and provides support**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Discussing menstrual health with fathers helps normalize the process and provides support"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **81. How can families help create an environment where menstruation is seen as a normal, natural process?**
 
 **Answer:** Families can avoid negative language, openly discuss menstruation, and use supportive language that promotes understanding and respect.
-
-**MCQ: How can families help create an environment where menstruation is seen as a normal, natural process?**
-
-- A) This has no relevance to menstrual health
-- B) Families can avoid negative language, openly discuss menstruation, and use suppo... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **82. Families can create a positive environment by using supportive language and discussing menstruation openly**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Families can create a positive environment by using supportive language and discussing menstruation openly"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **83. Why is it important for girls to have access to sanitary products during their menstruation?**
 
 **Answer:** Access to sanitary products ensures that girls can manage their menstruation hygienically and comfortably, helping them stay in school and participate in activities without interruption.
-
-**MCQ: Why is it important for girls to have access to sanitary products during their menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Access to sanitary products ensures that girls can manage their menstruation hyg... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **84. Access to sanitary products is essential for girls to manage menstruation hygienically and comfortably**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Access to sanitary products is essential for girls to manage menstruation hygienically and comfortably"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **85. How can local businesses help improve access to sanitary products for girls?**
 
 **Answer:** Local businesses can collaborate with schools or community centers to provide free or affordable sanitary products and raise awareness about menstrual health.
-
-**MCQ: How can local businesses help improve access to sanitary products for girls?**
-
-- A) This has no relevance to menstrual health
-- B) Local businesses can collaborate with schools or community centers to provide fr... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **86. Local businesses can improve access to sanitary products by partnering with schools and community centers**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Local businesses can improve access to sanitary products by partnering with schools and community centers"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **87. What role do NGOs play in improving menstrual health for girls in low-income communities?**
 
 **Answer:** NGOs can provide menstrual education, distribute sanitary products, and advocate for policies that improve menstrual health and access to necessary resources.
-
-**MCQ: What role do NGOs play in improving menstrual health for girls in low-income communities?**
-
-- A) This has no relevance to menstrual health
-- B) NGOs can provide menstrual education, distribute sanitary products, and advocate... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **88. NGOs can help by providing education and resources to improve menstrual health in low-income communities**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "NGOs can help by providing education and resources to improve menstrual health in low-income communities"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **89. How can media campaigns reduce the stigma around menstruation?**
 
 **Answer:** Media campaigns that portray menstruation as a normal, natural process can raise awareness, challenge stereotypes, and encourage open dialogue about menstrual health.
-
-**MCQ: How can media campaigns reduce the stigma around menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Media campaigns that portray menstruation as a normal, natural process can raise... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **90. Media campaigns can reduce stigma and promote open dialogue about menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Media campaigns can reduce stigma and promote open dialogue about menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **91. Why is it important for male teachers to receive training on menstrual health?**
 
 **Answer:** Male teachers should be trained to handle menstruation-related issues sensitively, ensure that all students feel supported, and help create a non-stigmatizing environment for menstruating students.
-
-**MCQ: Why is it important for male teachers to receive training on menstrual health?**
-
-- A) This has no relevance to menstrual health
-- B) Male teachers should be trained to handle menstruation-related issues sensitivel... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **92. Male teachers should receive training on menstrual health to support students and create a non-stigmatizing environment**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Male teachers should receive training on menstrual health to support students and create a non-stigmatizing environment"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **93. What impact does menstruation-related absenteeism have on a girl’s education?**
 
 **Answer:** Absenteeism due to menstruation can lead to missed lessons, poor academic performance, and increased dropout rates among girls.
-
-**MCQ: What impact does menstruation-related absenteeism have on a girl’s education?**
-
-- A) This has no relevance to menstrual health
-- B) Absenteeism due to menstruation can lead to missed lessons, poor academic perfor... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **94. Menstruation-related absenteeism can negatively affect a girl’s academic performance**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Menstruation-related absenteeism can negatively affect a girl’s academic performance"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **95. How can menstrual health education help reduce school dropout rates among girls?**
 
 **Answer:** By providing knowledge, reducing stigma, and ensuring access to sanitary products, menstrual health education can encourage girls to attend school regularly and avoid dropping out.
-
-**MCQ: How can menstrual health education help reduce school dropout rates among girls?**
-
-- A) This has no relevance to menstrual health
-- B) By providing knowledge, reducing stigma, and ensuring access to sanitary product... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **96. Menstrual health education can reduce school dropout rates by providing knowledge and ensuring access to sanitary products**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Menstrual health education can reduce school dropout rates by providing knowledge and ensuring access to sanitary products"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **97. How does poor menstrual health affect a girl's social and emotional well-being?**
 
 **Answer:** Poor menstrual health can lead to stress, embarrassment, and social isolation, negatively impacting a girl’s confidence and mental well-being.
-
-**MCQ: How does poor menstrual health affect a girl's social and emotional well-being?**
-
-- A) This has no relevance to menstrual health
-- B) Poor menstrual health can lead to stress, embarrassment, and social isolation, n... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **98. Poor menstrual health can lead to social isolation and emotional distress**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Poor menstrual health can lead to social isolation and emotional distress"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **99. What role do fathers and brothers have in reducing menstruation-related stigma in the community?**
 
 **Answer:** Fathers and brothers can actively support menstruating girls, talk openly about menstruation, and help foster a community culture where menstruation is seen as normal.
-
-**MCQ: What role do fathers and brothers have in reducing menstruation-related stigma in the community?**
-
-- A) This has no relevance to menstrual health
-- B) Fathers and brothers can actively support menstruating girls, talk openly about ... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **100. Fathers and brothers can help reduce menstruation-related stigma by supporting menstruating girls and fostering a culture of openness**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Fathers and brothers can help reduce menstruation-related stigma by supporting menstruating girls and fostering a culture of openness"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **101. How can fathers encourage their sons to be supportive of girls during their menstruation?**
 
 **Answer:** Fathers can talk to their sons about menstruation, emphasize the importance of empathy and respect, and model positive behaviors of support and understanding.
-
-**MCQ: How can fathers encourage their sons to be supportive of girls during their menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Fathers can talk to their sons about menstruation, emphasize the importance of e... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **102. Fathers can encourage their sons to support menstruating girls by emphasizing empathy and respect**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Fathers can encourage their sons to support menstruating girls by emphasizing empathy and respect"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **103. How can improving menstrual health education in schools reduce school absenteeism?**
 
 **Answer:** Proper education on menstrual health ensures that girls are prepared, have the products they need, and are encouraged to attend school without feeling embarrassed or unsupported.
-
-**MCQ: How can improving menstrual health education in schools reduce school absenteeism?**
-
-- A) This has no relevance to menstrual health
-- B) Proper education on menstrual health ensures that girls are prepared, have the p... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **104. Improving menstrual health education in schools can reduce absenteeism by ensuring girls feel prepared and supported**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Improving menstrual health education in schools can reduce absenteeism by ensuring girls feel prepared and supported"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **105. How can local community groups support menstrual health initiatives?**
 
 **Answer:** Local community groups can organize awareness campaigns, provide sanitary products to those in need, and offer educational workshops on menstrual health.
-
-**MCQ: How can local community groups support menstrual health initiatives?**
-
-- A) This has no relevance to menstrual health
-- B) Local community groups can organize awareness campaigns, provide sanitary produc... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **106. Local community groups can help by organizing awareness campaigns and providing sanitary products**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Local community groups can help by organizing awareness campaigns and providing sanitary products"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **107. Why is it important to create safe spaces in schools for girls to discuss menstrual health?**
 
 **Answer:** Safe spaces allow girls to share their experiences, ask questions, and receive support without fear of judgment, promoting better understanding and management of their menstrual health.
-
-**MCQ: Why is it important to create safe spaces in schools for girls to discuss menstrual health?**
-
-- A) This has no relevance to menstrual health
-- B) Safe spaces allow girls to share their experiences, ask questions, and receive s... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **108. Creating safe spaces in schools encourages girls to openly discuss and manage their menstrual health**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Creating safe spaces in schools encourages girls to openly discuss and manage their menstrual health"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **109. What can teachers do to reduce the stigma around menstruation in the classroom?**
 
 **Answer:** Teachers can create an open and supportive environment, educate students about menstruation, and ensure that all students feel comfortable and respected during their menstruation.
-
-**MCQ: What can teachers do to reduce the stigma around menstruation in the classroom?**
-
-- A) This has no relevance to menstrual health
-- B) Teachers can create an open and supportive environment, educate students about m... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **110. Teachers can reduce stigma by creating an open and supportive environment and educating students**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Teachers can reduce stigma by creating an open and supportive environment and educating students"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **111. How can peer education programs help with menstrual health literacy?**
 
 **Answer:** Peer education programs allow students to learn from their peers in a relatable and non-judgmental way, helping to normalize menstruation and reduce stigma among both girls and boys.
-
-**MCQ: How can peer education programs help with menstrual health literacy?**
-
-- A) This has no relevance to menstrual health
-- B) Peer education programs allow students to learn from their peers in a relatable ... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **112. Peer education programs help normalize menstruation and reduce stigma by allowing students to learn from their peers**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Peer education programs help normalize menstruation and reduce stigma by allowing students to learn from their peers"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **113. How can media campaigns targeted at boys help improve menstrual health awareness?**
 
 **Answer:** Media campaigns targeted at boys can educate them about the importance of menstrual health, reduce stigma, and encourage boys to support their menstruating peers and family members.
-
-**MCQ: How can media campaigns targeted at boys help improve menstrual health awareness?**
-
-- A) This has no relevance to menstrual health
-- B) Media campaigns targeted at boys can educate them about the importance of menstr... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **114. Media campaigns aimed at boys can educate them about menstrual health and reduce stigma**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Media campaigns aimed at boys can educate them about menstrual health and reduce stigma"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **115. What impact can providing sanitary products at no cost in public places have?**
 
 **Answer:** Providing free sanitary products in public places like schools, hospitals, and community centers ensures that girls and women have access to necessary menstrual products, reducing barriers to participation in education and work.
-
-**MCQ: What impact can providing sanitary products at no cost in public places have?**
-
-- A) This has no relevance to menstrual health
-- B) Providing free sanitary products in public places like schools, hospitals, and c... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **116. Providing free sanitary products in public places helps reduce barriers to education and work for girls and women**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Providing free sanitary products in public places helps reduce barriers to education and work for girls and women"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **117. How can positive reinforcement from family members help girls feel confident during menstruation?**
 
 **Answer:** Positive reinforcement, such as compliments and encouragement from family members, helps girls feel supported and confident about their bodies and menstrual health.
-
-**MCQ: How can positive reinforcement from family members help girls feel confident during menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Positive reinforcement, such as compliments and encouragement from family member... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **118. Positive reinforcement from family members can help girls feel confident during menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Positive reinforcement from family members can help girls feel confident during menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **119. How can schools ensure that menstruating girls feel supported and comfortable in school?**
 
 **Answer:** Schools can provide access to menstrual products, ensure privacy in restrooms, and train staff to handle menstruation-related issues sensitively.
-
-**MCQ: How can schools ensure that menstruating girls feel supported and comfortable in school?**
-
-- A) This has no relevance to menstrual health
-- B) Schools can provide access to menstrual products, ensure privacy in restrooms, a... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **120. Schools can support menstruating girls by providing menstrual products and ensuring privacy**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Schools can support menstruating girls by providing menstrual products and ensuring privacy"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **121. What can mothers do to ensure their daughters are emotionally prepared for menstruation?**
 
 **Answer:** Mothers can talk to their daughters about menstruation before it happens, provide reassurance, and offer practical advice on how to manage menstruation with confidence.
-
-**MCQ: What can mothers do to ensure their daughters are emotionally prepared for menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Mothers can talk to their daughters about menstruation before it happens, provid... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **122. Mothers can prepare their daughters for menstruation by offering practical advice and emotional support**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Mothers can prepare their daughters for menstruation by offering practical advice and emotional support"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **123. How can girls benefit from discussing menstruation with other girls their age?**
 
 **Answer:** Girls can share experiences, offer tips, and provide emotional support, which helps normalize menstruation and reduce feelings of isolation or embarrassment.
-
-**MCQ: How can girls benefit from discussing menstruation with other girls their age?**
-
-- A) This has no relevance to menstrual health
-- B) Girls can share experiences, offer tips, and provide emotional support, which he... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **124. Discussing menstruation with other girls helps normalize the experience and reduces embarrassment**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Discussing menstruation with other girls helps normalize the experience and reduces embarrassment"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **125. Why is it important to have access to hygiene products during menstruation?**
 
 **Answer:** Hygiene products like sanitary pads help girls maintain cleanliness, avoid infections, and feel comfortable while managing their menstruation.
-
-**MCQ: Why is it important to have access to hygiene products during menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Hygiene products like sanitary pads help girls maintain cleanliness, avoid infec... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **126. Access to hygiene products is important for maintaining cleanliness and avoiding infections during menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Access to hygiene products is important for maintaining cleanliness and avoiding infections during menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **127. How can a lack of menstrual product accessibility lead to school dropout?**
 
 **Answer:** Without access to menstrual products, girls may miss school due to discomfort or embarrassment, which can lead to increased absenteeism and ultimately dropout.
-
-**MCQ: How can a lack of menstrual product accessibility lead to school dropout?**
-
-- A) This has no relevance to menstrual health
-- B) Without access to menstrual products, girls may miss school due to discomfort or... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **128. Lack of access to menstrual products can lead to increased absenteeism and school dropout**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Lack of access to menstrual products can lead to increased absenteeism and school dropout"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **129. What role does the government play in reducing menstruation-related school absenteeism?**
 
 **Answer:** The government can provide funding for free or subsidized sanitary products in schools and implement policies that ensure all girls have access to menstrual health education and products.
-
-**MCQ: What role does the government play in reducing menstruation-related school absenteeism?**
-
-- A) This has no relevance to menstrual health
-- B) The government can provide funding for free or subsidized sanitary products in s... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **130. The government can reduce school absenteeism by funding free menstrual products and promoting education**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "The government can reduce school absenteeism by funding free menstrual products and promoting education"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **131. How can engaging fathers in conversations about menstruation help girls feel more comfortable?**
 
 **Answer:** When fathers are involved in discussions about menstruation, it helps reduce embarrassment, encourages open communication, and ensures that girls feel supported by all family members.
-
-**MCQ: How can engaging fathers in conversations about menstruation help girls feel more comfortable?**
-
-- A) This has no relevance to menstrual health
-- B) When fathers are involved in discussions about menstruation, it helps reduce emb... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **132. Fathers who engage in discussions about menstruation help girls feel more comfortable and supported**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Fathers who engage in discussions about menstruation help girls feel more comfortable and supported"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **133. How can men and boys show support when a girl in the family is menstruating?**
 
 **Answer:** Men and boys can show support by offering help with household tasks, avoiding teasing, and maintaining a respectful attitude towards the girl’s needs and comfort.
-
-**MCQ: How can men and boys show support when a girl in the family is menstruating?**
-
-- A) This has no relevance to menstrual health
-- B) Men and boys can show support by offering help with household tasks, avoiding te... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **134. Men and boys can show support by helping with household tasks and maintaining a respectful attitude**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Men and boys can show support by helping with household tasks and maintaining a respectful attitude"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **135. What can local businesses do to help support menstrual health in their communities?**
 
 **Answer:** Local businesses can sponsor educational programs, donate sanitary products to schools or shelters, and raise awareness about menstrual health in their communities.
-
-**MCQ: What can local businesses do to help support menstrual health in their communities?**
-
-- A) This has no relevance to menstrual health
-- B) Local businesses can sponsor educational programs, donate sanitary products to s... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **136. Local businesses can help support menstrual health by donating products and raising awareness**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Local businesses can help support menstrual health by donating products and raising awareness"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **137. How can increasing awareness of menstrual health help reduce gender discrimination?**
 
 **Answer:** Increased awareness helps both men and women understand the importance of menstrual health, reduces shame, and fosters respect and equality for menstruating individuals.
-
-**MCQ: How can increasing awareness of menstrual health help reduce gender discrimination?**
-
-- A) This has no relevance to menstrual health
-- B) Increased awareness helps both men and women understand the importance of menstr... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **138. Increasing awareness of menstrual health helps reduce gender discrimination and promotes respect**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Increasing awareness of menstrual health helps reduce gender discrimination and promotes respect"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **139. How can governments and NGOs collaborate to improve menstrual health access in rural areas?**
 
 **Answer:** Governments and NGOs can partner to distribute free menstrual products, provide education, and improve sanitation facilities in rural schools and communities.
-
-**MCQ: How can governments and NGOs collaborate to improve menstrual health access in rural areas?**
-
-- A) This has no relevance to menstrual health
-- B) Governments and NGOs can partner to distribute free menstrual products, provide ... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **140. Governments and NGOs can collaborate to improve menstrual health access in rural areas**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Governments and NGOs can collaborate to improve menstrual health access in rural areas"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **141. Why is it important to have gender-neutral discussions about menstruation in schools?**
 
 **Answer:** Gender-neutral discussions promote inclusivity, encourage respect between boys and girls, and reduce stigma, making it easier for all students to learn and engage in the conversation.
-
-**MCQ: Why is it important to have gender-neutral discussions about menstruation in schools?**
-
-- A) This has no relevance to menstrual health
-- B) Gender-neutral discussions promote inclusivity, encourage respect between boys a... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **142. Gender-neutral discussions about menstruation in schools promote inclusivity and respect**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Gender-neutral discussions about menstruation in schools promote inclusivity and respect"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **143. How can menstrual health education reduce bullying related to menstruation?**
 
 **Answer:** Education helps students understand the natural process of menstruation, reduces misconceptions, and encourages respectful behavior, decreasing bullying or teasing.
-
-**MCQ: How can menstrual health education reduce bullying related to menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Education helps students understand the natural process of menstruation, reduces... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **144. Menstrual health education can help reduce bullying by increasing understanding and respect**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Menstrual health education can help reduce bullying by increasing understanding and respect"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **145. What impact does menstruation-related stigma have on girls' self-esteem?**
 
 **Answer:** Stigma can make girls feel embarrassed, isolated, or ashamed, which negatively affects their self-esteem and confidence during menstruation.
-
-**MCQ: What impact does menstruation-related stigma have on girls' self-esteem?**
-
-- A) This has no relevance to menstrual health
-- B) Stigma can make girls feel embarrassed, isolated, or ashamed, which negatively a... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **146. Menstruation-related stigma can lower girls' self-esteem and confidence**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Menstruation-related stigma can lower girls' self-esteem and confidence"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **147. How can cultural practices support positive attitudes towards menstruation?**
 
 **Answer:** Cultural practices such as rituals, celebrations, or open discussions can help normalize menstruation, encourage respect for girls, and reduce shame.
-
-**MCQ: How can cultural practices support positive attitudes towards menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Cultural practices such as rituals, celebrations, or open discussions can help n... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **148. Cultural practices can help normalize menstruation and promote positive attitudes**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Cultural practices can help normalize menstruation and promote positive attitudes"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **149. How can schools ensure that menstrual products are available during emergencies?**
 
 **Answer:** Schools can provide emergency sanitary products in nurse's offices, bathrooms, and other common areas to ensure that girls have access to them when needed.
-
-**MCQ: How can schools ensure that menstrual products are available during emergencies?**
-
-- A) This has no relevance to menstrual health
-- B) Schools can provide emergency sanitary products in nurse's offices, bathrooms, a... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **150. Schools can ensure access to emergency sanitary products by providing them in accessible locations**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Schools can ensure access to emergency sanitary products by providing them in accessible locations"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **151. How can including boys in menstrual health education benefit both genders?**
 
 **Answer:** Including boys helps reduce stigma, promotes empathy, and encourages boys to support their menstruating peers, fostering respect and equality.
-
-**MCQ: How can including boys in menstrual health education benefit both genders?**
-
-- A) This has no relevance to menstrual health
-- B) Including boys helps reduce stigma, promotes empathy, and encourages boys to sup... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **152. Including boys in menstrual health education helps reduce stigma and promote empathy**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Including boys in menstrual health education helps reduce stigma and promote empathy"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **153. What role does access to clean and safe water play in menstrual health?**
 
 **Answer:** Access to clean and safe water is crucial for hygiene during menstruation, helping prevent infections and ensuring that girls can manage their periods safely and comfortably.
-
-**MCQ: What role does access to clean and safe water play in menstrual health?**
-
-- A) This has no relevance to menstrual health
-- B) Access to clean and safe water is crucial for hygiene during menstruation, helpi... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **154. Access to clean water is essential for maintaining hygiene and preventing infections during menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Access to clean water is essential for maintaining hygiene and preventing infections during menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **155. Why is it important for families to talk about menstruation before a girl’s first period?**
 
 **Answer:** Talking about menstruation beforehand prepares girls, reduces fear or anxiety, and ensures they feel supported and informed when their period begins.
-
-**MCQ: Why is it important for families to talk about menstruation before a girl’s first period?**
-
-- A) This has no relevance to menstrual health
-- B) Talking about menstruation beforehand prepares girls, reduces fear or anxiety, a... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **156. Talking about menstruation before a girl’s first period helps reduce fear and provides support**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Talking about menstruation before a girl’s first period helps reduce fear and provides support"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **157. How can awareness campaigns in the media help improve menstrual health literacy?**
 
 **Answer:** Awareness campaigns can inform the public about menstrual health, challenge taboos, and provide useful information on how to manage menstruation effectively.
-
-**MCQ: How can awareness campaigns in the media help improve menstrual health literacy?**
-
-- A) This has no relevance to menstrual health
-- B) Awareness campaigns can inform the public about menstrual health, challenge tabo... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **158. Media campaigns can help improve menstrual health literacy by providing useful information and challenging taboos**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Media campaigns can help improve menstrual health literacy by providing useful information and challenging taboos"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **159. How can teaching girls about menstrual health at a young age help them in the future?**
 
 **Answer:** Early education about menstrual health helps girls understand their bodies, manage their periods confidently, and ensures they are better prepared for puberty and adulthood.
-
-**MCQ: How can teaching girls about menstrual health at a young age help them in the future?**
-
-- A) This has no relevance to menstrual health
-- B) Early education about menstrual health helps girls understand their bodies, mana... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **160. Early education about menstrual health helps girls understand their bodies and manage their periods with confidence**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Early education about menstrual health helps girls understand their bodies and manage their periods with confidence"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **161. How can creating community workshops on menstruation help break taboos?**
 
 **Answer:** Community workshops can provide accurate information, encourage open dialogue, and challenge the stigma surrounding menstruation, leading to a more supportive environment for girls and women.
-
-**MCQ: How can creating community workshops on menstruation help break taboos?**
-
-- A) This has no relevance to menstrual health
-- B) Community workshops can provide accurate information, encourage open dialogue, a... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **162. Community workshops on menstruation help break taboos and encourage open dialogue**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Community workshops on menstruation help break taboos and encourage open dialogue"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **163. What can boys do to support their female classmates who may be going through menstruation?**
 
 **Answer:** Boys can show respect by not making jokes or teasing, offering help if needed, and creating a supportive and understanding environment.
-
-**MCQ: What can boys do to support their female classmates who may be going through menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Boys can show respect by not making jokes or teasing, offering help if needed, a... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **164. Boys can support their female classmates by showing respect and avoiding teasing during menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Boys can support their female classmates by showing respect and avoiding teasing during menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **165. Why is it important to address menstruation-related issues in family discussions?**
 
 **Answer:** Addressing menstruation in family discussions helps normalize the topic, reduces shame, and ensures that girls feel supported in their menstrual health journey.
-
-**MCQ: Why is it important to address menstruation-related issues in family discussions?**
-
-- A) This has no relevance to menstrual health
-- B) Addressing menstruation in family discussions helps normalize the topic, reduces... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **166. Discussing menstruation in family conversations reduces shame and normalizes the topic**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Discussing menstruation in family conversations reduces shame and normalizes the topic"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **167. How can reducing the stigma around menstruation improve girls' academic performance?**
 
 **Answer:** When girls feel comfortable about their menstruation and have support at home and school, they are more likely to attend school regularly and focus on their studies, leading to better academic outcomes.
-
-**MCQ: How can reducing the stigma around menstruation improve girls' academic performance?**
-
-- A) This has no relevance to menstrual health
-- B) When girls feel comfortable about their menstruation and have support at home an... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **168. Reducing stigma around menstruation helps improve girls' academic performance by encouraging regular school attendance**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Reducing stigma around menstruation helps improve girls' academic performance by encouraging regular school attendance"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **169. What role do healthcare providers play in educating families about menstrual health?**
 
 **Answer:** Healthcare providers can offer education on menstrual health, provide resources, and guide families on how to support menstruating girls and reduce stigma.
-
-**MCQ: What role do healthcare providers play in educating families about menstrual health?**
-
-- A) This has no relevance to menstrual health
-- B) Healthcare providers can offer education on menstrual health, provide resources,... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **170. Healthcare providers can help educate families about menstrual health and reduce stigma**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Healthcare providers can help educate families about menstrual health and reduce stigma"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **171. How can involving the extended family (aunts, uncles, grandparents) help girls feel supported during menstruation?**
 
 **Answer:** Extended family can provide additional support, share experiences, and offer guidance, creating a network of care that helps reduce isolation or embarrassment.
-
-**MCQ: How can involving the extended family (aunts, uncles, grandparents) help girls feel supported during menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Extended family can provide additional support, share experiences, and offer gui... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **172. Involving extended family members helps girls feel supported and reduces embarrassment during menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Involving extended family members helps girls feel supported and reduces embarrassment during menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **173. What impact can the lack of menstrual product access have on girls' health?**
 
 **Answer:** The lack of menstrual products can lead to poor hygiene, infections, and discomfort, which can impact both physical and emotional health.
-
-**MCQ: What impact can the lack of menstrual product access have on girls' health?**
-
-- A) This has no relevance to menstrual health
-- B) The lack of menstrual products can lead to poor hygiene, infections, and discomf... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **174. Lack of menstrual product access can lead to infections and discomfort, affecting girls' health**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Lack of menstrual product access can lead to infections and discomfort, affecting girls' health"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **175. How can governments improve access to menstrual products for girls in low-income communities?**
 
 **Answer:** Governments can distribute free menstrual products in schools and public spaces, and support initiatives that make sanitary products affordable and accessible to all.
-
-**MCQ: How can governments improve access to menstrual products for girls in low-income communities?**
-
-- A) This has no relevance to menstrual health
-- B) Governments can distribute free menstrual products in schools and public spaces,... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **176. Governments can improve access to menstrual products by distributing them in schools and public spaces**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Governments can improve access to menstrual products by distributing them in schools and public spaces"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **177. How can male teachers support girls during their menstruation in the classroom?**
 
 **Answer:** Male teachers can foster a respectful and understanding atmosphere, ensure that menstruating girls have the necessary resources, and avoid any behavior that contributes to embarrassment or discomfort.
-
-**MCQ: How can male teachers support girls during their menstruation in the classroom?**
-
-- A) This has no relevance to menstrual health
-- B) Male teachers can foster a respectful and understanding atmosphere, ensure that ... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **178. Male teachers can support girls by fostering a respectful atmosphere and ensuring they have necessary resources during menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Male teachers can support girls by fostering a respectful atmosphere and ensuring they have necessary resources during menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **179. Why is it important to include menstrual health as part of general health education in schools?**
 
 **Answer:** Including menstrual health in general health education ensures that all students have accurate information, which helps reduce stigma, promotes empathy, and prepares both girls and boys for healthy adulthood.
-
-**MCQ: Why is it important to include menstrual health as part of general health education in schools?**
-
-- A) This has no relevance to menstrual health
-- B) Including menstrual health in general health education ensures that all students... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **180. Including menstrual health in school health education helps reduce stigma and prepares students for healthy adulthood**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Including menstrual health in school health education helps reduce stigma and prepares students for healthy adulthood"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **181. What role do menstrual product manufacturers have in ensuring accessibility?**
 
 **Answer:** Manufacturers can lower the cost of menstrual products, create eco-friendly options, and partner with non-profits to distribute products to those in need.
-
-**MCQ: What role do menstrual product manufacturers have in ensuring accessibility?**
-
-- A) This has no relevance to menstrual health
-- B) Manufacturers can lower the cost of menstrual products, create eco-friendly opti... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **182. Menstrual product manufacturers can help by lowering costs and creating eco-friendly products**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Menstrual product manufacturers can help by lowering costs and creating eco-friendly products"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **183. How can businesses improve access to sanitary products for employees?**
 
 **Answer:** Businesses can provide sanitary products in the workplace, offer paid menstrual leave, and create a supportive work environment where employees feel comfortable discussing menstruation.
-
-**MCQ: How can businesses improve access to sanitary products for employees?**
-
-- A) This has no relevance to menstrual health
-- B) Businesses can provide sanitary products in the workplace, offer paid menstrual ... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **184. Businesses can improve access to sanitary products by providing them in the workplace and offering menstrual leave**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Businesses can improve access to sanitary products by providing them in the workplace and offering menstrual leave"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **185. How does cultural change around menstruation benefit girls in school?**
 
 **Answer:** Cultural change that normalizes menstruation helps reduce bullying, promotes respect, and encourages girls to attend school without fear of embarrassment or shame.
-
-**MCQ: How does cultural change around menstruation benefit girls in school?**
-
-- A) This has no relevance to menstrual health
-- B) Cultural change that normalizes menstruation helps reduce bullying, promotes res... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **186. Cultural change that normalizes menstruation helps reduce bullying and encourages school attendance**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Cultural change that normalizes menstruation helps reduce bullying and encourages school attendance"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **187. How can community leaders advocate for menstrual health?**
 
 **Answer:** Community leaders can lead by example, organize local awareness campaigns, and work with government and non-government organizations to ensure that menstrual health is a priority.
-
-**MCQ: How can community leaders advocate for menstrual health?**
-
-- A) This has no relevance to menstrual health
-- B) Community leaders can lead by example, organize local awareness campaigns, and w... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **188. Community leaders can advocate for menstrual health by organizing awareness campaigns and collaborating with others**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Community leaders can advocate for menstrual health by organizing awareness campaigns and collaborating with others"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **189. How can proper menstrual education prevent future health problems for girls?**
 
 **Answer:** Proper education helps girls manage their menstrual health, understand signs of abnormalities, and reduce the risk of infections and other reproductive health issues.
-
-**MCQ: How can proper menstrual education prevent future health problems for girls?**
-
-- A) This has no relevance to menstrual health
-- B) Proper education helps girls manage their menstrual health, understand signs of ... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **190. Proper menstrual education helps girls reduce the risk of infections and reproductive health problems**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Proper menstrual education helps girls reduce the risk of infections and reproductive health problems"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **191. What role does hygiene education play in menstruation management?**
 
 **Answer:** Hygiene education ensures that girls know how to use menstrual products safely, change them regularly, and maintain cleanliness to prevent infections.
-
-**MCQ: What role does hygiene education play in menstruation management?**
-
-- A) This has no relevance to menstrual health
-- B) Hygiene education ensures that girls know how to use menstrual products safely, ... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **192. Hygiene education is important for safely using menstrual products and preventing infections**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Hygiene education is important for safely using menstrual products and preventing infections"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **193. Why is it essential for men to understand the importance of menstrual health?**
 
 **Answer:** Men who understand menstrual health are more likely to support the women and girls in their lives, reduce stigma, and contribute to a more respectful and empathetic environment.
-
-**MCQ: Why is it essential for men to understand the importance of menstrual health?**
-
-- A) This has no relevance to menstrual health
-- B) Men who understand menstrual health are more likely to support the women and gir... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **194. Men who understand menstrual health are more likely to support women and reduce stigma**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Men who understand menstrual health are more likely to support women and reduce stigma"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **195. How can menstrual health education reduce teenage pregnancies?**
 
 **Answer:** When girls understand menstruation and reproductive health, they are more likely to make informed decisions about their bodies, which can delay pregnancies and reduce risks.
-
-**MCQ: How can menstrual health education reduce teenage pregnancies?**
-
-- A) This has no relevance to menstrual health
-- B) When girls understand menstruation and reproductive health, they are more likely... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **196. Menstrual health education can help reduce teenage pregnancies by encouraging informed decisions about reproductive health**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Menstrual health education can help reduce teenage pregnancies by encouraging informed decisions about reproductive health"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **197. How can access to menstrual products reduce gender-based violence?**
 
 **Answer:** Access to menstrual products reduces one barrier that might push girls into vulnerable situations, such as selling sex for money to buy pads, and can help prevent some forms of gender-based violence.
-
-**MCQ: How can access to menstrual products reduce gender-based violence?**
-
-- A) This has no relevance to menstrual health
-- B) Access to menstrual products reduces one barrier that might push girls into vuln... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **198. Access to menstrual products can help reduce gender-based violence by reducing the need for girls to trade sex for menstrual products**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Access to menstrual products can help reduce gender-based violence by reducing the need for girls to trade sex for menstrual products"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 **199. How can boys contribute to the emotional well-being of girls during menstruation?**
 
 **Answer:** Boys can show understanding, avoid making jokes or teasing, and offer practical support when necessary, ensuring that girls feel respected and emotionally supported during their period.
-
-**MCQ: How can boys contribute to the emotional well-being of girls during menstruation?**
-
-- A) This has no relevance to menstrual health
-- B) Boys can show understanding, avoid making jokes or teasing, and offer practical ... ✅
-- C) This only applies in clinical settings
-- D) The opposite approach is recommended
-
-**Answer:** B
-
 ---
 
 **200. Boys can support girls' emotional well-being by showing understanding and avoiding teasing during menstruation**
 
 **True/False Answer:** ✅ True
-
-**Explanation:** True
-
-**MCQ: Which of the following is correct regarding: "Boys can support girls' emotional well-being by showing understanding and avoiding teasing during menstruation"?**
-
-- A) This is false
-- B) This only applies in rare cases
-- C) This is correct ✅
-- D) This is only partially true
-
-**Answer:** C
-
 ---
 
 
@@ -5078,614 +2889,214 @@
 
 **True/False Answer:** ✅ True
 **Explanation:** Discomfort, absenteeism, and concentration difficulties may impair learning.
-
-**MCQ-Q11. Which statement about "Inadequate school toilets can affect academic performance." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q12. Menstrual products should be changed regularly.
 
 **True/False Answer:** ✅ True
 **Explanation:** Regular changing reduces odor, discomfort, and infection risk.
-
-**MCQ-Q12. Which statement about "Menstrual products should be changed regularly." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q13. Reusable menstrual products can be used safely when cleaned appropriately.
 
 **True/False Answer:** ✅ True
 **Explanation:** Proper washing and drying make reusable products safe and cost-effective.
-
-**MCQ-Q13. Which statement about "Reusable menstrual products can be used safely when cleaned appropriately." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q14. Menstrual blood is dirty blood that must be removed from the body.
 
 **True/False Answer:** ❌ False
 **Explanation:** Menstrual blood is a normal shedding of the uterine lining.
-
-**MCQ-Q14. Which statement about "Menstrual blood is dirty blood that must be removed from the body." is correct?**
-
-- A) This statement is completely accurate
-- B) This is universally true
-- C) This is confirmed by research
-- D) This statement is incorrect ✅
-
-**Answer:** D
-
 ---
 
 ### Q15. WASH interventions can improve school attendance among girls.
 
 **True/False Answer:** ✅ True
 **Explanation:** Improved facilities support menstrual management and school participation.
-
-**MCQ-Q15. Which statement about "WASH interventions can improve school attendance among girls." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q16. Toilet doors should provide adequate privacy.
 
 **True/False Answer:** ✅ True
 **Explanation:** Privacy is a key requirement for safe sanitation.
-
-**MCQ-Q16. Which statement about "Toilet doors should provide adequate privacy." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q17. Menstrual hygiene management has no relationship with gender equality.
 
 **True/False Answer:** ❌ False
 **Explanation:** Menstrual health is directly linked to gender equity and educational opportunities.
-
-**MCQ-Q17. Which statement about "Menstrual hygiene management has no relationship with gender equality." is correct?**
-
-- A) This statement is completely accurate
-- B) This is universally true
-- C) This is confirmed by research
-- D) This statement is incorrect ✅
-
-**Answer:** D
-
 ---
 
 ### Q18. Access to clean water supports menstrual hygiene.
 
-**True/False Answer:** ❌ False
-**Explanation:** Most girls can participate safely if comfortable.
-
-**MCQ-Q18. Which statement about "Access to clean water supports menstrual hygiene." is correct?**
-
-- A) This statement is completely accurate
-- B) This is universally true
-- C) This is confirmed by research
-- D) This statement is incorrect ✅
-
-**Answer:** D
-
+**True/False Answer:** ✅ True
+**Explanation:** Clean water is essential for handwashing, cleaning reusable menstrual products, and maintaining menstrual hygiene.
 ---
 
 ### Q19. Girls should be excluded from sports during menstruation.
 
 **True/False Answer:** ❌ False
 **Explanation:** Most girls can participate safely if comfortable.
-
-**MCQ-Q19. Which statement about "Girls should be excluded from sports during menstruation." is correct?**
-
-- A) This statement is completely accurate
-- B) This is universally true
-- C) This is confirmed by research
-- D) This statement is incorrect ✅
-
-**Answer:** D
-
 ---
 
 ### Q20. Menstrual health education should include boys as well as girls.
 
 **True/False Answer:** ✅ True
 **Explanation:** Inclusive education reduces stigma and misconceptions.
-
-**MCQ-Q20. Which statement about "Menstrual health education should include boys as well as girls." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q21. Soap and water are useful for menstrual hygiene.
 
-**True/False Answer:** ❌ False
-
-**MCQ-Q21. Which statement about "Soap and water are useful for menstrual hygiene." is correct?**
-
-- A) This statement is completely accurate
-- B) This is universally true
-- C) This is confirmed by research
-- D) This statement is incorrect ✅
-
-**Answer:** D
-
+**True/False Answer:** ✅ True
 ---
 
 ### Q22. Lack of menstrual supplies may contribute to school absenteeism.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q22. Which statement about "Lack of menstrual supplies may contribute to school absenteeism." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q23. Menstrual hygiene is solely a family issue and not a public health concern.
 
-**True/False Answer:** ✅ True
-
-**MCQ-Q23. Which statement about "Menstrual hygiene is solely a family issue and not a public health concern." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
+**True/False Answer:** ❌ False
 ---
 
 ### Q24. School sanitation facilities should be gender-sensitive.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q24. Which statement about "School sanitation facilities should be gender-sensitive." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q25. Menstrual health is recognized as a human rights issue.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q25. Which statement about "Menstrual health is recognized as a human rights issue." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q26. Safe disposal systems reduce environmental contamination.
 
-**True/False Answer:** ❌ False
-
-**MCQ-Q26. Which statement about "Safe disposal systems reduce environmental contamination." is correct?**
-
-- A) This statement is completely accurate
-- B) This is universally true
-- C) This is confirmed by research
-- D) This statement is incorrect ✅
-
-**Answer:** D
-
+**True/False Answer:** ✅ True
 ---
 
 ### Q27. Menstrual hygiene management includes access to information.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q27. Which statement about "Menstrual hygiene management includes access to information." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q28. All girls experience menstruation in exactly the same way.
 
-**True/False Answer:** ✅ True
-
-**MCQ-Q28. Which statement about "All girls experience menstruation in exactly the same way." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
+**True/False Answer:** ❌ False
 ---
 
 ### Q29. Fear of embarrassment may prevent girls from attending school during menstruation.
 
-**True/False Answer:** ❌ False
-
-**MCQ-Q29. Which statement about "Fear of embarrassment may prevent girls from attending school during menstruation." is correct?**
-
-- A) This statement is completely accurate
-- B) This is universally true
-- C) This is confirmed by research
-- D) This statement is incorrect ✅
-
-**Answer:** D
-
+**True/False Answer:** ✅ True
 ---
 
 ### Q30. Teachers can play an important role in menstrual health education.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q30. Which statement about "Teachers can play an important role in menstrual health education." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q31. Menstrual products should never be discussed in schools.
 
-**True/False Answer:** ✅ True
-
-**MCQ-Q31. Which statement about "Menstrual products should never be discussed in schools." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
+**True/False Answer:** ❌ False
 ---
 
 ### Q32. Separate toilet facilities for girls may improve comfort and privacy.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q32. Which statement about "Separate toilet facilities for girls may improve comfort and privacy." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q33. Menstrual hygiene affects self-esteem.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q33. Which statement about "Menstrual hygiene affects self-esteem." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q34. Menstrual education should address myths and misconceptions.
 
-**True/False Answer:** ❌ False
-
-**MCQ-Q34. Which statement about "Menstrual education should address myths and misconceptions." is correct?**
-
-- A) This statement is completely accurate
-- B) This is universally true
-- C) This is confirmed by research
-- D) This statement is incorrect ✅
-
-**Answer:** D
-
+**True/False Answer:** ✅ True
 ---
 
 ### Q35. Water scarcity can worsen menstrual management challenges.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q35. Which statement about "Water scarcity can worsen menstrual management challenges." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q36. Menstruation prevents girls from succeeding academically.
 
-**True/False Answer:** ✅ True
-
-**MCQ-Q36. Which statement about "Menstruation prevents girls from succeeding academically." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
+**True/False Answer:** ❌ False
 ---
 
 ### Q37. Menstrual hygiene management requires supportive infrastructure.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q37. Which statement about "Menstrual hygiene management requires supportive infrastructure." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q38. Poor sanitation may increase infection risks.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q38. Which statement about "Poor sanitation may increase infection risks." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q39. Menstrual stigma can affect mental health.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q39. Which statement about "Menstrual stigma can affect mental health." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q40. Girls should be encouraged to seek help for menstrual problems.
 
-**True/False Answer:** ❌ False
-
-**MCQ-Q40. Which statement about "Girls should be encouraged to seek help for menstrual problems." is correct?**
-
-- A) This statement is completely accurate
-- B) This is universally true
-- C) This is confirmed by research
-- D) This statement is incorrect ✅
-
-**Answer:** D
-
+**True/False Answer:** ✅ True
 ---
 
 ### Q41. Menstrual health literacy promotes healthy behaviors.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q41. Which statement about "Menstrual health literacy promotes healthy behaviors." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q42. Schools have no role in menstrual support.
 
-**True/False Answer:** ✅ True
-
-**MCQ-Q42. Which statement about "Schools have no role in menstrual support." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
+**True/False Answer:** ❌ False
 ---
 
 ### Q43. Safe toilets promote dignity.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q43. Which statement about "Safe toilets promote dignity." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q44. Menstrual hygiene products should be accessible.
 
-**True/False Answer:** ❌ False
-
-**MCQ-Q44. Which statement about "Menstrual hygiene products should be accessible." is correct?**
-
-- A) This statement is completely accurate
-- B) This is universally true
-- C) This is confirmed by research
-- D) This statement is incorrect ✅
-
-**Answer:** D
-
+**True/False Answer:** ✅ True
 ---
 
 ### Q45. Good menstrual hygiene contributes to overall health.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q45. Which statement about "Good menstrual hygiene contributes to overall health." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q46. Menstruation is incompatible with school attendance.
 
-**True/False Answer:** ✅ True
-
-**MCQ-Q46. Which statement about "Menstruation is incompatible with school attendance." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
+**True/False Answer:** ❌ False
 ---
 
 ### Q47. Proper sanitation promotes educational equity.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q47. Which statement about "Proper sanitation promotes educational equity." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q48. Menstrual management needs vary among individuals.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q48. Which statement about "Menstrual management needs vary among individuals." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q49. Access to toilets is part of WASH.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q49. Which statement about "Access to toilets is part of WASH." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 ### Q50. Investment in WASH facilities is an investment in girls' well-being.
 
 **True/False Answer:** ✅ True
-
-**MCQ-Q50. Which statement about "Investment in WASH facilities is an investment in girls' well-being." is correct?**
-
-- A) This statement is false
-- B) This only applies in rare cases
-- C) This statement is correct ✅
-- D) Medical evidence does not support this
-
-**Answer:** C
-
 ---
 
 
-## SECTION 4: Clinical & Public Health MCQ/SBA Questions (1–263)
+## SECTION 4: Clinical & Public Health MCQ/SBA Questions (1–20)
 
 ---
 
@@ -5895,12 +3306,12 @@ Explanation
 **The primary purpose of handwashing during menstruation is:**
 
 - **A.** Reduce prostaglandins
-- **B.** Reduce infection transmission
+- **B.** Reduce infection transmission ✅
 - **C.** Prevent ovulation
 - **D.** Reduce estrogen
 - **E.** Increase fertility
 
-**Answer:** 
+**Answer:** B
 
 ---
 
@@ -5909,12 +3320,12 @@ Explanation
 **Which factor most strongly influences menstrual dignity?**
 
 - **A.** Hair color
-- **B.** Access to menstrual products and privacy
+- **B.** Access to menstrual products and privacy ✅
 - **C.** Shoe size
 - **D.** Eye color
 - **E.** Height
 
-**Answer:** 
+**Answer:** B
 
 ---
 
@@ -5922,13 +3333,13 @@ Explanation
 
 **Failure to provide menstrual support in schools may worsen:**
 
-- **A.** Educational inequities
+- **A.** Educational inequities ✅
 - **B.** Myopia
 - **C.** Asthma
 - **D.** Appendicitis
 - **E.** Scoliosis
 
-**Answer:** 
+**Answer:** A
 
 ---
 
@@ -5937,12 +3348,12 @@ Explanation
 **A major reason menstrual health education should begin before menarche is:**
 
 - **A.** To increase menstrual flow
-- **B.** To reduce fear and misinformation
+- **B.** To reduce fear and misinformation ✅
 - **C.** To delay puberty
 - **D.** To prevent ovulation
 - **E.** To increase fertility
 
-**Answer:** 
+**Answer:** B
 
 ---
 
@@ -5951,12 +3362,12 @@ Explanation
 **Which population is most vulnerable to school-related period poverty?**
 
 - **A.** High-income students
-- **B.** Adolescents from socioeconomically disadvantaged households
+- **B.** Adolescents from socioeconomically disadvantaged households ✅
 - **C.** Teachers
 - **D.** Postmenopausal women
 - **E.** Male students
 
-**Answer:** 
+**Answer:** B
 
 ---
 
@@ -5964,13 +3375,13 @@ Explanation
 
 **Which public health principle is most strongly reflected by free provision of menstrual products?**
 
-- **A.** Equity
+- **A.** Equity ✅
 - **B.** Mutation
 - **C.** Randomization
 - **D.** Confounding
 - **E.** Stratification
 
-**Answer:** 
+**Answer:** A
 
 ---
 
@@ -5979,12 +3390,12 @@ Explanation
 **An intervention aimed at reducing menstrual stigma should primarily focus on:**
 
 - **A.** Restricting discussions
-- **B.** Improving knowledge and social acceptance
+- **B.** Improving knowledge and social acceptance ✅
 - **C.** Delaying menarche
 - **D.** Reducing fertility
 - **E.** Preventing ovulation
 
-**Answer:** 
+**Answer:** B
 
 ---
 
@@ -6026,2241 +3437,6 @@ Explanation
 **Answer:** C
 
 Questions 21–25
-
----
-
-### Question 26
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 27
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 28
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 29
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 30
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 31
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 32
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 33
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 34
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 35
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 36
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 37
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 38
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 39
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 40
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 41
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 42
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 43
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 44
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 45
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 46
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 47
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 48
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 49
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 50
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 51
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 52
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 53
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 54
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 55
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 56
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 57
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 58
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 59
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 60
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 61
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 62
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 63
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 64
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 65
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 66
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 67
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 68
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 69
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 70
-
-**The most effective educational strategy for menstrual health is:
-
-Answer: Continuous age-appropriate education
-
-Explanation: Reinforcement improves knowledge retention.
-
-Questions 71–100
-
-Q71
-
-Most effective school WASH intervention for girls?
-
-Answer: Gender-sensitive toilets with water, privacy, and disposal facilities.
-
-Explanation: These directly address menstrual hygiene needs.
-
-Q72
-
-Primary purpose of menstrual waste disposal systems?
-
-Answer: Safe and dignified disposal.
-
-Explanation: Reduces embarrassment and environmental contamination.
-
-Q73**
-
-
-**Answer:** 
-
----
-
-### Question 101
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 102
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 103
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 104
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 105
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 106
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 107
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 108
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 109
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 110
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 111
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 112
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 113
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 114
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 115
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 116
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 117
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 118
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 119
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 120
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 121
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 122
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 123
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 124
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 125
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 126
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 127
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 128
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 129
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 130
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 131
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 132
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 133
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 134
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 135
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 136
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 137
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 138
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 139
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 140
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 141
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 142
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 143
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 144
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 145
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 146
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 147
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 148
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 149
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 150
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 151
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 152
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 153
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 154
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 155
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 156
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 157
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 158
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 159
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 160
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 161
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 162
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 163
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 164
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 165
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 166
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 167
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 168
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 169
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 170
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 171
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 172
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 173
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 174
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 175
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 176
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 177
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 178
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 179
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 180
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 181
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 182
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 183
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 184
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 185
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 186
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 187
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 188
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 189
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 190
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 191
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 192
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 193
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 194
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 195
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 196
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 197
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 198
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 199
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 200
-
-**A comprehensive national menstrual health strategy simultaneously advances:
-
-Answer: SDG 3 – Good Health and Well-Being; SDG 4 – Quality Education; SDG 5 – Gender Equality; SDG 6 – Clean Water and Sanitation; SDG 1 – No Poverty; and SDG 10 – Reduced Inequalities.
-
-Explanation: Menstrual health is a cross-cutting issue affecting health, education, economic productivity, gender equity, sanitation, and social inclusion. Addressing menstrual health therefore contributes to multiple Sustainable Development Goals simultaneously.
-
-MCQ/SBA QUESTIONS 201–250
-
-EVIDENCE-BASED MANAGEMENT OF DYSMENORRHOEA: NEUROMODULATION, TENS, AND NON-PHARMACOLOGICAL THERAPIES
-
-Key Definitions
-
-Neuromodulation
-
-Neuromodulation is the therapeutic alteration of nerve activity through targeted delivery of electrical, magnetic, or chemical stimuli to specific neurological sites.
-
-TENS (Transcutaneous Electrical Nerve Stimulation)
-
-TENS is a non-invasive method of pain control that delivers electrical impulses through electrodes placed on the skin to modulate pain perception.
-
-PENS (Percutaneous Electrical Nerve Stimulation)
-
-PENS combines principles of acupuncture and electrical stimulation by delivering electrical currents through fine needles inserted into tissues.
-
-Interferential Therapy (IFT)**
-
-
-**Answer:** 
-
----
-
-### Question 201
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 202
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 203
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 204
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 205
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 206
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 207
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 208
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 209
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 210
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 211
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 212
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 213
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 214
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 215
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 216
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 217
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 218
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 219
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 220
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 221
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 222
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 223
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 224
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 225
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 226
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 227
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 228
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 229
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 230
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 231
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 234
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 235
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 236
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 237
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 238
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 239
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 240
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 241
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 242
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 243
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 244
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 245
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 246
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 247
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 248
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 249
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 250
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 251
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 252
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 253
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 254
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 255
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 256
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 257
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 258
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 259
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 260
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 261
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 262
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 263
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 264
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 265
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 266
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 267
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 268
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 269
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 270
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 271
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 272
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 273
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 274
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 275
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 276
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 277
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 278
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 279
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 280
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 281
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 282
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 283
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 284
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 285
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 286
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 287
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 288
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 289
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 290
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 291
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 292
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 293
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 294
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 295
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 296
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 297
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 298
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 299
-
-****
-
-
-**Answer:** 
-
----
-
-### Question 300
-
-****
-
-
-**Answer:** 
 
 ---
 
