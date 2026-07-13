@@ -40,7 +40,7 @@ const ladders = {
   85: 100, 58: 100,
 };
 
-/* Questions array - will be populated dynamically from questions.md */
+/* Questions array - will be populated dynamically from the markdown question bank */
 let questions = [];
 let questionBankReady = Promise.resolve();
 let questionBankMetadata = {
@@ -59,44 +59,40 @@ const difficultyLevels = {
 
 /* 
  * QUESTION PARSER & LOADER
- * Parses questions.md at runtime to build the question bank
+ * Parses the markdown question bank at runtime to build the question bank
  */
 
 /**
- * Parse the questions.md file and extract questions with answers
+ * Parse the markdown question bank file and extract questions with answers
  * Categorizes them by difficulty based on section headings
  */
 async function loadQuestionsFromMarkdown() {
   try {
     const response = await fetch(QUESTION_SOURCE_PATH);
     if (!response.ok) {
-      console.warn('Could not load questions.md, using fallback questions');
-      loadFallbackQuestions();
-      return;
+      throw new Error(`Could not load question bank from ${QUESTION_SOURCE_PATH}`);
     }
 
     const markdown = await response.text();
     const parsedQuestions = parseQuestionsMarkdown(markdown);
-    
+
     if (parsedQuestions.length === 0) {
-      console.warn('No questions parsed from questions.md, using fallback questions');
-      loadFallbackQuestions();
-      return;
+      throw new Error('No questions parsed from the markdown question bank');
     }
 
     questions = parsedQuestions;
-    console.log(`Loaded ${questions.length} questions from questions.md`);
+    console.log(`Loaded ${questions.length} questions from the markdown question bank`);
     categorizeQuestionsByDifficulty();
   } catch (error) {
-    console.warn('Error loading questions.md:', error);
-    loadFallbackQuestions();
+    console.error('Error loading markdown question bank:', error);
+    throw error;
   }
 }
 
 /**
  * Parse markdown text to extract questions and answers
  * Recognizes both True/False and Q&A format questions
- * @param {string} markdown - The markdown content from questions.md
+ * @param {string} markdown - The markdown content from the question bank
  * @returns {Array} Array of question objects with {question, answer, type, section, difficulty}
  */
 function parseQuestionsMarkdown(markdown) {
@@ -581,30 +577,6 @@ function categorizeQuestionsByDifficulty() {
   });
 
   console.log('Question bank loaded', questionBankMetadata);
-}
-
-/**
- * Load fallback menstrual health questions if parsing fails
- */
-function loadFallbackQuestions() {
-  questions = [
-    { question: "Menstruation is the monthly shedding of the uterine lining.", answer: true, type: 'true-false', difficulty: 'easy' },
-    { question: "What is the average length of a menstrual cycle?", options: [{label: 'A', text: '21 days'}, {label: 'B', text: '28 days'}, {label: 'C', text: '35 days'}, {label: 'D', text: '40 days'}], answer: "B", type: 'mcq', difficulty: 'easy' },
-    { question: "True or False: A menstrual cycle of 28 days is standard for all women.", answer: false, type: 'true-false', difficulty: 'easy' },
-    { question: "Which hormone is primarily responsible for preparing the uterine lining for pregnancy?", options: [{label: 'A', text: 'Insulin'}, {label: 'B', text: 'Estrogen'}, {label: 'C', text: 'Testosterone'}, {label: 'D', text: 'Melatonin'}], answer: "B", type: 'mcq', difficulty: 'easy' },
-    { question: "True or False: Using unclean cloths during menstruation can lead to infections.", answer: true, type: 'true-false', difficulty: 'medium' },
-    { question: "What are the most common menstrual hygiene products?", options: [{label: 'A', text: 'Sanitary pads, tampons, and menstrual cups'}, {label: 'B', text: 'Paper towels and tissues'}, {label: 'C', text: 'Cotton balls'}, {label: 'D', text: 'Sponges'}], answer: "A", type: 'mcq', difficulty: 'medium' },
-    { question: "True or False: Leaving a tampon in for too long can increase the risk of toxic shock syndrome (TSS).", answer: true, type: 'true-false', difficulty: 'medium' },
-    { question: "Which of the following can help alleviate menstrual cramps?", options: [{label: 'A', text: 'Eating very salty foods'}, {label: 'B', text: 'Drinking icy cold water'}, {label: 'C', text: 'Applying heat to the abdomen'}, {label: 'D', text: 'Avoiding all physical movement'}], answer: "C", type: 'mcq', difficulty: 'hard' },
-    { question: "True or False: PCOS can lead to menstrual irregularities and infertility.", answer: true, type: 'true-false', difficulty: 'hard' },
-    { question: "What is endometriosis?", options: [{label: 'A', text: 'A normal part of the menstrual cycle'}, {label: 'B', text: 'Tissue similar to the uterine lining growing outside the uterus'}, {label: 'C', text: 'A type of menstrual product'}, {label: 'D', text: 'A hormonal medication'}], answer: "B", type: 'mcq', difficulty: 'hard' },
-  ];
-  
-  difficultyLevels.easy = questions.filter(q => q.difficulty === 'easy');
-  difficultyLevels.medium = questions.filter(q => q.difficulty === 'medium');
-  difficultyLevels.hard = questions.filter(q => q.difficulty === 'hard');
-
-  console.log('Using fallback questions');
 }
 
 /* Game rules for carousel display */
@@ -1816,7 +1788,7 @@ function showQuestion(callback) {
 
   // Ensure the question bank is ready.
   if (questions.length === 0) {
-    loadFallbackQuestions();
+    throw new Error('No questions available from the markdown question bank');
   }
 
   // Get a unique question for this turn.
@@ -1928,7 +1900,7 @@ async function handleTurn() {
   try {
     await questionBankReady;
     if (questions.length === 0) {
-      loadFallbackQuestions();
+      throw new Error('No questions available from the markdown question bank');
     }
 
     const currentPlayer = gameState.players[gameState.currentPlayer];
