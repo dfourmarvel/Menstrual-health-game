@@ -177,32 +177,31 @@ Net effect on the pool: **371 questions** (was 411; the drop is the excluded gen
 - **Location:** keydown handler `js/game.js:2326`, `hideQuestionModal()` `js/game.js:1671`.
 - **Symptom:** Pressing **Escape** during a question hides the modal but the turn never resolves — the game freezes, and it also lets a player dodge questions.
 - **Root cause:** The Escape handler hides the modal but doesn't reset `isQuestionActive` or invoke the pending answer callback, so `handleTurn` waits forever and the roll button stays disabled.
-- **Fix steps:**
-  - [ ] Decide the intended behaviour: either **ignore Escape** while a question is active, or treat Escape as "answer incorrectly / skip" and resolve the turn cleanly.
-  - [ ] Implement so `isQuestionActive` is always reset and the callback always fires (or Escape is a no-op during questions).
-- **Verify:** Press Escape mid-question → game does not freeze; roll button state is correct afterward.
+- **Fix steps:** ✅ DONE (2026-07-13)
+  - [x] Chose **ignore Escape while a question is active** — safest option; also stops players skipping questions. The keydown handler now returns early when `gameState.isQuestionActive`, so the modal is never hidden out from under an unresolved turn. (Handler at `js/game.js` end-of-file.)
+- **Verify:** ✅ Browser preview — rolled to open a question, pressed Escape: modal stays visible, turn stays live, no freeze; answering then Continue closes it cleanly with 0 console errors.
 
 ### 4.2 🟢 "1 player" option does nothing
 
 - **Location:** `index.html:242` (dropdown), `createInitialGameState()` `js/game.js:655` (min-2 enforcement).
 - **Symptom:** Selecting **1** player still spawns 2.
-- **Fix steps:**
-  - [ ] Either support true single-player vs. an AI opponent, or remove the `1` option from the dropdown.
+- **Fix steps:** ✅ DONE (2026-07-13)
+  - [x] Removed the `1` option from the dropdown (the game already supports AI opponents via per-player toggles; a true 1-total-player game can't form). Dropdown now offers 2/3/4. Verified in preview.
 
 ### 4.3 🟢 Three.js loaded from CDN (offline = no 3D dice)
 
 - **Location:** `index.html:8` (CDN `r128`).
 - **Symptom:** The "open `index.html` and play offline" promise breaks the 3D dice when offline (a 1.2s blank fallback kicks in).
-- **Fix steps:**
-  - [ ] Vendor Three.js locally (e.g. `assets/vendor/three.min.js`) and reference it relatively.
-  - [ ] Consider pinning a newer version than `r128`.
+- **Fix steps:** ✅ DONE (2026-07-13)
+  - [x] Vendored Three.js locally at `assets/vendor/three.min.js` and referenced it relatively in `index.html`; the CDN `<script>` is gone. Verified in preview: `window.THREE` loads from `/assets/vendor/three.min.js`, dice roll works, 0 console errors.
+  - [x] Kept **r128** deliberately — the dice code (`getEulerForFace`, mesh setup) targets that API; a version bump is a separate, riskier change left for later.
 
 ### 4.4 🟢 Assorted polish
 
-- [ ] **Back button** (`js/game.js:2268`) calls `window.history.back()` — a no-op when the page is opened directly. Point it somewhere meaningful or hide it in that case.
-- [ ] **Restart button** is visible from game start, before there's anything to restart (`index.html:129`). Hide until a game is in progress/over.
-- [ ] **Modal focus management:** no focus trap in the setup/question/winner modals. Trap focus and return it on close for keyboard/screen-reader users.
-- [ ] **Favicon:** none set — add one.
+- [x] **Back button** — DONE (2026-07-13): hidden on load when `window.history.length <= 1` (nothing to go back to); still wired to `history.back()` when there is history. Verified hidden in preview.
+- [x] **Restart button** — DONE (2026-07-13): now `hidden` by default in `index.html`; shown in `startGame()`, on a restored in-progress game, and kept visible through `resetGame()` (stale `hidden = true` there fixed). Verified: hidden before start, visible after.
+- [x] **Modal focus management** — DONE (2026-07-13): added a reusable focus trap (`activateFocusTrap`/`deactivateFocusTrap`) wired into the setup, question, and winner modals — Tab cycles within the open modal and focus returns to the trigger on close. Verified in preview (focus trapped inside the question modal).
+- [x] **Favicon** — DONE (2026-07-13): inline SVG (🩸) data-URI favicon added to `<head>`. Verified present.
 - [x] **Persistence gap** — FIXED (2026-07-13): saved question pool now restored via an id→question map across **all** types (was True/False only, dropping MCQs on reload).
 
 ### 4.5 🟠 IndexedDB save was completely broken (boolean key) — FIXED

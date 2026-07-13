@@ -1417,16 +1417,77 @@ function moveToCarouselEnd() {
    MODAL MANAGEMENT
    ============================================================================ */
 
+/* ---------------------------------------------------------------
+   Modal focus management: while a modal is open, keep Tab focus
+   inside it, and return focus to the triggering element on close.
+   --------------------------------------------------------------- */
+const focusTrapState = new WeakMap();
+
+function getFocusableElements(container) {
+  const selector = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])',
+  ].join(',');
+  return Array.from(container.querySelectorAll(selector))
+    .filter(el => !el.hidden && el.offsetParent !== null);
+}
+
+function activateFocusTrap(modal) {
+  if (focusTrapState.has(modal)) return;
+
+  const previouslyFocused = document.activeElement;
+  const handler = (e) => {
+    if (e.key !== 'Tab') return;
+    const focusable = getFocusableElements(modal);
+    if (focusable.length === 0) {
+      e.preventDefault();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement;
+    if (e.shiftKey && (active === first || !modal.contains(active))) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && (active === last || !modal.contains(active))) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
+  modal.addEventListener('keydown', handler);
+  focusTrapState.set(modal, { handler, previouslyFocused });
+
+  const focusable = getFocusableElements(modal);
+  (focusable[0] || modal).focus();
+}
+
+function deactivateFocusTrap(modal) {
+  const state = focusTrapState.get(modal);
+  if (!state) return;
+  modal.removeEventListener('keydown', state.handler);
+  focusTrapState.delete(modal);
+  if (typeof state.previouslyFocused?.focus === 'function') {
+    state.previouslyFocused.focus();
+  }
+}
+
 function showSetupModal(forceRules = false) {
   if (forceRules || appState.showRulesOnStart) {
     showRulesStep();
   } else {
     showPlayerSetupStep();
   }
+  activateFocusTrap(elements.setupModal);
 }
 
 function hideSetupModal() {
   elements.setupModal.classList.remove('modal-active');
+  deactivateFocusTrap(elements.setupModal);
   speechManager.stop();
 }
 
@@ -1435,7 +1496,8 @@ function showQuestionModal(questionText) {
   elements.questionModal.hidden = false;
   elements.questionModal.classList.add('modal-active');
   playSound(elements.questionSound);
-  
+  activateFocusTrap(elements.questionModal);
+
   /* Read aloud the question */
   speechManager.speak(questionText);
 }
@@ -1443,6 +1505,7 @@ function showQuestionModal(questionText) {
 function hideQuestionModal() {
   elements.questionModal.hidden = true;
   elements.questionModal.classList.remove('modal-active');
+  deactivateFocusTrap(elements.questionModal);
 }
 
 function showWinnerModal(playerName, playerElement) {
@@ -1452,11 +1515,13 @@ function showWinnerModal(playerName, playerElement) {
   elements.winnerModal.hidden = false;
   elements.winnerModal.classList.add('modal-active');
   playSound(elements.winSound);
+  activateFocusTrap(elements.winnerModal);
 }
 
 function hideWinnerModal() {
   elements.winnerModal.hidden = true;
   elements.winnerModal.classList.remove('modal-active');
+  deactivateFocusTrap(elements.winnerModal);
 }
 
 /* ============================================================================
@@ -1937,12 +2002,13 @@ function startGame() {
   updatePlayersUi();
 
   hideSetupModal();
-  
+
   gameState.currentPlayer = 0;
   gameState.isGameOver = false;
   gameState.isQuestionActive = false;
   gameState.isRolling = false;
 
+  elements.restartBtn.hidden = false;
   playMusic(elements.backgroundMusic);
   enableRollWhenQuestionsReady();
 }
@@ -1965,7 +2031,8 @@ function resetGame() {
   setDiceFace(1);
   updatePlayersUi();
   elements.rollDiceBtn.hidden = false;
-  elements.restartBtn.hidden = true;
+  // A restart keeps the game in progress, so the Restart button stays visible.
+  elements.restartBtn.hidden = false;
 
   gameState.players.forEach((player, index) => {
     updatePlayerPosition(index, 0);
@@ -2033,6 +2100,8 @@ function initGame() {
         }
         gameState.players.forEach((player, idx) => syncAvatarPicker(idx, player.avatar));
         updatePlayersUi();
+        // A restored game is in progress, so surface the Restart button.
+        elements.restartBtn.hidden = false;
         setRollButtonForCurrentPlayer();
         if (appState.showRulesOnStart) {
           showSetupModal();
@@ -2053,9 +2122,15 @@ function initGame() {
   gameState.players[1].element = elements.player2;
   
   // Event Listeners - Navigation
-  elements.backBtn.addEventListener('click', () => {
-    window.history.back();
-  });
+  // history.back() is a no-op when index.html is opened directly (no prior
+  // entry), so hide the Back button unless there is somewhere to go back to.
+  if (window.history.length <= 1) {
+    elements.backBtn.hidden = true;
+  } else {
+    elements.backBtn.addEventListener('click', () => {
+      window.history.back();
+    });
+  }
   
   elements.rulesBtn.addEventListener('click', showRulesModal);
   elements.themeBtn.addEventListener('click', toggleTheme);
@@ -2113,6 +2188,12 @@ function initGame() {
 /* Keyboard shortcuts */
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    hideQuestionModal();
+    // While a question is active, Escape must be a no-op: hiding the modal
+    // here would leave the turn unresolved (isQuestionActive stuck true, the
+    // answer callback never fires) and let players skip questions. The modal
+    // is only ever open during a question, so there is nothing else to close.
+    if (gameState.isQuestionActive) {
+      return;
+    }
   }
 });
