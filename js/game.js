@@ -494,6 +494,7 @@ function cleanMarkdownText(text) {
     .replace(/^\s*\d+[.)]\s*/, '')
     .replace(/\*\*/g, '')
     .replace(/[_`]/g, '')
+    .replace(/\s*[✅❌]\s*/g, ' ')
     .replace(/[ \t]{2,}/g, ' ')
     .trim();
 }
