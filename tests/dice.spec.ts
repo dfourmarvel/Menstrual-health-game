@@ -14,7 +14,14 @@ async function answerQuestionIfShown(page) {
     .catch(() => false);
 
   if (shown) {
-    await page.locator('#true-btn').click();
+    const trueBtn = page.locator('#true-btn');
+    const mcqOption = page.locator('#mcq-options button').first();
+    if (await trueBtn.isVisible().catch(() => false)) {
+      await trueBtn.click();
+    } else {
+      await mcqOption.waitFor({ state: 'visible', timeout: 2000 });
+      await mcqOption.click();
+    }
     await page.locator('#continue-btn').waitFor({ state: 'visible', timeout: 2000 });
     await page.locator('#continue-btn').click();
   }
@@ -31,17 +38,16 @@ test('roll dice button triggers a 3D dice roll after game start', async ({ page 
   await page.locator('#start-game').click();
 
   const rollButton = page.locator('#roll-dice');
-  const dice = page.locator('#dice-cube');
+  const dice = page.locator('#dice-canvas-container');
   await expect(rollButton).toBeEnabled();
   await expect(dice).toBeVisible();
-  await expect(dice.locator('.dice-face-panel')).toHaveCount(6);
+  await expect(dice.locator('canvas')).toHaveCount(1);
 
   await rollButton.click();
   await answerQuestionIfShown(page);
 
   const rolledNumber = page.locator('.rolled-number');
   await expect(rolledNumber).toHaveText(/[1-6]/, { timeout: 3000 });
-  await expect(dice).toHaveClass(/dice-face-[1-6]/);
   await expect(rollButton).toBeEnabled({ timeout: 4000 });
 
   await rollButton.click();

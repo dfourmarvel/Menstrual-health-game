@@ -90,94 +90,60 @@ async function loadQuestionsFromMarkdown() {
 }
 
 /**
- * Parse markdown text to extract questions and answers
- * Recognizes both True/False and Q&A format questions
+ * Section-to-difficulty mapping. Each of the question bank's four sections uses a
+ * distinct markdown format (see the per-section block parsers below) and is tagged
+ * with a fixed difficulty rather than inferred from keywords or running counts.
+ */
+const SECTION_DIFFICULTY = { 1: 'easy', 2: 'medium', 3: 'medium', 4: 'hard' };
+const SECTION_HEADING_RE = /^##\s+SECTION\s+(\d+)\b/i;
+const SECTION_PARSERS = {
+  1: parseSection1Block,
+  2: parseSection2Block,
+  3: parseSection3Block,
+  4: parseSection4Block,
+};
+
+/**
+ * Parse markdown text to extract questions and answers.
+ * Tracks the current `## SECTION N` heading and dispatches each block to the parser
+ * for that section's specific format.
  * @param {string} markdown - The markdown content from the question bank
  * @returns {Array} Array of question objects with {question, answer, type, section, difficulty}
  */
 function parseQuestionsMarkdown(markdown) {
-  const structuredQuestions = parseStructuredQuestionMarkdown(markdown);
-  if (structuredQuestions.length > 0) {
-    applyOrderBasedDifficulty(structuredQuestions);
-    return structuredQuestions;
-  }
-
-  const parsedQuestions = [];
   const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
-  let currentSection = 'Introduction';
-  let currentDifficulty = 'easy';
+  const parsedQuestions = [];
+  let currentSection = null;
+  let currentSectionHeading = '';
   let i = 0;
 
   while (i < lines.length) {
     const line = normalizeMarkdownLine(lines[i]);
-    const heading = getSectionHeading(line);
-
-    if (heading) {
-      currentSection = heading;
-      currentDifficulty = inferDifficultyFromSection(currentSection, parsedQuestions.length);
+    const sectionMatch = line.match(SECTION_HEADING_RE);
+    if (sectionMatch) {
+      currentSection = Number(sectionMatch[1]);
+      currentSectionHeading = cleanMarkdownText(line.replace(/^##\s+/, ''));
       i++;
       continue;
     }
 
-    const bulletQuestion = parseBulletQuestion(line, lines, i, currentSection, currentDifficulty, parsedQuestions.length);
-    if (bulletQuestion) {
-      parsedQuestions.push(bulletQuestion.question);
-      i = bulletQuestion.nextIndex;
-      continue;
-    }
-
-    const blockQuestion = parseQuestionBlock(lines, i, currentSection, currentDifficulty, parsedQuestions.length);
-    if (blockQuestion) {
-      parsedQuestions.push(blockQuestion.question);
-      i = blockQuestion.nextIndex;
-      continue;
-    }
-
-    const inlineQuestions = parseInlineQuestionPairs(line, currentSection, currentDifficulty, parsedQuestions.length);
-    if (inlineQuestions.length > 0) {
-      parsedQuestions.push(...inlineQuestions);
-      i++;
-      continue;
-    }
-
-    i++;
-  }
-
-  applyOrderBasedDifficulty(parsedQuestions);
-  return parsedQuestions;
-}
-
-function parseStructuredQuestionMarkdown(markdown) {
-  const parsedQuestions = [];
-  const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
-  let currentSection = 'Introduction';
-  let currentDifficulty = 'easy';
-  let i = 0;
-
-  while (i < lines.length) {
-    const line = normalizeMarkdownLine(lines[i]);
-    const block = parseStructuredQuestionBlock(lines, i, currentSection, currentDifficulty, parsedQuestions.length);
+    const parseBlock = SECTION_PARSERS[currentSection];
+    const block = parseBlock
+      ? parseBlock(lines, i, currentSectionHeading, SECTION_DIFFICULTY[currentSection], parsedQuestions.length)
+      : null;
     if (block) {
       parsedQuestions.push(...block.questions);
       i = block.nextIndex;
       continue;
     }
 
-    const heading = getSectionHeading(line);
-    if (heading) {
-      currentSection = heading;
-      currentDifficulty = inferDifficultyFromSection(currentSection, parsedQuestions.length);
-      i++;
-      continue;
-    }
-
     i++;
   }
 
   return parsedQuestions;
 }
 
-function parseStructuredQuestionBlock(allLines, lineIndex, section, difficulty, questionIndex) {
+function parseSection1Block(allLines, lineIndex, section, difficulty, questionIndex) {
   const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
   if (!/^###\s+TF-/i.test(currentLine)) {
     return null;
@@ -191,7 +157,7 @@ function parseStructuredQuestionBlock(allLines, lineIndex, section, difficulty, 
       cursor++;
       continue;
     }
-    if (/^###\s+/i.test(line)) break;
+    if (/^#{2,3}\s+/i.test(line)) break;
     blockLines.push(line);
     cursor++;
   }
@@ -242,7 +208,10 @@ function buildStructuredMcqQuestion(blockLines, section, difficulty, order, sour
   const headingIndex = blockLines.findIndex(line => /^\*\*MCQ-\d+/i.test(line) || /^MCQ-\d+/i.test(line));
   if (headingIndex === -1) return null;
 
-  const answerLine = blockLines.find(line => /^\*\*(?:Answer|Correct Answer):\*\*/i.test(line) || /^(?:Answer|Correct Answer):/i.test(line));
+  // Scoped to lines after the MCQ heading so its own Answer/Explanation lines aren't
+  // shadowed by the True/False sub-question's Answer line earlier in the same block.
+  const afterHeadingLines = blockLines.slice(headingIndex + 1);
+  const answerLine = afterHeadingLines.find(line => /^\*\*(?:Answer|Correct Answer):\*\*/i.test(line) || /^(?:Answer|Correct Answer):/i.test(line));
   if (!answerLine) return null;
 
   const headingLine = blockLines[headingIndex];
@@ -252,12 +221,12 @@ function buildStructuredMcqQuestion(blockLines, section, difficulty, order, sour
     .replace(/\*\*/g, '')
     .trim();
 
-  const optionLines = blockLines.filter(line => /^[-*]?\s*[A-E]\)\s+/i.test(line));
+  const optionLines = afterHeadingLines.filter(line => /^[-*]?\s*[A-E]\)\s+/i.test(line));
   const questionText = [promptText, ...optionLines].join('\n');
   const answerValue = extractStructuredAnswerValue(answerLine);
   if (answerValue === null) return null;
 
-  const explanation = extractStructuredExplanation(blockLines);
+  const explanation = extractStructuredExplanation(afterHeadingLines);
   return buildQuestionRecord(questionText, String(answerValue), {
     section,
     difficulty,
@@ -268,7 +237,7 @@ function buildStructuredMcqQuestion(blockLines, section, difficulty, order, sour
 }
 
 function extractStructuredAnswerValue(line) {
-  const match = line.match(/^(?:\*\*(?:Answer|Correct Answer):\*\*|(?:Answer|Correct Answer):)\s*(.+)$/i);
+  const match = line.match(/^(?:\*\*(?:Answer|Correct Answer|True\/False Answer):\*\*|(?:Answer|Correct Answer|True\/False Answer):)\s*(.+)$/i);
   if (!match) return null;
 
   const raw = cleanMarkdownText(match[1]).replace(/^✅\s*/i, '').replace(/^❌\s*/i, '').trim();
@@ -277,10 +246,239 @@ function extractStructuredAnswerValue(line) {
   return raw.toUpperCase();
 }
 
+/** Extract a free-text answer (no bool/letter coercion) from a "**Answer:** ..." line. */
+function extractLabeledFreeText(line) {
+  const match = line.match(/^(?:\*\*(?:Correct\s+)?Answer:\*\*|(?:Correct\s+)?Answer:)\s*(.+)$/i);
+  if (!match) return null;
+  return cleanMarkdownText(match[1]).trim();
+}
+
+/** Extract just the option letter from a "**Answer:** C" or "**Answer:** C. full text" line. */
+function extractLeadingLetterAnswer(line) {
+  const match = line.match(/^\*\*Answer:\*\*\s*([A-E])\b/i);
+  return match ? match[1].toUpperCase() : null;
+}
+
 function extractStructuredExplanation(blockLines) {
   const explanationLine = blockLines.find(line => /^\*\*Explanation:\*\*/i.test(line) || /^Explanation:/i.test(line));
   if (!explanationLine) return '';
   return cleanMarkdownText(explanationLine.replace(/^\*\*Explanation:\*\*/i, '').replace(/^Explanation:/i, '').trim());
+}
+
+/*
+ * SECTION 2: "Family, Education & Community" — no ### sub-heading; each block starts
+ * with a bold-numbered line (**N. text**) and alternates between an open Q&A sub-type
+ * and a true/false sub-type, each followed by an inline **MCQ: ...** sub-question.
+ */
+function parseSection2Block(allLines, lineIndex, section, difficulty, questionIndex) {
+  const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
+  const startMatch = currentLine.match(/^\*\*(\d+)\.\s+(.+?)\*\*\s*$/);
+  if (!startMatch) return null;
+
+  const blockLines = [];
+  let cursor = lineIndex + 1;
+  while (cursor < allLines.length) {
+    const line = normalizeMarkdownLine(allLines[cursor]);
+    if (!line) {
+      cursor++;
+      continue;
+    }
+    if (/^-{3,}\s*$/.test(line)) {
+      cursor++;
+      break;
+    }
+    if (/^#{2,3}\s+/i.test(line)) break;
+    if (/^\*\*\d+\.\s+/.test(line)) break;
+    blockLines.push(line);
+    cursor++;
+  }
+
+  const promptText = cleanMarkdownText(startMatch[2]);
+  const questionNumber = Number(startMatch[1]);
+  const mcqHeadingIndex = blockLines.findIndex(line => /^\*\*MCQ:\s*/i.test(line));
+
+  if (mcqHeadingIndex === -1) {
+    console.warn('[questions] Section 2 block missing MCQ heading', { lineIndex: lineIndex + 1 });
+    return { questions: [], nextIndex: cursor };
+  }
+
+  const preMcqLines = blockLines.slice(0, mcqHeadingIndex);
+  const postMcqLines = blockLines.slice(mcqHeadingIndex + 1);
+  const questions = [];
+  let nextOrder = questionIndex + 1;
+
+  const tfAnswerLine = preMcqLines.find(line => /^\*\*True\/False Answer:\*\*/i.test(line) || /^True\/False Answer:/i.test(line));
+  const freeAnswerLine = preMcqLines.find(line => /^\*\*Answer:\*\*/i.test(line) || /^Answer:/i.test(line));
+
+  if (tfAnswerLine) {
+    const tfAnswerValue = extractStructuredAnswerValue(tfAnswerLine);
+    if (tfAnswerValue !== null) {
+      questions.push(buildQuestionRecord(`True or False: ${promptText}`, String(tfAnswerValue), {
+        section, difficulty, sourceLine: lineIndex + 1, order: nextOrder,
+        explanation: extractStructuredExplanation(preMcqLines), questionNumber,
+      }));
+      nextOrder += 1;
+    }
+  } else if (freeAnswerLine) {
+    const freeAnswer = extractLabeledFreeText(freeAnswerLine);
+    if (freeAnswer !== null) {
+      questions.push(buildQuestionRecord(promptText, freeAnswer, {
+        section, difficulty, sourceLine: lineIndex + 1, order: nextOrder,
+        explanation: '', questionNumber,
+      }));
+      nextOrder += 1;
+    }
+  } else {
+    console.warn('[questions] Section 2 block missing Answer/True-False Answer line', { lineIndex: lineIndex + 1 });
+  }
+
+  const mcqHeadingLine = blockLines[mcqHeadingIndex];
+  const mcqPromptText = cleanMarkdownText(mcqHeadingLine.replace(/^\*\*MCQ:\s*/i, ''));
+  const optionLines = postMcqLines.filter(line => /^[-*]?\s*[A-E]\)\s+/i.test(line));
+  const mcqAnswerLine = postMcqLines.find(line => /^\*\*(?:Answer|Correct Answer):\*\*/i.test(line) || /^(?:Answer|Correct Answer):/i.test(line));
+
+  if (optionLines.length >= 2 && mcqAnswerLine) {
+    const mcqAnswerValue = extractStructuredAnswerValue(mcqAnswerLine);
+    if (mcqAnswerValue !== null) {
+      const mcqQuestionText = [mcqPromptText, ...optionLines].join('\n');
+      questions.push(buildQuestionRecord(mcqQuestionText, String(mcqAnswerValue), {
+        section, difficulty, sourceLine: lineIndex + 1, order: nextOrder,
+        explanation: extractStructuredExplanation(postMcqLines), questionNumber,
+      }));
+    }
+  } else {
+    console.warn('[questions] Section 2 block missing usable MCQ answer/options', { lineIndex: lineIndex + 1 });
+  }
+
+  return { questions, nextIndex: cursor };
+}
+
+/*
+ * SECTION 3: "WASH & Period Poverty" — heading itself (### Q{n}.) is the true/false
+ * statement, followed inline by a **MCQ-Q{n}. ...** sub-question.
+ */
+function parseSection3Block(allLines, lineIndex, section, difficulty, questionIndex) {
+  const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
+  const startMatch = currentLine.match(/^###\s+Q(\d+)\.\s*(.+)$/i);
+  if (!startMatch) return null;
+
+  const blockLines = [];
+  let cursor = lineIndex + 1;
+  while (cursor < allLines.length) {
+    const line = normalizeMarkdownLine(allLines[cursor]);
+    if (!line) {
+      cursor++;
+      continue;
+    }
+    if (/^#{2,3}\s+/i.test(line)) break;
+    blockLines.push(line);
+    cursor++;
+  }
+
+  const promptText = cleanMarkdownText(startMatch[2]);
+  const questionNumber = Number(startMatch[1]);
+  const mcqHeadingIndex = blockLines.findIndex(line => /^\*\*MCQ-Q\d+\.?/i.test(line));
+  const preMcqLines = mcqHeadingIndex === -1 ? blockLines : blockLines.slice(0, mcqHeadingIndex);
+  const postMcqLines = mcqHeadingIndex === -1 ? [] : blockLines.slice(mcqHeadingIndex + 1);
+  const questions = [];
+  let nextOrder = questionIndex + 1;
+
+  const tfAnswerLine = preMcqLines.find(line => /^\*\*True\/False Answer:\*\*/i.test(line) || /^True\/False Answer:/i.test(line));
+  if (tfAnswerLine) {
+    const tfAnswerValue = extractStructuredAnswerValue(tfAnswerLine);
+    if (tfAnswerValue !== null) {
+      questions.push(buildQuestionRecord(`True or False: ${promptText}`, String(tfAnswerValue), {
+        section, difficulty, sourceLine: lineIndex + 1, order: nextOrder,
+        explanation: extractStructuredExplanation(preMcqLines), questionNumber,
+      }));
+      nextOrder += 1;
+    }
+  } else {
+    console.warn('[questions] Section 3 block missing True/False Answer line', { lineIndex: lineIndex + 1 });
+  }
+
+  if (mcqHeadingIndex !== -1) {
+    const mcqHeadingLine = blockLines[mcqHeadingIndex];
+    const mcqPromptText = cleanMarkdownText(mcqHeadingLine.replace(/^\*\*MCQ-Q\d+\.?/i, ''));
+    const optionLines = postMcqLines.filter(line => /^[-*]?\s*[A-E]\)\s+/i.test(line));
+    const mcqAnswerLine = postMcqLines.find(line => /^\*\*(?:Answer|Correct Answer):\*\*/i.test(line) || /^(?:Answer|Correct Answer):/i.test(line));
+
+    if (optionLines.length >= 2 && mcqAnswerLine) {
+      const mcqAnswerValue = extractStructuredAnswerValue(mcqAnswerLine);
+      if (mcqAnswerValue !== null) {
+        const mcqQuestionText = [mcqPromptText, ...optionLines].join('\n');
+        questions.push(buildQuestionRecord(mcqQuestionText, String(mcqAnswerValue), {
+          section, difficulty, sourceLine: lineIndex + 1, order: nextOrder,
+          explanation: extractStructuredExplanation(postMcqLines), questionNumber,
+        }));
+      }
+    } else {
+      console.warn('[questions] Section 3 block missing usable MCQ answer/options', { lineIndex: lineIndex + 1 });
+    }
+  } else {
+    console.warn('[questions] Section 3 block missing MCQ heading', { lineIndex: lineIndex + 1 });
+  }
+
+  return { questions, nextIndex: cursor };
+}
+
+/*
+ * SECTION 4: "Clinical & Public Health MCQ/SBA" — ### Question {n} heading, a single
+ * bold scenario/question paragraph, then bold-lettered options (- **A.** text, distinct
+ * bracket style from the other sections). MCQ only, no true/false sub-question.
+ */
+function parseSection4Block(allLines, lineIndex, section, difficulty, questionIndex) {
+  const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
+  const startMatch = currentLine.match(/^###\s+Question\s+(\d+)\s*$/i);
+  if (!startMatch) return null;
+
+  const blockLines = [];
+  let cursor = lineIndex + 1;
+  while (cursor < allLines.length) {
+    const line = normalizeMarkdownLine(allLines[cursor]);
+    if (!line) {
+      cursor++;
+      continue;
+    }
+    if (/^#{2,3}\s+/i.test(line)) break;
+    blockLines.push(line);
+    cursor++;
+  }
+
+  const questionNumber = Number(startMatch[1]);
+  const promptLine = blockLines.find(line => /^\*\*(.+)\*\*\s*$/.test(line) && !/^[-*]\s/.test(line));
+  if (!promptLine) {
+    console.warn('[questions] Section 4 block missing prompt line', { lineIndex: lineIndex + 1 });
+    return { questions: [], nextIndex: cursor };
+  }
+  const promptText = cleanMarkdownText(promptLine);
+
+  const optionMap = new Map();
+  const optionRe = /^[-*]?\s*\*\*([A-E])\.\*\*\s*(.+)$/i;
+  blockLines.forEach(line => {
+    const match = line.match(optionRe);
+    if (match && !optionMap.has(match[1].toUpperCase())) {
+      optionMap.set(match[1].toUpperCase(), cleanMarkdownText(match[2]));
+    }
+  });
+
+  const answerLine = blockLines.find(line => /^\*\*Answer:\*\*/i.test(line));
+  const answerLetter = answerLine ? extractLeadingLetterAnswer(answerLine) : null;
+
+  if (optionMap.size < 2 || !answerLetter) {
+    console.warn('[questions] Section 4 block missing usable options/answer', { lineIndex: lineIndex + 1 });
+    return { questions: [], nextIndex: cursor };
+  }
+
+  const optionLines = [...optionMap.entries()].map(([letter, text]) => `${letter}) ${text}`);
+  const questionText = [promptText, ...optionLines].join('\n');
+  const explanation = extractStructuredExplanation(blockLines);
+
+  const question = buildQuestionRecord(questionText, answerLetter, {
+    section, difficulty, sourceLine: lineIndex + 1, order: questionIndex + 1, explanation, questionNumber,
+  });
+
+  return { questions: [question], nextIndex: cursor };
 }
 
 function normalizeMarkdownLine(line) {
@@ -300,226 +498,28 @@ function cleanMarkdownText(text) {
     .trim();
 }
 
-function getSectionHeading(line) {
-  if (!line) return null;
-
-  const hashHeading = line.match(/^#{1,6}\s+(.+)$/);
-  if (hashHeading) {
-    return cleanMarkdownText(hashHeading[1]);
-  }
-
-  const boldHeading = line.match(/^\*\*([^*]+)\*\*$/);
-  if (!boldHeading) return null;
-
-  const heading = cleanMarkdownText(boldHeading[1]);
-  if (/^(answer|correct answer|explanation|question\s*\d*|questions?\s*\d*|q\d+\.|\d+\\?[.)]\s*)/i.test(heading)) {
-    return null;
-  }
-  if (heading.length > 95 || heading.endsWith('?') || /^true or false:/i.test(heading)) {
-    return null;
-  }
-
-  return heading;
-}
-
-function inferDifficultyFromSection(section, questionCount) {
-  const sectionText = section.toLowerCase();
-
-  if (/basic|understanding|questions?\s*1\s*[-–]\s*50/.test(sectionText)) {
-    return 'easy';
-  }
-  if (/intermediate|questions?\s*51\s*[-–]\s*100|period poverty|wash/.test(sectionText)) {
-    return 'medium';
-  }
-  if (/advanced|family|specialist|evidence|management|secondary|chronic|neuromodulation|mcq|sba|questions?\s*10\d|questions?\s*15\d|questions?\s*20\d|questions?\s*25\d/.test(sectionText)) {
-    return 'hard';
-  }
-
-  if (questionCount < 120) return 'easy';
-  if (questionCount < 260) return 'medium';
-  return 'hard';
-}
-
-function parseBulletQuestion(line, allLines, lineIndex, section, difficulty, questionIndex) {
-  const questionMatch = line.match(/^[-*]\s+\*\*(.+?)\*\*\s*$/);
-  if (!questionMatch || /^answer:/i.test(questionMatch[1])) return null;
-
-  let cursor = lineIndex + 1;
-  const questionLines = [questionMatch[1]];
-
-  while (cursor < allLines.length) {
-    const currentLine = normalizeMarkdownLine(allLines[cursor]);
-    if (!currentLine) {
-      cursor++;
-      continue;
-    }
-    if (isAnswerLine(currentLine)) break;
-    if (isQuestionStart(currentLine) || getSectionHeading(currentLine)) return null;
-    questionLines.push(currentLine);
-    cursor++;
-  }
-
-  const answerInfo = findAnswerAfterLine(allLines, lineIndex + 1);
-  if (!answerInfo) return null;
-
-  return {
-    question: buildQuestionRecord(questionLines.join('\n'), answerInfo.answer, {
-      section,
-      difficulty,
-      sourceLine: lineIndex + 1,
-      order: questionIndex + 1,
-    }),
-    nextIndex: answerInfo.nextIndex,
-  };
-}
-
-function parseQuestionBlock(allLines, lineIndex, section, difficulty, questionIndex) {
-  const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
-  const questionNumberMatch = currentLine.match(/^\*\*Question\s+(\d+)\*\*\s*$/i);
-  const namedQuestionMatch = currentLine.match(/^\*\*Question:\*\*\s*(.+)$/i);
-  const shortQuestionMatch = currentLine.match(/^\*\*Q(\d+)\.\*\*\s*(.+)$/i);
-  const numberedBoldMatch = currentLine.match(/^\*\*(\d+)\\?[.)]\s*(.+?)\*\*\s*$/);
-  if (!questionNumberMatch && !namedQuestionMatch && !shortQuestionMatch && !numberedBoldMatch) return null;
-
-  const inlineQuestionText = namedQuestionMatch?.[1] || shortQuestionMatch?.[2] || numberedBoldMatch?.[2] || '';
-  const questionLines = inlineQuestionText ? [inlineQuestionText] : [];
-  let cursor = lineIndex + 1;
-
-  while (cursor < allLines.length) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) {
-      cursor++;
-      continue;
-    }
-    if (isAnswerLine(line)) break;
-    if (isQuestionStart(line) || getSectionHeading(line)) return null;
-    questionLines.push(line);
-    cursor++;
-  }
-
-  const answerInfo = findAnswerAfterLine(allLines, cursor);
-  if (!answerInfo || questionLines.length === 0) return null;
-
-  return {
-    question: buildQuestionRecord(questionLines.join(' '), answerInfo.answer, {
-      section,
-      difficulty,
-      sourceLine: lineIndex + 1,
-      order: questionIndex + 1,
-      questionNumber: Number(questionNumberMatch?.[1] || shortQuestionMatch?.[1] || numberedBoldMatch?.[1]) || null,
-    }),
-    nextIndex: answerInfo.nextIndex,
-  };
-}
-
-function parseInlineQuestionPairs(line, section, difficulty, questionIndex) {
-  const inlinePattern = /(?:^|\s)(?:\d+[.)]\s*)?\*\*(.+?)\*\*\s*(?:\*\*Answer:\*\*|Answer:)\s*([^*]+?)(?=\s+\d+[.)]\s*\*\*|$)/gi;
-  const parsed = [];
-  let match;
-
-  while ((match = inlinePattern.exec(line)) !== null) {
-    parsed.push(buildQuestionRecord(match[1], match[2], {
-      section,
-      difficulty,
-      sourceLine: null,
-      order: questionIndex + parsed.length + 1,
-    }));
-  }
-
-  return parsed;
-}
-
-function findAnswerAfterLine(allLines, startIndex) {
-  for (let cursor = startIndex; cursor < allLines.length; cursor++) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) continue;
-    if (isQuestionStart(line) || getSectionHeading(line)) return null;
-    if (!isAnswerLine(line)) continue;
-
-    const answer = extractAnswer(line, allLines, cursor);
-    if (!answer.value) return null;
-    return {
-      answer: answer.value,
-      nextIndex: answer.nextIndex,
-    };
-  }
-
-  return null;
-}
-
-function extractAnswer(answerLine, allLines, lineIndex) {
-  let answer = answerLine
-    .replace(/^\*\*(Correct\s+Answer|Answer):\*\*:?\s*/i, '')
-    .replace(/^\*\*(Correct\s+Answer|Answer):?\*\*\s*/i, '')
-    .replace(/^(Correct\s+Answer|Answer):\s*/i, '')
-    .trim();
-
-  let cursor = lineIndex + 1;
-
-  while (!answer && cursor < allLines.length) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) {
-      cursor++;
-      continue;
-    }
-    if (isQuestionStart(line) || isExplanationLine(line) || getSectionHeading(line)) break;
-    answer = line;
-    cursor++;
-    break;
-  }
-
-  while (cursor < allLines.length) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) {
-      cursor++;
-      continue;
-    }
-    if (isQuestionStart(line) || isAnswerLine(line) || isExplanationLine(line) || getSectionHeading(line)) break;
-    answer = `${answer} ${line}`;
-    cursor++;
-  }
-
-  return {
-    value: cleanMarkdownText(answer),
-    nextIndex: cursor,
-  };
-}
-
-function isQuestionStart(line) {
-  return /^[-*]\s+\*\*.+\*\*/.test(line) ||
-    /^\*\*Question\s+\d+\*\*/i.test(line) ||
-    /^\*\*Question:\*\*/i.test(line) ||
-    /^\*\*Q\d+\.\*\*/i.test(line) ||
-    /^\*\*\d+\\?[.)]\s+.+\*\*/.test(line);
-}
-
-function isAnswerLine(line) {
-  return /^\*\*(Correct\s+Answer|Answer):?\*\*/i.test(line) ||
-    /^(Correct\s+Answer|Answer):/i.test(line);
-}
-
-function isExplanationLine(line) {
-  return /^\*\*Explanation:?\*\*/i.test(line) || /^Explanation:?/i.test(line);
-}
-
 function buildQuestionRecord(questionText, answerText, metadata) {
-  let cleanedQuestion = cleanMarkdownText(questionText).replace(/^Question:\s*/i, '');
+  // Split into a leading prompt and any "A) text" option lines. Done line-by-line
+  // (rather than a single blob regex) because options are newline-separated and a
+  // lazy `.+?` without the dotall flag can never cross those newlines to find them.
+  const optionLineRe = /^[-*]?\s*([A-E])\)\s+(.+)$/i;
+  const promptLines = [];
+  const options = [];
+  questionText.split('\n').forEach(line => {
+    const match = line.trim().match(optionLineRe);
+    if (match) {
+      options.push({ label: match[1].toUpperCase(), text: cleanMarkdownText(match[2]) });
+    } else if (options.length === 0) {
+      promptLines.push(line);
+    }
+  });
+
+  const cleanedQuestion = cleanMarkdownText(promptLines.join(' ')).replace(/^Question:\s*/i, '');
   const cleanedAnswer = cleanMarkdownText(answerText);
   const normalizedAnswer = cleanedAnswer.toLowerCase();
-  
-  let options = [];
-  let isMcq = false;
-  let mcqAnswer = cleanedAnswer;
 
-  const optionRegex = /(?:^|\n|\s+)([A-E])\)\s+(.+?)(?=(?:\n|\s+)[A-E]\)\s+|$)/gi;
-  const matchArray = [...cleanedQuestion.matchAll(optionRegex)];
-  
-  if (matchArray.length >= 2) {
-    isMcq = true;
-    options = matchArray.map(match => ({ label: match[1].toUpperCase(), text: match[2].trim() }));
-    cleanedQuestion = cleanedQuestion.substring(0, matchArray[0].index).trim();
-    mcqAnswer = mcqAnswer.toUpperCase();
-  }
+  const isMcq = options.length >= 2;
+  const mcqAnswer = isMcq ? cleanedAnswer.toUpperCase() : cleanedAnswer;
 
   const isTrueFalse = !isMcq && (/^true\b/i.test(cleanedQuestion) || /^(true|false)\b/i.test(normalizedAnswer));
 
@@ -536,24 +536,6 @@ function buildQuestionRecord(questionText, answerText, metadata) {
     sourceLine: metadata.sourceLine,
     questionNumber: metadata.questionNumber || null,
   };
-}
-
-function applyOrderBasedDifficulty(parsedQuestions) {
-  const total = parsedQuestions.length;
-  if (total === 0) return;
-
-  parsedQuestions.forEach((question, index) => {
-    if (question.difficulty) return;
-
-    const progress = index / total;
-    if (progress < 0.34) {
-      question.difficulty = 'easy';
-    } else if (progress < 0.67) {
-      question.difficulty = 'medium';
-    } else {
-      question.difficulty = 'hard';
-    }
-  });
 }
 
 /**
@@ -1769,7 +1751,14 @@ function getExplanationForQuestion(q) {
       }
     }
   }
-  // Fallback: if no close match, just describe the correct statement
+  // Fallback: if no close match, just describe the correct answer
+  if (q.type === 'mcq') {
+    const correctOption = q.options.find(opt => opt.label === q.answer);
+    const optionText = correctOption ? correctOption.text.replace(/\s*✅\s*$/, '').trim() : null;
+    return optionText
+      ? `The correct answer is ${correctOption.label}) ${optionText}.`
+      : `The correct answer is ${q.answer}.`;
+  }
   if (q.answer === true) {
     return `${q.question.replace(/^True or False:\s*/i, '')} is correct.`;
   } else {
