@@ -21,14 +21,20 @@ const CELL_SIZE = 10;
 const DICE_ROLL_FRAMES = 20;
 const DICE_FRAME_DELAY = 50;
 const ENTRY_CORRECT_SIX_CHANCE = 0.65;
+
+/* Scoring */
+const POINTS_PER_CORRECT = 10;   /* points awarded for each correct answer */
+const STREAK_BONUS = 5;          /* extra points every time the streak hits a multiple of… */
+const STREAK_THRESHOLD = 3;      /* …this many correct answers in a row */
+
+/* Difficulty-scaled AI answer accuracy (probability the AI answers correctly). */
+const AI_ACCURACY = { easy: 0.8, medium: 0.6, hard: 0.45, all: 0.6 };
+
 const IMAGE_PATH = "assets/images";
 const AUDIO_PATH = "assets/audio";
 const QUESTION_SOURCE_PATH = "Menstrual_Health%20questions.md";
 
 /* Snakes: Landing position -> slide down to */
-/* Minimum difficulty allowed in the question pool (easy < medium < hard).
-   "easy" includes every difficulty so the pool draws from the whole bank. */
-const START_DIFFICULTY = "easy";
 const snakes = {
   11: 10, 48: 28, 41: 23, 64: 44, 68: 31,
   88: 72, 91: 71, 94: 87, 98: 83,
@@ -445,6 +451,7 @@ function createInitialGameState(playerConfigs = []) {
       avatar,
       hasStarted: false,
       score: 0,
+      streak: 0,
       achievements: [],
       isAI,
     });
@@ -461,6 +468,7 @@ function createInitialGameState(playerConfigs = []) {
       avatar,
       hasStarted: false,
       score: 0,
+      streak: 0,
       achievements: [],
       isAI: false,
     });
@@ -473,6 +481,8 @@ function createInitialGameState(playerConfigs = []) {
     isRolling: false,
     questionPool: [],
     usedQuestions: [],
+    difficulty: 'all',   /* pool filter: all | easy | medium | hard */
+    timerSeconds: 0,     /* per-question countdown; 0 = off */
   };
 }
 
@@ -575,12 +585,51 @@ const speechManager = {
 
 const elements = {};
 let aiTurnTimer = null;
+let questionTimerId = null;   /* interval id for the per-question countdown */
+
+/* ---------------------------------------------------------------
+   Per-question countdown timer. Off when timerSeconds is 0.
+   onExpire is called once if the player runs out of time.
+   --------------------------------------------------------------- */
+function clearQuestionTimer() {
+  if (questionTimerId !== null) {
+    clearInterval(questionTimerId);
+    questionTimerId = null;
+  }
+  if (elements.questionTimer) elements.questionTimer.hidden = true;
+}
+
+function startQuestionTimer(onExpire) {
+  clearQuestionTimer();
+  const total = gameState.timerSeconds || 0;
+  const chip = elements.questionTimer;
+  if (!total || !chip) return;
+
+  let remaining = total;
+  const render = () => {
+    chip.hidden = false;
+    chip.textContent = `⏱ ${remaining}s`;
+    chip.classList.toggle('question-timer-urgent', remaining <= 5);
+  };
+  render();
+
+  questionTimerId = setInterval(() => {
+    remaining -= 1;
+    if (remaining <= 0) {
+      clearQuestionTimer();
+      onExpire();
+      return;
+    }
+    render();
+  }, 1000);
+}
 
 function cacheElements() {
   Object.assign(elements, {
     // Navbar
     backBtn: document.getElementById('back-btn'),
     rulesBtn: document.getElementById('rules-btn'),
+    historyBtn: document.getElementById('history-btn'),
     themeBtn: document.getElementById('theme-btn'),
     musicBtn: document.getElementById('music-btn'),
     soundBtn: document.getElementById('sound-btn'),
@@ -633,6 +682,8 @@ function cacheElements() {
     player3NameInput: document.getElementById('player3-name'),
     player4NameInput: document.getElementById('player4-name'),
     playerCountSelect: document.getElementById('player-count'),
+    difficultySelect: document.getElementById('difficulty-select'),
+    timerSelect: document.getElementById('timer-select'),
     player3InputGroup: document.getElementById('player3-input-group'),
     player4InputGroup: document.getElementById('player4-input-group'),
     player1AvatarSelection: document.getElementById('player1-avatar-selection'),
@@ -644,6 +695,7 @@ function cacheElements() {
 
     // Question modal
     questionTitle: document.getElementById('question-title'),
+    questionTimer: document.getElementById('question-timer'),
     questionText: document.getElementById('question-text'),
     mcqOptions: document.getElementById('mcq-options'),
     trueBtn: document.getElementById('true-btn'),
@@ -657,7 +709,19 @@ function cacheElements() {
     // Winner modal
     winnerText: document.getElementById('winner-text'),
     winnerAvatar: document.getElementById('winner-avatar'),
+    winnerScores: document.getElementById('winner-scores'),
     playAgainBtn: document.getElementById('play-again-btn'),
+
+    // Resume-game modal
+    resumeModal: document.getElementById('resume-modal'),
+    resumeSummary: document.getElementById('resume-summary'),
+    resumeContinueBtn: document.getElementById('resume-continue-btn'),
+    resumeNewBtn: document.getElementById('resume-new-btn'),
+
+    // History modal
+    historyModal: document.getElementById('history-modal'),
+    historyList: document.getElementById('history-list'),
+    historyCloseBtn: document.getElementById('history-close-btn'),
 
     // Audio
     backgroundMusic: document.getElementById('background-music'),
@@ -750,6 +814,53 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/* Escape a string so it is safe to inject into innerHTML. Player names are the
+   only user-supplied text that reaches HTML templates (scoreboard, history). */
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  }[ch]));
+}
+
+/* ---------------------------------------------------------------
+   Scoring: +10 per correct answer, +5 bonus every 3-in-a-row streak.
+   --------------------------------------------------------------- */
+function recordAnswer(isCorrect) {
+  const player = gameState.players[gameState.currentPlayer];
+  if (!player) return;
+
+  if (isCorrect) {
+    player.streak = (player.streak || 0) + 1;
+    let gained = POINTS_PER_CORRECT;
+    if (player.streak % STREAK_THRESHOLD === 0) gained += STREAK_BONUS;
+    player.score = (player.score || 0) + gained;
+  } else {
+    player.streak = 0;
+  }
+
+  updateScoreboardUi();
+}
+
+/* Refresh the per-player score and streak badges on the player cards. */
+function updateScoreboardUi() {
+  for (let i = 0; i < 4; i++) {
+    const player = gameState.players[i];
+    const scoreEl = document.getElementById(`player${i + 1}-score-display`);
+    const badgeEl = document.getElementById(`player${i + 1}-streak-badge`);
+    if (scoreEl && player) scoreEl.textContent = `${player.score || 0} pts`;
+    if (badgeEl && player) {
+      const streaking = (player.streak || 0) >= STREAK_THRESHOLD;
+      badgeEl.hidden = !streaking;
+      const countEl = badgeEl.querySelector('.streak-count');
+      if (countEl) countEl.textContent = String(player.streak || 0);
+    }
+  }
+}
+
 function getPlayerToken(index) {
   return [elements.player1, elements.player2, elements.player3, elements.player4][index] || null;
 }
@@ -809,6 +920,7 @@ function updatePlayersUi() {
   }
 
   elements.currentPlayerName.textContent = gameState.players[gameState.currentPlayer]?.name || "Player 1";
+  updateScoreboardUi();
 }
 
 function showRulesStep() {
@@ -1336,6 +1448,7 @@ function toggleReadAloud() {
    ============================================================================ */
 
 let currentRuleSlide = 0;
+let pendingSavedGame = null;   /* saved game awaiting a Resume / New Game choice */
 
 function initializeCarousel() {
   renderCarouselSlides();
@@ -1503,6 +1616,7 @@ function showQuestionModal(questionText) {
 }
 
 function hideQuestionModal() {
+  clearQuestionTimer();
   elements.questionModal.hidden = true;
   elements.questionModal.classList.remove('modal-active');
   deactivateFocusTrap(elements.questionModal);
@@ -1512,10 +1626,32 @@ function showWinnerModal(playerName, playerElement) {
   elements.winnerText.textContent = `${playerName} wins the game!`;
   elements.winnerAvatar.src = playerElement?.src || "";
   elements.winnerAvatar.alt = `${playerName}'s avatar`;
+  renderFinalScoreboard();
   elements.winnerModal.hidden = false;
   elements.winnerModal.classList.add('modal-active');
   playSound(elements.winSound);
   activateFocusTrap(elements.winnerModal);
+}
+
+/* Fill the winner modal with a final scoreboard sorted by score (desc). */
+function renderFinalScoreboard() {
+  if (!elements.winnerScores) return;
+  const ranked = gameState.players
+    .map((p, index) => ({ p, index }))
+    .sort((a, b) => (b.p.score || 0) - (a.p.score || 0));
+
+  elements.winnerScores.innerHTML = `
+    <h3 class="scoreboard-title">Final Scores</h3>
+    <ol class="scoreboard-list">
+      ${ranked.map(({ p }) => `
+        <li class="scoreboard-row">
+          <img class="scoreboard-avatar" src="${escapeHtml(p.avatar || '')}" alt="">
+          <span class="scoreboard-name">${escapeHtml(p.name)}${p.isAI ? ' (AI)' : ''}</span>
+          <span class="scoreboard-score">${p.score || 0} pts</span>
+        </li>
+      `).join('')}
+    </ol>
+  `;
 }
 
 function hideWinnerModal() {
@@ -1573,16 +1709,16 @@ function getBoardJump(position) {
 // QUESTION HANDLING – session‑unique question pool
 // ---------------------------------------------------------------------------
 
-// Build the list of pool-eligible questions, honouring the difficulty floor but
-// never returning an empty list when the bank has usable questions.
+// Build the list of pool-eligible questions for the selected difficulty, never
+// returning an empty list when the bank has usable questions.
 function getEligibleQuestions() {
-  const difficultyOrder = ['easy', 'medium', 'hard'];
-  const minIndex = Math.max(0, difficultyOrder.indexOf(START_DIFFICULTY));
-  const allowed = new Set(difficultyOrder.slice(minIndex));
   const isPlayable = q => q && (q.type === 'true-false' || q.type === 'mcq');
-  const filtered = questions.filter(q => isPlayable(q) && allowed.has(q.difficulty));
+  const selected = gameState.difficulty || 'all';
+  const playable = questions.filter(isPlayable);
+  if (selected === 'all') return playable;
+  const filtered = playable.filter(q => q.difficulty === selected);
   // Fall back to every playable question if the difficulty filter empties the pool.
-  return filtered.length ? filtered : questions.filter(isPlayable);
+  return filtered.length ? filtered : playable;
 }
 
 function shuffleInPlace(list) {
@@ -1646,11 +1782,16 @@ function getExplanationForQuestion(q) {
 }
 
 function showQuestion(callback) {
-  // If the current player is AI, answer automatically without UI
+  // If the current player is AI, answer automatically without UI. The odds of a
+  // correct answer scale with the selected difficulty of the question pool.
   const currentPlayer = gameState.players[gameState.currentPlayer];
   if (currentPlayer.isAI) {
-    const autoAnswer = Math.random() < 0.5;
-    setTimeout(() => callback(autoAnswer), 300);
+    const accuracy = AI_ACCURACY[gameState.difficulty] ?? AI_ACCURACY.all;
+    const autoAnswer = Math.random() < accuracy;
+    setTimeout(() => {
+      recordAnswer(autoAnswer);
+      callback(autoAnswer);
+    }, 300);
     return;
   }
 
@@ -1705,7 +1846,17 @@ function showQuestion(callback) {
   showQuestionModal(nextQuestion.question);
   gameState.isQuestionActive = true;
 
-  function handleSelect(answer, clickedBtn = null) {
+  /* Start the countdown (if enabled). Running out of time counts as a wrong
+     answer: resolve with a guaranteed-incorrect option. */
+  startQuestionTimer(() => {
+    const wrongAnswer = nextQuestion.type === 'mcq'
+      ? (nextQuestion.options.find(opt => opt.label !== nextQuestion.answer)?.label ?? null)
+      : !nextQuestion.answer;
+    handleSelect(wrongAnswer, null, true);
+  });
+
+  function handleSelect(answer, clickedBtn = null, timedOut = false) {
+    clearQuestionTimer();
     if (nextQuestion.type === 'mcq') {
       const buttons = elements.mcqOptions.querySelectorAll('button');
       buttons.forEach(b => {
@@ -1737,18 +1888,24 @@ function showQuestion(callback) {
     } else {
       elements.questionFeedback.classList.remove('feedback-correct');
       elements.questionFeedback.classList.add('feedback-incorrect');
-      elements.feedbackIcon.textContent = "❌";
-      elements.feedbackMessage.textContent = "Incorrect – better luck next time.";
+      elements.feedbackIcon.textContent = timedOut ? "⏱" : "❌";
+      elements.feedbackMessage.textContent = timedOut
+        ? "Time's up – that counts as incorrect."
+        : "Incorrect – better luck next time.";
     }
-    
+
     elements.feedbackExplanation.textContent = explanation;
     elements.questionFeedback.classList.remove('hidden');
     elements.continueBtn.classList.remove('hidden');
-    
+
     // Speak feedback and explanation
-    const feedbackText = (isCorrect ? "Correct – well done! " : "Incorrect – better luck next time. ") + explanation;
+    const incorrectSpoken = timedOut ? "Time's up. That counts as incorrect. " : "Incorrect – better luck next time. ";
+    const feedbackText = (isCorrect ? "Correct – well done! " : incorrectSpoken) + explanation;
     speechManager.speak(feedbackText);
-    
+
+    // Update score and streak once the answer is locked in.
+    recordAnswer(isCorrect);
+
     function onContinue() {
       elements.continueBtn.removeEventListener('click', onContinue);
       speechManager.stop();
@@ -1881,10 +2038,13 @@ function finalizeTurn(newPosition) {
         position: p.position,
         avatar: p.avatar,
         score: p.score,
+        streak: p.streak,
         achievements: p.achievements,
         isAI: p.isAI,
       })),
       currentPlayer: gameState.currentPlayer,
+      winner: currentPlayer.name,
+      difficulty: gameState.difficulty,
       timestamp: Date.now(),
     });
     clearCurrentGame().catch(error => {
@@ -1901,10 +2061,13 @@ function finalizeTurn(newPosition) {
       position: p.position,
       avatar: p.avatar,
       score: p.score,
+      streak: p.streak,
       achievements: p.achievements,
       isAI: p.isAI,
     })),
     currentPlayer: gameState.currentPlayer,
+    difficulty: gameState.difficulty,
+    timerSeconds: gameState.timerSeconds,
     questionPool: gameState.questionPool?.map(q => q.id) || [],
   });
 }
@@ -1994,12 +2157,15 @@ function startGame() {
   }
 
   gameState = createInitialGameState(playerConfigs);
+  gameState.difficulty = elements.difficultySelect?.value || 'all';
+  gameState.timerSeconds = Number(elements.timerSelect?.value || 0);
   gameState.players.forEach((player, index) => {
     player.element = getPlayerToken(index);
     player.position = 0;
     player.hasStarted = false;
   });
   updatePlayersUi();
+  initializeQuestionPool();
 
   hideSetupModal();
 
@@ -2047,6 +2213,155 @@ function showRulesModal() {
 }
 
 /* ============================================================================
+   RESUME-GAME PROMPT
+   ============================================================================ */
+
+function promptResume(saved) {
+  hideSetupModal();
+  if (elements.resumeSummary) {
+    const names = (saved.players || []).map(p => p.name).join(', ');
+    elements.resumeSummary.textContent = names ? `Players: ${names}` : '';
+  }
+  if (!elements.resumeModal) return;
+  elements.resumeModal.hidden = false;
+  elements.resumeModal.classList.add('modal-active');
+  activateFocusTrap(elements.resumeModal);
+}
+
+function hideResumeModal() {
+  if (!elements.resumeModal) return;
+  elements.resumeModal.classList.remove('modal-active');
+  elements.resumeModal.hidden = true;
+  deactivateFocusTrap(elements.resumeModal);
+}
+
+/* Apply a previously saved game to the live state and continue play. */
+function applySavedGame(saved) {
+  gameState = createInitialGameState(saved.players || []);
+  gameState.difficulty = saved.difficulty || 'all';
+  gameState.timerSeconds = saved.timerSeconds || 0;
+  gameState.players.forEach((p, i) => {
+    const sp = saved.players?.[i] || {};
+    p.position = sp.position || 0;
+    p.score = sp.score || 0;
+    p.streak = sp.streak || 0;
+    p.achievements = sp.achievements || [];
+    p.hasStarted = p.position > 0;
+    p.element = getPlayerToken(i);
+  });
+  gameState.currentPlayer = saved.currentPlayer ?? 0;
+
+  // Restore the shuffled question pool (IDs only) to keep uniqueness.
+  if (saved.questionPool?.length) {
+    const byId = new Map(questions.map(q => [q.id, q]));
+    gameState.questionPool = saved.questionPool.map(id => byId.get(id)).filter(Boolean);
+  } else {
+    initializeQuestionPool();
+  }
+
+  gameState.players.forEach((player, idx) => syncAvatarPicker(idx, player.avatar));
+  updatePlayersUi();
+  elements.rollDiceBtn.hidden = false;
+  elements.restartBtn.hidden = false;   // A restored game is in progress.
+  playMusic(elements.backgroundMusic);
+  setRollButtonForCurrentPlayer();
+  scheduleAiTurnIfNeeded();
+}
+
+function resumeSavedGame() {
+  if (!pendingSavedGame) return;
+  const saved = pendingSavedGame;
+  pendingSavedGame = null;
+  hideResumeModal();
+  applySavedGame(saved);
+}
+
+function startNewFromResume() {
+  pendingSavedGame = null;
+  hideResumeModal();
+  clearCurrentGame().catch(error => console.warn('Unable to clear current game', error));
+  showSetupModal();
+}
+
+/* ============================================================================
+   GAME HISTORY
+   ============================================================================ */
+
+/* Determine the winner of an archived game: whoever reached 100, else top score. */
+function historyWinner(state) {
+  const players = state.players || [];
+  if (state.winner) return state.winner;
+  const reached = players.find(p => (p.position || 0) >= 100);
+  if (reached) return reached.name;
+  const top = players.slice().sort((a, b) => (b.score || 0) - (a.score || 0))[0];
+  return top?.name || '—';
+}
+
+function formatHistoryDate(timestamp) {
+  if (!timestamp) return '';
+  try {
+    return new Date(timestamp).toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  } catch {
+    return new Date(timestamp).toLocaleString();
+  }
+}
+
+async function renderHistoryList() {
+  const list = elements.historyList;
+  if (!list) return;
+  list.innerHTML = '<li class="history-empty">Loading…</li>';
+
+  let games = [];
+  try {
+    games = await fetchGameHistory(20);
+  } catch (error) {
+    console.warn('Unable to load game history', error);
+  }
+
+  if (!games.length) {
+    list.innerHTML = '<li class="history-empty">No finished games yet. Win a game to see it here!</li>';
+    return;
+  }
+
+  list.innerHTML = games.map(entry => {
+    const state = entry.state || {};
+    const players = state.players || [];
+    const winner = historyWinner(state);
+    const scores = players.slice()
+      .sort((a, b) => (b.score || 0) - (a.score || 0))
+      .map(p => `${escapeHtml(p.name)}: ${p.score || 0}`)
+      .join(' • ');
+    return `
+      <li class="history-row">
+        <div class="history-main">
+          <span class="history-winner">🏆 ${escapeHtml(winner)}</span>
+          <span class="history-date">${escapeHtml(formatHistoryDate(entry.timestamp))}</span>
+        </div>
+        <div class="history-scores">${scores}</div>
+      </li>
+    `;
+  }).join('');
+}
+
+function openHistoryModal() {
+  if (!elements.historyModal) return;
+  elements.historyModal.hidden = false;
+  elements.historyModal.classList.add('modal-active');
+  activateFocusTrap(elements.historyModal);
+  renderHistoryList();
+}
+
+function hideHistoryModal() {
+  if (!elements.historyModal) return;
+  elements.historyModal.classList.remove('modal-active');
+  elements.historyModal.hidden = true;
+  deactivateFocusTrap(elements.historyModal);
+}
+
+/* ============================================================================
    EVENT LISTENERS & INITIALIZATION
    ============================================================================ */
 
@@ -2080,37 +2395,13 @@ function initGame() {
       return loadCurrentGame();
     })
     .then(saved => {
-      if (saved) {
-        gameState = createInitialGameState(saved.players || []);
-        gameState.players.forEach((p, i) => {
-          const sp = saved.players?.[i] || {};
-          p.position = sp.position || 0;
-          p.score = sp.score || 0;
-          p.achievements = sp.achievements || [];
-          p.hasStarted = p.position > 0;
-          p.element = getPlayerToken(i);
-        });
-        gameState.currentPlayer = saved.currentPlayer ?? 0;
-        // Restore the shuffled question pool (IDs only) to keep uniqueness
-        if (saved.questionPool?.length) {
-          const byId = new Map(questions.map(q => [q.id, q]));
-          gameState.questionPool = saved.questionPool
-            .map(id => byId.get(id))
-            .filter(Boolean);
-        }
-        gameState.players.forEach((player, idx) => syncAvatarPicker(idx, player.avatar));
-        updatePlayersUi();
-        // A restored game is in progress, so surface the Restart button.
-        elements.restartBtn.hidden = false;
-        setRollButtonForCurrentPlayer();
-        if (appState.showRulesOnStart) {
-          showSetupModal();
-        } else {
-          scheduleAiTurnIfNeeded();
-        }
+      // A saved game in progress: ask the player whether to resume it rather
+      // than silently restoring. Otherwise leave the setup modal open.
+      if (saved && (saved.players || []).some(p => (p.position || 0) > 0)) {
+        pendingSavedGame = saved;
+        promptResume(saved);
       }
       // Roll dice button enabled after game start handled in startGame()
-
     })
     .catch(err => {
       console.warn('Failed to load game state', err);
@@ -2133,6 +2424,11 @@ function initGame() {
   }
   
   elements.rulesBtn.addEventListener('click', showRulesModal);
+  elements.historyBtn?.addEventListener('click', openHistoryModal);
+  elements.historyCloseBtn?.addEventListener('click', hideHistoryModal);
+  elements.historyModal?.querySelector('.modal-overlay')?.addEventListener('click', hideHistoryModal);
+  elements.resumeContinueBtn?.addEventListener('click', resumeSavedGame);
+  elements.resumeNewBtn?.addEventListener('click', startNewFromResume);
   elements.themeBtn.addEventListener('click', toggleTheme);
   elements.musicBtn.addEventListener('click', toggleMusic);
   elements.soundBtn.addEventListener('click', toggleSound);
@@ -2179,9 +2475,23 @@ function initGame() {
   
   // Play again button
   elements.playAgainBtn.addEventListener('click', resetGame);
-  
+
+  // Register the service worker for offline support (http/https only).
+  registerServiceWorker();
+
   // Show setup modal on start (unless user disabled it) – now handled by loadCurrentGame
 
+}
+
+/* Register the offline service worker when the environment supports it. */
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(error => {
+      console.warn('Service worker registration failed', error);
+    });
+  });
 }
 
 
@@ -2194,6 +2504,10 @@ document.addEventListener('keydown', (e) => {
     // is only ever open during a question, so there is nothing else to close.
     if (gameState.isQuestionActive) {
       return;
+    }
+    // The history modal is purely informational, so Escape may close it.
+    if (elements.historyModal?.classList.contains('modal-active')) {
+      hideHistoryModal();
     }
   }
 });

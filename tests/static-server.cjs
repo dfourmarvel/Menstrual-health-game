@@ -10,10 +10,15 @@ const types = {
   '.html': 'text/html',
   '.js': 'text/javascript',
   '.json': 'application/json',
+  '.webmanifest': 'application/manifest+json',
   '.md': 'text/markdown; charset=utf-8',
   '.mp3': 'audio/mpeg',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
+  '.webp': 'image/webp',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.ico': 'image/x-icon',
 };
 
 const server = http.createServer((req, res) => {

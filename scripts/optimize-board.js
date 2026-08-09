@@ -1,30 +1,29 @@
 // optimize-board.js
-// This script uses sharp (installed as a devDependency) to create an optimized WebP
-// version of the game board and a 600px PNG fallback for srcset.
+// Uses sharp (a devDependency) to generate responsive board variants:
+// 600w and 1200w, each as WebP (small, primary) and PNG (fallback).
+// Run from the project root: node scripts/optimize-board.js
 
 const sharp = require('sharp');
 const path = require('path');
 
 // Resolve paths relative to the project root (the cwd when we run the script).
 const src = path.resolve('assets', 'images', 'menstrual-maze-board.png');
-const outWebp = path.resolve('assets', 'images', 'menstrual-maze-board.webp');
-const out600 = path.resolve('assets', 'images', 'menstrual-maze-board-600.png');
+const base = path.resolve('assets', 'images', 'menstrual-maze-board');
+
+const variants = [
+  { width: 600, format: 'webp', opts: { quality: 82 } },
+  { width: 1200, format: 'webp', opts: { quality: 82 } },
+  { width: 600, format: 'png', opts: { quality: 90 } },
+  { width: 1200, format: 'png', opts: { quality: 90 } },
+];
 
 (async () => {
   try {
-    // 1200px wide WebP (quality 85)
-    await sharp(src)
-      .resize({ width: 1200 })
-      .webp({ quality: 85 })
-      .toFile(outWebp);
-    console.log('✅ Created WebP:', outWebp);
-
-    // 600px fallback PNG
-    await sharp(src)
-      .resize({ width: 600 })
-      .png({ quality: 90 })
-      .toFile(out600);
-    console.log('✅ Created 600px PNG fallback:', out600);
+    for (const v of variants) {
+      const out = `${base}-${v.width}.${v.format}`;
+      await sharp(src).resize({ width: v.width })[v.format](v.opts).toFile(out);
+      console.log('✅ Created', out);
+    }
   } catch (err) {
     console.error('❌ Optimization error:', err);
     process.exit(1);

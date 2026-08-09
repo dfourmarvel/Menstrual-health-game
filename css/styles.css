@@ -1568,3 +1568,258 @@ button {
     display: none;
   }
 }
+
+/* ============================================================================
+   GAME OPTIONS (difficulty / timer / player count)
+   ============================================================================ */
+
+.game-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.player-count-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1 1 120px;
+}
+
+.player-count-section label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.game-options select,
+#player-count {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: var(--font-size-md);
+  transition: all var(--transition-fast);
+}
+
+.game-options select:focus,
+#player-count:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* ============================================================================
+   SCORE & STREAK (player cards)
+   ============================================================================ */
+
+.player-score {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--warning-color);
+  background-color: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 999px;
+  padding: 2px var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ============================================================================
+   QUESTION TIMER
+   ============================================================================ */
+
+.question-timer {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--primary-color);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: var(--spacing-xs) var(--spacing-md);
+  min-width: 64px;
+  text-align: center;
+}
+
+.question-timer-urgent {
+  color: #fff;
+  background-color: var(--danger-color);
+  border-color: var(--danger-color);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+/* ============================================================================
+   FINAL SCOREBOARD (winner modal)
+   ============================================================================ */
+
+.winner-scores {
+  margin-top: var(--spacing-lg);
+  text-align: left;
+}
+
+.scoreboard-title {
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-sm);
+  text-align: center;
+}
+
+.scoreboard-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  counter-reset: rank;
+}
+
+.scoreboard-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  counter-increment: rank;
+}
+
+.scoreboard-row::before {
+  content: counter(rank);
+  font-weight: 800;
+  color: var(--text-secondary);
+  min-width: 1.2em;
+  text-align: center;
+}
+
+.scoreboard-row:first-child {
+  border-color: var(--warning-color);
+  background-color: rgba(245, 158, 11, 0.08);
+}
+
+.scoreboard-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: contain;
+  background-color: var(--bg-primary);
+}
+
+.scoreboard-name {
+  flex: 1;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.scoreboard-score {
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+/* ============================================================================
+   RESUME MODAL
+   ============================================================================ */
+
+.modal-resume {
+  max-width: 440px;
+  text-align: center;
+}
+
+.resume-icon {
+  font-size: 56px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.resume-text {
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+  margin: var(--spacing-md) 0;
+}
+
+.resume-summary {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ============================================================================
+   GAME HISTORY MODAL
+   ============================================================================ */
+
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.history-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-md);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--primary-color);
+  border-radius: 8px;
+}
+
+.history-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.history-winner {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.history-date {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.history-scores {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.history-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: var(--spacing-lg);
+}
+
+/* ============================================================================
+   REDUCED MOTION
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
