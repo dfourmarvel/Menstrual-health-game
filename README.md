@@ -53,7 +53,7 @@ npm test
 index.html              # Main game screen and modals
 css/styles.css          # Layout, themes, dice, board, and responsive UI
 js/game.js              # Game state, rules, dice, questions, audio, and storage
-questions.md            # Question bank loaded at runtime
+Menstrual_Health questions.md  # Question bank loaded at runtime
 assets/images/          # Board, tokens, avatars, and dice images
 assets/audio/           # Music and sound effects
 tests/                  # Playwright TypeScript tests

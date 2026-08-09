@@ -45,6 +45,7 @@ test('roll dice button triggers a dice roll after game start', async ({ page }) 
 
   await expect(rollButton).toBeEnabled();
   await expect(diceContainer).toBeVisible();
+  await expect(diceContainer.locator('canvas')).toHaveCount(1);
 
   await rollButton.click();
   await answerQuestionIfShown(page);
