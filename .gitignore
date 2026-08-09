@@ -20,6 +20,7 @@ pnpm-debug.log*
 !.env.example
 .vscode/
 .idea/
+.claude/
 
 # OS files
 .DS_Store
