@@ -48,14 +48,16 @@ test('loads questions from the markdown bank and shows explanations', async ({ p
 
   await page.locator('#roll-dice').click();
 
+  // A real question from the markdown bank should appear (TF or MCQ) with non-empty text.
   await expect(page.locator('#question-modal')).toBeVisible();
   await expect(page.locator('#question-text')).not.toHaveText('');
 
-  const trueBtn = page.locator('#true-btn');
-  if (await trueBtn.isVisible().catch(() => false)) {
-    await trueBtn.click();
+  // Answer whichever question type is shown.
+  const mcqOptions = page.locator('#mcq-options');
+  if (await mcqOptions.isVisible()) {
+    await mcqOptions.locator('.btn-mcq-option').first().click();
   } else {
-    await page.locator('#mcq-options button').first().click();
+    await page.locator('#true-btn').click();
   }
 
   await expect(page.locator('#question-feedback')).toBeVisible();

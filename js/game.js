@@ -21,12 +21,20 @@ const CELL_SIZE = 10;
 const DICE_ROLL_FRAMES = 20;
 const DICE_FRAME_DELAY = 50;
 const ENTRY_CORRECT_SIX_CHANCE = 0.65;
+
+/* Scoring */
+const POINTS_PER_CORRECT = 10;   /* points awarded for each correct answer */
+const STREAK_BONUS = 5;          /* extra points every time the streak hits a multiple of… */
+const STREAK_THRESHOLD = 3;      /* …this many correct answers in a row */
+
+/* Difficulty-scaled AI answer accuracy (probability the AI answers correctly). */
+const AI_ACCURACY = { easy: 0.8, medium: 0.6, hard: 0.45, all: 0.6 };
+
 const IMAGE_PATH = "assets/images";
 const AUDIO_PATH = "assets/audio";
 const QUESTION_SOURCE_PATH = "Menstrual_Health%20questions.md";
 
 /* Snakes: Landing position -> slide down to */
-const START_DIFFICULTY = "medium";
 const snakes = {
   11: 10, 48: 28, 41: 23, 64: 44, 68: 31,
   88: 72, 91: 71, 94: 87, 98: 83,
@@ -40,7 +48,7 @@ const ladders = {
   85: 100, 58: 100,
 };
 
-/* Questions array - will be populated dynamically from the markdown question bank */
+/* Questions array - will be populated dynamically from the question bank */
 let questions = [];
 let questionBankReady = Promise.resolve();
 let questionBankMetadata = {
@@ -59,428 +67,260 @@ const difficultyLevels = {
 
 /* 
  * QUESTION PARSER & LOADER
- * Parses the markdown question bank at runtime to build the question bank
+ * Parses the question bank at runtime to build the question bank
  */
 
 /**
- * Parse the markdown question bank file and extract questions with answers
+ * Parse the the question bank file and extract questions with answers
  * Categorizes them by difficulty based on section headings
  */
 async function loadQuestionsFromMarkdown() {
   try {
     const response = await fetch(QUESTION_SOURCE_PATH);
     if (!response.ok) {
-      throw new Error(`Could not load question bank from ${QUESTION_SOURCE_PATH}`);
+      console.warn('Could not load the question bank, using fallback questions');
+      loadFallbackQuestions();
+      return;
     }
 
     const markdown = await response.text();
     const parsedQuestions = parseQuestionsMarkdown(markdown);
-
+    
     if (parsedQuestions.length === 0) {
-      throw new Error('No questions parsed from the markdown question bank');
+      console.warn('No questions parsed from the question bank, using fallback questions');
+      loadFallbackQuestions();
+      return;
     }
 
     questions = parsedQuestions;
-    console.log(`Loaded ${questions.length} questions from the markdown question bank`);
+    console.log(`Loaded ${questions.length} questions from the question bank`);
     categorizeQuestionsByDifficulty();
   } catch (error) {
-    console.error('Error loading markdown question bank:', error);
-    throw error;
+    console.warn('Error loading the question bank:', error);
+    loadFallbackQuestions();
   }
 }
 
 /**
- * Section-to-difficulty mapping. Each of the question bank's four sections uses a
- * distinct markdown format (see the per-section block parsers below) and is tagged
- * with a fixed difficulty rather than inferred from keywords or running counts.
- */
-const SECTION_DIFFICULTY = { 1: 'easy', 2: 'medium', 3: 'medium', 4: 'hard' };
-const SECTION_HEADING_RE = /^##\s+SECTION\s+(\d+)\b/i;
-const SECTION_PARSERS = {
-  1: parseSection1Block,
-  2: parseSection2Block,
-  3: parseSection3Block,
-  4: parseSection4Block,
-};
-
-/**
- * Parse markdown text to extract questions and answers.
- * Tracks the current `## SECTION N` heading and dispatches each block to the parser
- * for that section's specific format.
+ * Parse markdown text to extract questions and answers
+ * Recognizes both True/False and Q&A format questions
  * @param {string} markdown - The markdown content from the question bank
  * @returns {Array} Array of question objects with {question, answer, type, section, difficulty}
  */
 function parseQuestionsMarkdown(markdown) {
   const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
-  const parsedQuestions = [];
-  let currentSection = null;
-  let currentSectionHeading = '';
-  let i = 0;
+  const questions = [];
+  const seen = new Set();
+  let section = 'Section 1';
+  let difficulty = 'easy';
+  let block = [];
 
-  while (i < lines.length) {
-    const line = normalizeMarkdownLine(lines[i]);
-    const sectionMatch = line.match(SECTION_HEADING_RE);
+  const flushBlock = () => {
+    if (block.length) {
+      buildRecordsFromBlock(block, section, difficulty).forEach(record => {
+        const key = `${record.type}::${record.question.toLowerCase().replace(/\s+/g, ' ').trim()}`;
+        if (record.question && !seen.has(key)) {
+          seen.add(key);
+          record.id = `q-${questions.length + 1}`;
+          questions.push(record);
+        }
+      });
+    }
+    block = [];
+  };
+
+  for (const rawLine of lines) {
+    const line = normalizeMarkdownLine(rawLine);
+    const sectionMatch = line.match(/^##\s+(SECTION[^#].*)$/i);
     if (sectionMatch) {
-      currentSection = Number(sectionMatch[1]);
-      currentSectionHeading = cleanMarkdownText(line.replace(/^##\s+/, ''));
-      i++;
+      flushBlock();
+      section = cleanMarkdownText(sectionMatch[1]);
+      difficulty = sectionDifficulty(section);
       continue;
     }
-
-    const parseBlock = SECTION_PARSERS[currentSection];
-    const block = parseBlock
-      ? parseBlock(lines, i, currentSectionHeading, SECTION_DIFFICULTY[currentSection], parsedQuestions.length)
-      : null;
-    if (block) {
-      parsedQuestions.push(...block.questions);
-      i = block.nextIndex;
+    if (/^-{3,}$/.test(line)) {
+      flushBlock();
       continue;
     }
-
-    i++;
+    block.push(line);
   }
+  flushBlock();
 
-  return parsedQuestions;
+  return questions;
 }
 
-function parseSection1Block(allLines, lineIndex, section, difficulty, questionIndex) {
-  const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
-  if (!/^###\s+TF-/i.test(currentLine)) {
+/* Map a section title to a difficulty bucket used by the question pool. */
+function sectionDifficulty(sectionTitle) {
+  const title = sectionTitle.toLowerCase();
+  if (/section\s*4|clinical|sba/.test(title)) return 'hard';
+  if (/section\s*3|wash|period poverty/.test(title)) return 'medium';
+  return 'easy';
+}
+
+/*
+ * Turn a single markdown block (delimited by --- rules) into question records.
+ * A block may yield a True/False record, a multiple-choice record, or both.
+ */
+function buildRecordsFromBlock(blockLines, section, difficulty) {
+  const lines = blockLines.map(line => line.trim()).filter(Boolean);
+  if (!lines.length) return [];
+
+  const statement = getBlockStatement(lines);
+  const records = [];
+
+  const trueFalse = extractTrueFalseRecord(lines, statement, section, difficulty);
+  if (trueFalse) records.push(trueFalse);
+
+  /* Section 2 MCQs are auto-generated with truncated/generic options, so they
+     are skipped for quality; its True/False statements are still included. */
+  if (!/section\s*2/i.test(section)) {
+    const mcq = extractMcqRecord(lines, statement, section, difficulty);
+    if (mcq) records.push(mcq);
+  }
+
+  return records;
+}
+
+/* Extract the statement/prompt text from a block's heading line. */
+function getBlockStatement(lines) {
+  const heading = lines[0] || '';
+  let match;
+  if ((match = heading.match(/^###\s+TF-\d+\.?\s*(.+)$/i))) return match[1].trim();
+  if ((match = heading.match(/^###\s+Q\d+\.?\s*(.+)$/i))) return match[1].trim();
+  if ((match = heading.match(/^\*\*\d+\.\s*(.+?)\*\*\s*$/))) return cleanMarkdownText(match[1]);
+  return '';
+}
+
+/* Interpret an answer line as a boolean, using ✅/❌ markers or true/false words. */
+function answerToBool(text) {
+  if (/✅/.test(text) || /\btrue\b/i.test(text)) return true;
+  if (/❌/.test(text) || /\bfalse\b/i.test(text)) return false;
+  return null;
+}
+
+function extractTrueFalseRecord(lines, statement, section, difficulty) {
+  let boolAnswer = null;
+  let tfStatement = statement;
+
+  const inlineIndex = lines.findIndex(line => /^\*\*True\/False Answer:\*\*/i.test(line));
+  const promptIndex = lines.findIndex(line => /^\*\*True or False:\*\*/i.test(line));
+
+  if (inlineIndex !== -1) {
+    /* Sections 2 & 3: the statement is the heading; the answer is inline. */
+    boolAnswer = answerToBool(lines[inlineIndex]);
+  } else if (promptIndex !== -1) {
+    /* Section 1: the statement follows the prompt; answer is the next Answer line. */
+    tfStatement = lines[promptIndex].replace(/^\*\*True or False:\*\*/i, '').trim();
+    const answerIndex = lines.findIndex((line, i) => i > promptIndex && /^\*\*Answer:\*\*/i.test(line));
+    if (answerIndex !== -1) boolAnswer = answerToBool(lines[answerIndex]);
+  } else {
     return null;
   }
 
-  const blockLines = [];
-  let cursor = lineIndex + 1;
-  while (cursor < allLines.length) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) {
-      cursor++;
-      continue;
-    }
-    if (/^#{2,3}\s+/i.test(line)) break;
-    blockLines.push(line);
-    cursor++;
-  }
+  tfStatement = (tfStatement || '').replace(/^True or False:\s*/i, '').trim();
+  if (boolAnswer === null || !tfStatement) return null;
 
-  const questions = [];
-  let nextOrder = questionIndex + 1;
-
-  const tfQuestion = buildStructuredTrueFalseQuestion(blockLines, section, difficulty, nextOrder, lineIndex + 1);
-  if (tfQuestion) {
-    questions.push(tfQuestion);
-    nextOrder += 1;
-  }
-
-  const mcqQuestion = buildStructuredMcqQuestion(blockLines, section, difficulty, nextOrder, lineIndex + 1);
-  if (mcqQuestion) {
-    questions.push(mcqQuestion);
-  }
-
-  return { questions, nextIndex: cursor };
-}
-
-function buildStructuredTrueFalseQuestion(blockLines, section, difficulty, order, sourceLine) {
-  const promptIndex = blockLines.findIndex(line => /^\*\*True or False:\*\*/i.test(line) || /^True or False:/i.test(line));
-  if (promptIndex === -1) return null;
-
-  const answerLine = blockLines.find(line => /^\*\*(?:Answer|Correct Answer):\*\*/i.test(line) || /^(?:Answer|Correct Answer):/i.test(line));
-  if (!answerLine) return null;
-
-  const promptText = blockLines[promptIndex]
-    .replace(/^\*\*True or False:\*\*/i, '')
-    .replace(/^True or False:/i, '')
-    .trim();
-
-  const answerValue = extractStructuredAnswerValue(answerLine);
-  if (answerValue === null) return null;
-
-  const explanation = extractStructuredExplanation(blockLines);
-  return buildQuestionRecord(`True or False: ${promptText}`, String(answerValue), {
+  return {
+    id: '',
+    question: tfStatement,
+    options: [],
+    answer: boolAnswer,
+    answerText: boolAnswer ? 'True' : 'False',
+    explanation: getBlockExplanation(lines, 'first'),
+    type: 'true-false',
     section,
     difficulty,
-    sourceLine,
-    order,
-    explanation,
+  };
+}
+
+function extractMcqRecord(lines, statement, section, difficulty) {
+  /* Options appear as "- A) text" (S1/S3) or "- **A.** text" (S4); ✅ marks the answer. */
+  const optionPattern = /^-\s*(?:\*\*)?([A-E])[.)](?:\*\*)?\s*(.+?)\s*$/;
+  const options = [];
+  const seenLabels = new Set();
+  let firstOptionIndex = -1;
+
+  lines.forEach((line, index) => {
+    const match = line.match(optionPattern);
+    if (!match) return;
+    if (firstOptionIndex === -1) firstOptionIndex = index;
+    const label = match[1].toUpperCase();
+    if (seenLabels.has(label)) return; /* dedupe repeated correct-answer lines (S4) */
+    seenLabels.add(label);
+    const rawText = match[2];
+    options.push({
+      label,
+      text: cleanMarkdownText(rawText.replace(/[✅❌]/g, '')).trim(),
+      correct: /✅/.test(rawText),
+    });
   });
-}
 
-function buildStructuredMcqQuestion(blockLines, section, difficulty, order, sourceLine) {
-  const headingIndex = blockLines.findIndex(line => /^\*\*MCQ-\d+/i.test(line) || /^MCQ-\d+/i.test(line));
-  if (headingIndex === -1) return null;
+  if (options.length < 2) return null;
 
-  // Scoped to lines after the MCQ heading so its own Answer/Explanation lines aren't
-  // shadowed by the True/False sub-question's Answer line earlier in the same block.
-  const afterHeadingLines = blockLines.slice(headingIndex + 1);
-  const answerLine = afterHeadingLines.find(line => /^\*\*(?:Answer|Correct Answer):\*\*/i.test(line) || /^(?:Answer|Correct Answer):/i.test(line));
-  if (!answerLine) return null;
-
-  const headingLine = blockLines[headingIndex];
-  const promptText = headingLine
-    .replace(/^\*\*MCQ-\d+\.?/i, '')
-    .replace(/^MCQ-\d+\.?/i, '')
-    .replace(/\*\*/g, '')
-    .trim();
-
-  const optionLines = afterHeadingLines.filter(line => /^[-*]?\s*[A-E]\)\s+/i.test(line));
-  const questionText = [promptText, ...optionLines].join('\n');
-  const answerValue = extractStructuredAnswerValue(answerLine);
-  if (answerValue === null) return null;
-
-  const explanation = extractStructuredExplanation(afterHeadingLines);
-  return buildQuestionRecord(questionText, String(answerValue), {
-    section,
-    difficulty,
-    sourceLine,
-    order,
-    explanation,
-  });
-}
-
-function extractStructuredAnswerValue(line) {
-  const match = line.match(/^(?:\*\*(?:Answer|Correct Answer|True\/False Answer):\*\*|(?:Answer|Correct Answer|True\/False Answer):)\s*(.+)$/i);
-  if (!match) return null;
-
-  const raw = cleanMarkdownText(match[1]).replace(/^✅\s*/i, '').replace(/^❌\s*/i, '').trim();
-  if (/^true$/i.test(raw)) return true;
-  if (/^false$/i.test(raw)) return false;
-  return raw.toUpperCase();
-}
-
-/** Extract a free-text answer (no bool/letter coercion) from a "**Answer:** ..." line. */
-function extractLabeledFreeText(line) {
-  const match = line.match(/^(?:\*\*(?:Correct\s+)?Answer:\*\*|(?:Correct\s+)?Answer:)\s*(.+)$/i);
-  if (!match) return null;
-  return cleanMarkdownText(match[1]).trim();
-}
-
-/** Extract just the option letter from a "**Answer:** C" or "**Answer:** C. full text" line. */
-function extractLeadingLetterAnswer(line) {
-  const match = line.match(/^\*\*Answer:\*\*\s*([A-E])\b/i);
-  return match ? match[1].toUpperCase() : null;
-}
-
-function extractStructuredExplanation(blockLines) {
-  const explanationLine = blockLines.find(line => /^\*\*Explanation:\*\*/i.test(line) || /^Explanation:/i.test(line));
-  if (!explanationLine) return '';
-  return cleanMarkdownText(explanationLine.replace(/^\*\*Explanation:\*\*/i, '').replace(/^Explanation:/i, '').trim());
-}
-
-/*
- * SECTION 2: "Family, Education & Community" — no ### sub-heading; each block starts
- * with a bold-numbered line (**N. text**) and alternates between an open Q&A sub-type
- * and a true/false sub-type, each followed by an inline **MCQ: ...** sub-question.
- */
-function parseSection2Block(allLines, lineIndex, section, difficulty, questionIndex) {
-  const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
-  const startMatch = currentLine.match(/^\*\*(\d+)\.\s+(.+?)\*\*\s*$/);
-  if (!startMatch) return null;
-
-  const blockLines = [];
-  let cursor = lineIndex + 1;
-  while (cursor < allLines.length) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) {
-      cursor++;
-      continue;
-    }
-    if (/^-{3,}\s*$/.test(line)) {
-      cursor++;
-      break;
-    }
-    if (/^#{2,3}\s+/i.test(line)) break;
-    if (/^\*\*\d+\.\s+/.test(line)) break;
-    blockLines.push(line);
-    cursor++;
+  let answer = options.find(option => option.correct)?.label || null;
+  if (!answer) {
+    const answerLine = lines.slice(firstOptionIndex).find(line => /^\*\*?Answer:/i.test(line));
+    const letterMatch = answerLine && answerLine.match(/\b([A-E])\b/i);
+    if (letterMatch) answer = letterMatch[1].toUpperCase();
   }
+  if (!answer) return null;
 
-  const promptText = cleanMarkdownText(startMatch[2]);
-  const questionNumber = Number(startMatch[1]);
-  const mcqHeadingIndex = blockLines.findIndex(line => /^\*\*MCQ:\s*/i.test(line));
-
-  if (mcqHeadingIndex === -1) {
-    console.warn('[questions] Section 2 block missing MCQ heading', { lineIndex: lineIndex + 1 });
-    return { questions: [], nextIndex: cursor };
+  let prompt = '';
+  const mcqIndex = lines.findIndex(line => /^\*\*MCQ/i.test(line));
+  if (mcqIndex !== -1) {
+    prompt = lines[mcqIndex]
+      .replace(/^\*\*MCQ[-:]?\s*(?:Q?\d+)?\.?\s*/i, '')
+      .replace(/\*\*/g, '')
+      .replace(/^[:.]\s*/, '')
+      .trim();
   }
-
-  const preMcqLines = blockLines.slice(0, mcqHeadingIndex);
-  const postMcqLines = blockLines.slice(mcqHeadingIndex + 1);
-  const questions = [];
-  let nextOrder = questionIndex + 1;
-
-  const tfAnswerLine = preMcqLines.find(line => /^\*\*True\/False Answer:\*\*/i.test(line) || /^True\/False Answer:/i.test(line));
-  const freeAnswerLine = preMcqLines.find(line => /^\*\*Answer:\*\*/i.test(line) || /^Answer:/i.test(line));
-
-  if (tfAnswerLine) {
-    const tfAnswerValue = extractStructuredAnswerValue(tfAnswerLine);
-    if (tfAnswerValue !== null) {
-      questions.push(buildQuestionRecord(`True or False: ${promptText}`, String(tfAnswerValue), {
-        section, difficulty, sourceLine: lineIndex + 1, order: nextOrder,
-        explanation: extractStructuredExplanation(preMcqLines), questionNumber,
-      }));
-      nextOrder += 1;
-    }
-  } else if (freeAnswerLine) {
-    const freeAnswer = extractLabeledFreeText(freeAnswerLine);
-    if (freeAnswer !== null) {
-      questions.push(buildQuestionRecord(promptText, freeAnswer, {
-        section, difficulty, sourceLine: lineIndex + 1, order: nextOrder,
-        explanation: '', questionNumber,
-      }));
-      nextOrder += 1;
-    }
-  } else {
-    console.warn('[questions] Section 2 block missing Answer/True-False Answer line', { lineIndex: lineIndex + 1 });
-  }
-
-  const mcqHeadingLine = blockLines[mcqHeadingIndex];
-  const mcqPromptText = cleanMarkdownText(mcqHeadingLine.replace(/^\*\*MCQ:\s*/i, ''));
-  const optionLines = postMcqLines.filter(line => /^[-*]?\s*[A-E]\)\s+/i.test(line));
-  const mcqAnswerLine = postMcqLines.find(line => /^\*\*(?:Answer|Correct Answer):\*\*/i.test(line) || /^(?:Answer|Correct Answer):/i.test(line));
-
-  if (optionLines.length >= 2 && mcqAnswerLine) {
-    const mcqAnswerValue = extractStructuredAnswerValue(mcqAnswerLine);
-    if (mcqAnswerValue !== null) {
-      const mcqQuestionText = [mcqPromptText, ...optionLines].join('\n');
-      questions.push(buildQuestionRecord(mcqQuestionText, String(mcqAnswerValue), {
-        section, difficulty, sourceLine: lineIndex + 1, order: nextOrder,
-        explanation: extractStructuredExplanation(postMcqLines), questionNumber,
-      }));
-    }
-  } else {
-    console.warn('[questions] Section 2 block missing usable MCQ answer/options', { lineIndex: lineIndex + 1 });
-  }
-
-  return { questions, nextIndex: cursor };
-}
-
-/*
- * SECTION 3: "WASH & Period Poverty" — heading itself (### Q{n}.) is the true/false
- * statement, followed inline by a **MCQ-Q{n}. ...** sub-question.
- */
-function parseSection3Block(allLines, lineIndex, section, difficulty, questionIndex) {
-  const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
-  const startMatch = currentLine.match(/^###\s+Q(\d+)\.\s*(.+)$/i);
-  if (!startMatch) return null;
-
-  const blockLines = [];
-  let cursor = lineIndex + 1;
-  while (cursor < allLines.length) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) {
-      cursor++;
-      continue;
-    }
-    if (/^#{2,3}\s+/i.test(line)) break;
-    blockLines.push(line);
-    cursor++;
-  }
-
-  const promptText = cleanMarkdownText(startMatch[2]);
-  const questionNumber = Number(startMatch[1]);
-  const mcqHeadingIndex = blockLines.findIndex(line => /^\*\*MCQ-Q\d+\.?/i.test(line));
-  const preMcqLines = mcqHeadingIndex === -1 ? blockLines : blockLines.slice(0, mcqHeadingIndex);
-  const postMcqLines = mcqHeadingIndex === -1 ? [] : blockLines.slice(mcqHeadingIndex + 1);
-  const questions = [];
-  let nextOrder = questionIndex + 1;
-
-  const tfAnswerLine = preMcqLines.find(line => /^\*\*True\/False Answer:\*\*/i.test(line) || /^True\/False Answer:/i.test(line));
-  if (tfAnswerLine) {
-    const tfAnswerValue = extractStructuredAnswerValue(tfAnswerLine);
-    if (tfAnswerValue !== null) {
-      questions.push(buildQuestionRecord(`True or False: ${promptText}`, String(tfAnswerValue), {
-        section, difficulty, sourceLine: lineIndex + 1, order: nextOrder,
-        explanation: extractStructuredExplanation(preMcqLines), questionNumber,
-      }));
-      nextOrder += 1;
-    }
-  } else {
-    console.warn('[questions] Section 3 block missing True/False Answer line', { lineIndex: lineIndex + 1 });
-  }
-
-  if (mcqHeadingIndex !== -1) {
-    const mcqHeadingLine = blockLines[mcqHeadingIndex];
-    const mcqPromptText = cleanMarkdownText(mcqHeadingLine.replace(/^\*\*MCQ-Q\d+\.?/i, ''));
-    const optionLines = postMcqLines.filter(line => /^[-*]?\s*[A-E]\)\s+/i.test(line));
-    const mcqAnswerLine = postMcqLines.find(line => /^\*\*(?:Answer|Correct Answer):\*\*/i.test(line) || /^(?:Answer|Correct Answer):/i.test(line));
-
-    if (optionLines.length >= 2 && mcqAnswerLine) {
-      const mcqAnswerValue = extractStructuredAnswerValue(mcqAnswerLine);
-      if (mcqAnswerValue !== null) {
-        const mcqQuestionText = [mcqPromptText, ...optionLines].join('\n');
-        questions.push(buildQuestionRecord(mcqQuestionText, String(mcqAnswerValue), {
-          section, difficulty, sourceLine: lineIndex + 1, order: nextOrder,
-          explanation: extractStructuredExplanation(postMcqLines), questionNumber,
-        }));
+  if (!prompt) {
+    /* Section 4: the prompt is the bold scenario line before the options. */
+    for (let i = 0; i < firstOptionIndex; i++) {
+      const line = lines[i];
+      if (/^\*\*.+\*\*$/.test(line) && !/^\*\*(Answer|Explanation|MCQ|True)/i.test(line)) {
+        // Strip the bold markers first so cleanMarkdownText can't mistake a
+        // leading "**" for a bullet and leave a stray asterisk behind.
+        prompt = cleanMarkdownText(line.replace(/\*\*/g, ''));
+        break;
       }
-    } else {
-      console.warn('[questions] Section 3 block missing usable MCQ answer/options', { lineIndex: lineIndex + 1 });
     }
-  } else {
-    console.warn('[questions] Section 3 block missing MCQ heading', { lineIndex: lineIndex + 1 });
+  }
+  if (!prompt) prompt = statement;
+  if (!prompt) return null;
+
+  /* Skip auto-generated template MCQs ("Which statement about X is correct?" /
+     "Which of the following is correct regarding X?"): their options are generic
+     filler and their answers are unreliable. The trailing "is correct?" keeps
+     this from catching real questions like "…is scientifically accurate?". */
+  if (/^which statement about .+ is correct\?\s*$/i.test(prompt) || /^which of the following is correct regarding/i.test(prompt)) {
+    return null;
   }
 
-  return { questions, nextIndex: cursor };
+  return {
+    id: '',
+    question: prompt,
+    options: options.map(option => ({ label: option.label, text: option.text })),
+    answer,
+    answerText: answer,
+    explanation: getBlockExplanation(lines, 'last'),
+    type: 'mcq',
+    section,
+    difficulty,
+  };
 }
 
-/*
- * SECTION 4: "Clinical & Public Health MCQ/SBA" — ### Question {n} heading, a single
- * bold scenario/question paragraph, then bold-lettered options (- **A.** text, distinct
- * bracket style from the other sections). MCQ only, no true/false sub-question.
- */
-function parseSection4Block(allLines, lineIndex, section, difficulty, questionIndex) {
-  const currentLine = normalizeMarkdownLine(allLines[lineIndex]);
-  const startMatch = currentLine.match(/^###\s+Question\s+(\d+)\s*$/i);
-  if (!startMatch) return null;
-
-  const blockLines = [];
-  let cursor = lineIndex + 1;
-  while (cursor < allLines.length) {
-    const line = normalizeMarkdownLine(allLines[cursor]);
-    if (!line) {
-      cursor++;
-      continue;
-    }
-    if (/^#{2,3}\s+/i.test(line)) break;
-    blockLines.push(line);
-    cursor++;
-  }
-
-  const questionNumber = Number(startMatch[1]);
-  const promptLine = blockLines.find(line => /^\*\*(.+)\*\*\s*$/.test(line) && !/^[-*]\s/.test(line));
-  if (!promptLine) {
-    console.warn('[questions] Section 4 block missing prompt line', { lineIndex: lineIndex + 1 });
-    return { questions: [], nextIndex: cursor };
-  }
-  const promptText = cleanMarkdownText(promptLine);
-
-  const optionMap = new Map();
-  const optionRe = /^[-*]?\s*\*\*([A-E])\.\*\*\s*(.+)$/i;
-  blockLines.forEach(line => {
-    const match = line.match(optionRe);
-    if (match && !optionMap.has(match[1].toUpperCase())) {
-      optionMap.set(match[1].toUpperCase(), cleanMarkdownText(match[2]));
-    }
-  });
-
-  const answerLine = blockLines.find(line => /^\*\*Answer:\*\*/i.test(line));
-  const answerLetter = answerLine ? extractLeadingLetterAnswer(answerLine) : null;
-
-  if (optionMap.size < 2 || !answerLetter) {
-    console.warn('[questions] Section 4 block missing usable options/answer', { lineIndex: lineIndex + 1 });
-    return { questions: [], nextIndex: cursor };
-  }
-
-  const optionLines = [...optionMap.entries()].map(([letter, text]) => `${letter}) ${text}`);
-  const questionText = [promptText, ...optionLines].join('\n');
-  const explanation = extractStructuredExplanation(blockLines);
-
-  const question = buildQuestionRecord(questionText, answerLetter, {
-    section, difficulty, sourceLine: lineIndex + 1, order: questionIndex + 1, explanation, questionNumber,
-  });
-
-  return { questions: [question], nextIndex: cursor };
+/* Pull an explanation from a block; blocks may hold one for the TF and one for the MCQ. */
+function getBlockExplanation(lines, which) {
+  const explanations = lines
+    .filter(line => /^\*\*Explanation:\*\*/i.test(line))
+    .map(line => cleanMarkdownText(line.replace(/^\*\*Explanation:\*\*/i, '')))
+    .filter(text => text && !/^(true|false)$/i.test(text));
+  if (!explanations.length) return '';
+  return which === 'last' ? explanations[explanations.length - 1] : explanations[0];
 }
 
+/* ---- shared markdown helpers ---- */
 function normalizeMarkdownLine(line) {
   return line
     .replace(/<[^>]+>/g, '')
@@ -497,46 +337,6 @@ function cleanMarkdownText(text) {
     .replace(/\s*[✅❌]\s*/g, ' ')
     .replace(/[ \t]{2,}/g, ' ')
     .trim();
-}
-
-function buildQuestionRecord(questionText, answerText, metadata) {
-  // Split into a leading prompt and any "A) text" option lines. Done line-by-line
-  // (rather than a single blob regex) because options are newline-separated and a
-  // lazy `.+?` without the dotall flag can never cross those newlines to find them.
-  const optionLineRe = /^[-*]?\s*([A-E])\)\s+(.+)$/i;
-  const promptLines = [];
-  const options = [];
-  questionText.split('\n').forEach(line => {
-    const match = line.trim().match(optionLineRe);
-    if (match) {
-      options.push({ label: match[1].toUpperCase(), text: cleanMarkdownText(match[2]) });
-    } else if (options.length === 0) {
-      promptLines.push(line);
-    }
-  });
-
-  const cleanedQuestion = cleanMarkdownText(promptLines.join(' ')).replace(/^Question:\s*/i, '');
-  const cleanedAnswer = cleanMarkdownText(answerText);
-  const normalizedAnswer = cleanedAnswer.toLowerCase();
-
-  const isMcq = options.length >= 2;
-  const mcqAnswer = isMcq ? cleanedAnswer.toUpperCase() : cleanedAnswer;
-
-  const isTrueFalse = !isMcq && (/^true\b/i.test(cleanedQuestion) || /^(true|false)\b/i.test(normalizedAnswer));
-
-  return {
-    id: `q-${metadata.order}`,
-    question: cleanedQuestion,
-    options: options,
-    answer: isMcq ? mcqAnswer : (isTrueFalse ? normalizedAnswer.startsWith('true') : cleanedAnswer),
-    answerText: cleanedAnswer,
-    explanation: metadata.explanation || '',
-    type: isMcq ? 'mcq' : (isTrueFalse ? 'true-false' : 'qa'),
-    section: metadata.section,
-    difficulty: metadata.difficulty,
-    sourceLine: metadata.sourceLine,
-    questionNumber: metadata.questionNumber || null,
-  };
 }
 
 /**
@@ -560,6 +360,30 @@ function categorizeQuestionsByDifficulty() {
   });
 
   console.log('Question bank loaded', questionBankMetadata);
+}
+
+/**
+ * Load fallback menstrual health questions if parsing fails
+ */
+function loadFallbackQuestions() {
+  questions = [
+    { question: "Menstruation is the monthly shedding of the uterine lining.", answer: true, type: 'true-false', difficulty: 'easy' },
+    { question: "What is the average length of a menstrual cycle?", options: [{label: 'A', text: '21 days'}, {label: 'B', text: '28 days'}, {label: 'C', text: '35 days'}, {label: 'D', text: '40 days'}], answer: "B", type: 'mcq', difficulty: 'easy' },
+    { question: "True or False: A menstrual cycle of 28 days is standard for all women.", answer: false, type: 'true-false', difficulty: 'easy' },
+    { question: "Which hormone is primarily responsible for preparing the uterine lining for pregnancy?", options: [{label: 'A', text: 'Insulin'}, {label: 'B', text: 'Estrogen'}, {label: 'C', text: 'Testosterone'}, {label: 'D', text: 'Melatonin'}], answer: "B", type: 'mcq', difficulty: 'easy' },
+    { question: "True or False: Using unclean cloths during menstruation can lead to infections.", answer: true, type: 'true-false', difficulty: 'medium' },
+    { question: "What are the most common menstrual hygiene products?", options: [{label: 'A', text: 'Sanitary pads, tampons, and menstrual cups'}, {label: 'B', text: 'Paper towels and tissues'}, {label: 'C', text: 'Cotton balls'}, {label: 'D', text: 'Sponges'}], answer: "A", type: 'mcq', difficulty: 'medium' },
+    { question: "True or False: Leaving a tampon in for too long can increase the risk of toxic shock syndrome (TSS).", answer: true, type: 'true-false', difficulty: 'medium' },
+    { question: "Which of the following can help alleviate menstrual cramps?", options: [{label: 'A', text: 'Eating very salty foods'}, {label: 'B', text: 'Drinking icy cold water'}, {label: 'C', text: 'Applying heat to the abdomen'}, {label: 'D', text: 'Avoiding all physical movement'}], answer: "C", type: 'mcq', difficulty: 'hard' },
+    { question: "True or False: PCOS can lead to menstrual irregularities and infertility.", answer: true, type: 'true-false', difficulty: 'hard' },
+    { question: "What is endometriosis?", options: [{label: 'A', text: 'A normal part of the menstrual cycle'}, {label: 'B', text: 'Tissue similar to the uterine lining growing outside the uterus'}, {label: 'C', text: 'A type of menstrual product'}, {label: 'D', text: 'A hormonal medication'}], answer: "B", type: 'mcq', difficulty: 'hard' },
+  ];
+  
+  difficultyLevels.easy = questions.filter(q => q.difficulty === 'easy');
+  difficultyLevels.medium = questions.filter(q => q.difficulty === 'medium');
+  difficultyLevels.hard = questions.filter(q => q.difficulty === 'hard');
+
+  console.log('Using fallback questions');
 }
 
 /* Game rules for carousel display */
@@ -628,6 +452,7 @@ function createInitialGameState(playerConfigs = []) {
       avatar,
       hasStarted: false,
       score: 0,
+      streak: 0,
       achievements: [],
       isAI,
     });
@@ -644,6 +469,7 @@ function createInitialGameState(playerConfigs = []) {
       avatar,
       hasStarted: false,
       score: 0,
+      streak: 0,
       achievements: [],
       isAI: false,
     });
@@ -656,6 +482,8 @@ function createInitialGameState(playerConfigs = []) {
     isRolling: false,
     questionPool: [],
     usedQuestions: [],
+    difficulty: 'all',   /* pool filter: all | easy | medium | hard */
+    timerSeconds: 0,     /* per-question countdown; 0 = off */
   };
 }
 
@@ -758,12 +586,51 @@ const speechManager = {
 
 const elements = {};
 let aiTurnTimer = null;
+let questionTimerId = null;   /* interval id for the per-question countdown */
+
+/* ---------------------------------------------------------------
+   Per-question countdown timer. Off when timerSeconds is 0.
+   onExpire is called once if the player runs out of time.
+   --------------------------------------------------------------- */
+function clearQuestionTimer() {
+  if (questionTimerId !== null) {
+    clearInterval(questionTimerId);
+    questionTimerId = null;
+  }
+  if (elements.questionTimer) elements.questionTimer.hidden = true;
+}
+
+function startQuestionTimer(onExpire) {
+  clearQuestionTimer();
+  const total = gameState.timerSeconds || 0;
+  const chip = elements.questionTimer;
+  if (!total || !chip) return;
+
+  let remaining = total;
+  const render = () => {
+    chip.hidden = false;
+    chip.textContent = `⏱ ${remaining}s`;
+    chip.classList.toggle('question-timer-urgent', remaining <= 5);
+  };
+  render();
+
+  questionTimerId = setInterval(() => {
+    remaining -= 1;
+    if (remaining <= 0) {
+      clearQuestionTimer();
+      onExpire();
+      return;
+    }
+    render();
+  }, 1000);
+}
 
 function cacheElements() {
   Object.assign(elements, {
     // Navbar
     backBtn: document.getElementById('back-btn'),
     rulesBtn: document.getElementById('rules-btn'),
+    historyBtn: document.getElementById('history-btn'),
     themeBtn: document.getElementById('theme-btn'),
     musicBtn: document.getElementById('music-btn'),
     soundBtn: document.getElementById('sound-btn'),
@@ -816,6 +683,8 @@ function cacheElements() {
     player3NameInput: document.getElementById('player3-name'),
     player4NameInput: document.getElementById('player4-name'),
     playerCountSelect: document.getElementById('player-count'),
+    difficultySelect: document.getElementById('difficulty-select'),
+    timerSelect: document.getElementById('timer-select'),
     player3InputGroup: document.getElementById('player3-input-group'),
     player4InputGroup: document.getElementById('player4-input-group'),
     player1AvatarSelection: document.getElementById('player1-avatar-selection'),
@@ -827,6 +696,7 @@ function cacheElements() {
 
     // Question modal
     questionTitle: document.getElementById('question-title'),
+    questionTimer: document.getElementById('question-timer'),
     questionText: document.getElementById('question-text'),
     mcqOptions: document.getElementById('mcq-options'),
     trueBtn: document.getElementById('true-btn'),
@@ -840,7 +710,19 @@ function cacheElements() {
     // Winner modal
     winnerText: document.getElementById('winner-text'),
     winnerAvatar: document.getElementById('winner-avatar'),
+    winnerScores: document.getElementById('winner-scores'),
     playAgainBtn: document.getElementById('play-again-btn'),
+
+    // Resume-game modal
+    resumeModal: document.getElementById('resume-modal'),
+    resumeSummary: document.getElementById('resume-summary'),
+    resumeContinueBtn: document.getElementById('resume-continue-btn'),
+    resumeNewBtn: document.getElementById('resume-new-btn'),
+
+    // History modal
+    historyModal: document.getElementById('history-modal'),
+    historyList: document.getElementById('history-list'),
+    historyCloseBtn: document.getElementById('history-close-btn'),
 
     // Audio
     backgroundMusic: document.getElementById('background-music'),
@@ -933,6 +815,53 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/* Escape a string so it is safe to inject into innerHTML. Player names are the
+   only user-supplied text that reaches HTML templates (scoreboard, history). */
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  }[ch]));
+}
+
+/* ---------------------------------------------------------------
+   Scoring: +10 per correct answer, +5 bonus every 3-in-a-row streak.
+   --------------------------------------------------------------- */
+function recordAnswer(isCorrect) {
+  const player = gameState.players[gameState.currentPlayer];
+  if (!player) return;
+
+  if (isCorrect) {
+    player.streak = (player.streak || 0) + 1;
+    let gained = POINTS_PER_CORRECT;
+    if (player.streak % STREAK_THRESHOLD === 0) gained += STREAK_BONUS;
+    player.score = (player.score || 0) + gained;
+  } else {
+    player.streak = 0;
+  }
+
+  updateScoreboardUi();
+}
+
+/* Refresh the per-player score and streak badges on the player cards. */
+function updateScoreboardUi() {
+  for (let i = 0; i < 4; i++) {
+    const player = gameState.players[i];
+    const scoreEl = document.getElementById(`player${i + 1}-score-display`);
+    const badgeEl = document.getElementById(`player${i + 1}-streak-badge`);
+    if (scoreEl && player) scoreEl.textContent = `${player.score || 0} pts`;
+    if (badgeEl && player) {
+      const streaking = (player.streak || 0) >= STREAK_THRESHOLD;
+      badgeEl.hidden = !streaking;
+      const countEl = badgeEl.querySelector('.streak-count');
+      if (countEl) countEl.textContent = String(player.streak || 0);
+    }
+  }
+}
+
 function getPlayerToken(index) {
   return [elements.player1, elements.player2, elements.player3, elements.player4][index] || null;
 }
@@ -992,6 +921,7 @@ function updatePlayersUi() {
   }
 
   elements.currentPlayerName.textContent = gameState.players[gameState.currentPlayer]?.name || "Player 1";
+  updateScoreboardUi();
 }
 
 function showRulesStep() {
@@ -1051,7 +981,7 @@ function transactionDone(tx) {
 
 async function deleteCurrentRecord(store) {
   const curIdx = store.index('current');
-  const curCursor = await idbRequest(curIdx.openCursor(IDBKeyRange.only(true)));
+  const curCursor = await idbRequest(curIdx.openCursor(IDBKeyRange.only(1)));
   if (curCursor) {
     curCursor.delete();
   }
@@ -1079,7 +1009,7 @@ async function persistCurrentGame(state) {
   const tx = db.transaction(STORE_NAME, 'readwrite');
   const store = tx.objectStore(STORE_NAME);
   await deleteCurrentRecord(store);
-  store.put({ timestamp: Date.now(), isCurrent: true, state });
+  store.put({ timestamp: Date.now(), isCurrent: 1, state });
   await transactionDone(tx);
 }
 
@@ -1091,7 +1021,7 @@ async function loadCurrentGame() {
   const db = await openDB();
   const tx = db.transaction(STORE_NAME, 'readonly');
   const idx = tx.objectStore(STORE_NAME).index('current');
-  const cursor = await idbRequest(idx.openCursor(IDBKeyRange.only(true)));
+  const cursor = await idbRequest(idx.openCursor(IDBKeyRange.only(1)));
   return cursor ? cursor.value.state : null;
 }
 
@@ -1109,7 +1039,7 @@ async function archiveFinishedGame(state) {
   const tx = db.transaction(STORE_NAME, 'readwrite');
   const store = tx.objectStore(STORE_NAME);
   await deleteCurrentRecord(store);
-  store.put({ timestamp: Date.now(), isCurrent: false, state });
+  store.put({ timestamp: Date.now(), isCurrent: 0, state });
   await transactionDone(tx);
 }
 
@@ -1519,6 +1449,7 @@ function toggleReadAloud() {
    ============================================================================ */
 
 let currentRuleSlide = 0;
+let pendingSavedGame = null;   /* saved game awaiting a Resume / New Game choice */
 
 function initializeCarousel() {
   renderCarouselSlides();
@@ -1600,16 +1531,77 @@ function moveToCarouselEnd() {
    MODAL MANAGEMENT
    ============================================================================ */
 
+/* ---------------------------------------------------------------
+   Modal focus management: while a modal is open, keep Tab focus
+   inside it, and return focus to the triggering element on close.
+   --------------------------------------------------------------- */
+const focusTrapState = new WeakMap();
+
+function getFocusableElements(container) {
+  const selector = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])',
+  ].join(',');
+  return Array.from(container.querySelectorAll(selector))
+    .filter(el => !el.hidden && el.offsetParent !== null);
+}
+
+function activateFocusTrap(modal) {
+  if (focusTrapState.has(modal)) return;
+
+  const previouslyFocused = document.activeElement;
+  const handler = (e) => {
+    if (e.key !== 'Tab') return;
+    const focusable = getFocusableElements(modal);
+    if (focusable.length === 0) {
+      e.preventDefault();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement;
+    if (e.shiftKey && (active === first || !modal.contains(active))) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && (active === last || !modal.contains(active))) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
+  modal.addEventListener('keydown', handler);
+  focusTrapState.set(modal, { handler, previouslyFocused });
+
+  const focusable = getFocusableElements(modal);
+  (focusable[0] || modal).focus();
+}
+
+function deactivateFocusTrap(modal) {
+  const state = focusTrapState.get(modal);
+  if (!state) return;
+  modal.removeEventListener('keydown', state.handler);
+  focusTrapState.delete(modal);
+  if (typeof state.previouslyFocused?.focus === 'function') {
+    state.previouslyFocused.focus();
+  }
+}
+
 function showSetupModal(forceRules = false) {
   if (forceRules || appState.showRulesOnStart) {
     showRulesStep();
   } else {
     showPlayerSetupStep();
   }
+  activateFocusTrap(elements.setupModal);
 }
 
 function hideSetupModal() {
   elements.setupModal.classList.remove('modal-active');
+  deactivateFocusTrap(elements.setupModal);
   speechManager.stop();
 }
 
@@ -1618,28 +1610,55 @@ function showQuestionModal(questionText) {
   elements.questionModal.hidden = false;
   elements.questionModal.classList.add('modal-active');
   playSound(elements.questionSound);
-  
+  activateFocusTrap(elements.questionModal);
+
   /* Read aloud the question */
   speechManager.speak(questionText);
 }
 
 function hideQuestionModal() {
+  clearQuestionTimer();
   elements.questionModal.hidden = true;
   elements.questionModal.classList.remove('modal-active');
+  deactivateFocusTrap(elements.questionModal);
 }
 
 function showWinnerModal(playerName, playerElement) {
   elements.winnerText.textContent = `${playerName} wins the game!`;
   elements.winnerAvatar.src = playerElement?.src || "";
   elements.winnerAvatar.alt = `${playerName}'s avatar`;
+  renderFinalScoreboard();
   elements.winnerModal.hidden = false;
   elements.winnerModal.classList.add('modal-active');
   playSound(elements.winSound);
+  activateFocusTrap(elements.winnerModal);
+}
+
+/* Fill the winner modal with a final scoreboard sorted by score (desc). */
+function renderFinalScoreboard() {
+  if (!elements.winnerScores) return;
+  const ranked = gameState.players
+    .map((p, index) => ({ p, index }))
+    .sort((a, b) => (b.p.score || 0) - (a.p.score || 0));
+
+  elements.winnerScores.innerHTML = `
+    <h3 class="scoreboard-title">Final Scores</h3>
+    <ol class="scoreboard-list">
+      ${ranked.map(({ p }) => `
+        <li class="scoreboard-row">
+          <img class="scoreboard-avatar" src="${escapeHtml(p.avatar || '')}" alt="">
+          <span class="scoreboard-name">${escapeHtml(p.name)}${p.isAI ? ' (AI)' : ''}</span>
+          <span class="scoreboard-score">${p.score || 0} pts</span>
+        </li>
+      `).join('')}
+    </ol>
+  `;
 }
 
 function hideWinnerModal() {
   elements.winnerModal.hidden = true;
   elements.winnerModal.classList.remove('modal-active');
+  deactivateFocusTrap(elements.winnerModal);
 }
 
 /* ============================================================================
@@ -1691,43 +1710,46 @@ function getBoardJump(position) {
 // QUESTION HANDLING – session‑unique question pool
 // ---------------------------------------------------------------------------
 
+// Build the list of pool-eligible questions for the selected difficulty, never
+// returning an empty list when the bank has usable questions.
+function getEligibleQuestions() {
+  const isPlayable = q => q && (q.type === 'true-false' || q.type === 'mcq');
+  const selected = gameState.difficulty || 'all';
+  const playable = questions.filter(isPlayable);
+  if (selected === 'all') return playable;
+  const filtered = playable.filter(q => q.difficulty === selected);
+  // Fall back to every playable question if the difficulty filter empties the pool.
+  return filtered.length ? filtered : playable;
+}
+
+function shuffleInPlace(list) {
+  for (let i = list.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  return list;
+}
+
 // Initialize a shuffled pool of questions for the current game session.
 function initializeQuestionPool() {
-  // Determine allowed difficulties based on START_DIFFICULTY (easy < medium < hard)
-  const difficultyOrder = ['easy','medium','hard'];
-  const minIndex = difficultyOrder.indexOf(START_DIFFICULTY);
-  const allowed = new Set(difficultyOrder.slice(minIndex));
-  // Use true/false and mcq questions meeting difficulty criteria
-  const pool = questions.filter(q => (q.type === 'true-false' || q.type === 'mcq') && allowed.has(q.difficulty));
-  // Shuffle using Fisher‑Yates.
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  gameState.questionPool = pool; // array of question objects
+  gameState.questionPool = shuffleInPlace(getEligibleQuestions().slice());
   gameState.usedQuestions = [];
 }
 
 // Retrieve the next question from the session pool, rebuilding if exhausted.
 function getNextQuestion() {
   if (!gameState.questionPool || gameState.questionPool.length === 0) {
-    // Rebuild pool with difficulty filter
-    const difficultyOrder = ['easy','medium','hard'];
-    const minIndex = difficultyOrder.indexOf(START_DIFFICULTY);
-    const allowed = new Set(difficultyOrder.slice(minIndex));
     const recent = gameState.usedQuestions.slice(-5);
-    const all = questions.filter(q => (q.type === 'true-false' || q.type === 'mcq') && allowed.has(q.difficulty));
-    const newPool = all.filter(q => !recent.includes(q));
-    for (let i = newPool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newPool[i], newPool[j]] = [newPool[j], newPool[i]];
-    }
-    gameState.questionPool = newPool;
+    const eligible = getEligibleQuestions();
+    // Avoid repeating the most recent questions unless that would empty the pool.
+    let newPool = eligible.filter(q => !recent.includes(q));
+    if (newPool.length === 0) newPool = eligible.slice();
+    gameState.questionPool = shuffleInPlace(newPool);
     gameState.usedQuestions = [];
   }
   const next = gameState.questionPool.shift();
-  gameState.usedQuestions.push(next);
-  return next;
+  if (next) gameState.usedQuestions.push(next);
+  return next || null;
 }
 
 function getExplanationForQuestion(q) {
@@ -1752,14 +1774,7 @@ function getExplanationForQuestion(q) {
       }
     }
   }
-  // Fallback: if no close match, just describe the correct answer
-  if (q.type === 'mcq') {
-    const correctOption = q.options.find(opt => opt.label === q.answer);
-    const optionText = correctOption ? correctOption.text.replace(/\s*✅\s*$/, '').trim() : null;
-    return optionText
-      ? `The correct answer is ${correctOption.label}) ${optionText}.`
-      : `The correct answer is ${q.answer}.`;
-  }
+  // Fallback: if no close match, just describe the correct statement
   if (q.answer === true) {
     return `${q.question.replace(/^True or False:\s*/i, '')} is correct.`;
   } else {
@@ -1768,21 +1783,39 @@ function getExplanationForQuestion(q) {
 }
 
 function showQuestion(callback) {
-  // If the current player is AI, answer automatically without UI
+  // If the current player is AI, answer automatically without UI. The odds of a
+  // correct answer scale with the selected difficulty of the question pool.
   const currentPlayer = gameState.players[gameState.currentPlayer];
   if (currentPlayer.isAI) {
-    const autoAnswer = Math.random() < 0.5;
-    setTimeout(() => callback(autoAnswer), 300);
+    const accuracy = AI_ACCURACY[gameState.difficulty] ?? AI_ACCURACY.all;
+    const autoAnswer = Math.random() < accuracy;
+    setTimeout(() => {
+      recordAnswer(autoAnswer);
+      callback(autoAnswer);
+    }, 300);
     return;
   }
 
   // Ensure the question bank is ready.
   if (questions.length === 0) {
-    throw new Error('No questions available from the markdown question bank');
+    loadFallbackQuestions();
   }
 
   // Get a unique question for this turn.
-  const nextQuestion = getNextQuestion();
+  let nextQuestion = getNextQuestion();
+
+  // Safety net: if the pool could not supply a question, rebuild from fallbacks
+  // rather than crashing on an undefined question.
+  if (!nextQuestion) {
+    loadFallbackQuestions();
+    initializeQuestionPool();
+    nextQuestion = getNextQuestion();
+  }
+  if (!nextQuestion) {
+    console.warn('No question available to display; skipping question.');
+    callback(false);
+    return;
+  }
 
   // Reset the UI to initial question state
   elements.questionFeedback.classList.add('hidden');
@@ -1814,7 +1847,17 @@ function showQuestion(callback) {
   showQuestionModal(nextQuestion.question);
   gameState.isQuestionActive = true;
 
-  function handleSelect(answer, clickedBtn = null) {
+  /* Start the countdown (if enabled). Running out of time counts as a wrong
+     answer: resolve with a guaranteed-incorrect option. */
+  startQuestionTimer(() => {
+    const wrongAnswer = nextQuestion.type === 'mcq'
+      ? (nextQuestion.options.find(opt => opt.label !== nextQuestion.answer)?.label ?? null)
+      : !nextQuestion.answer;
+    handleSelect(wrongAnswer, null, true);
+  });
+
+  function handleSelect(answer, clickedBtn = null, timedOut = false) {
+    clearQuestionTimer();
     if (nextQuestion.type === 'mcq') {
       const buttons = elements.mcqOptions.querySelectorAll('button');
       buttons.forEach(b => {
@@ -1846,18 +1889,24 @@ function showQuestion(callback) {
     } else {
       elements.questionFeedback.classList.remove('feedback-correct');
       elements.questionFeedback.classList.add('feedback-incorrect');
-      elements.feedbackIcon.textContent = "❌";
-      elements.feedbackMessage.textContent = "Incorrect – better luck next time.";
+      elements.feedbackIcon.textContent = timedOut ? "⏱" : "❌";
+      elements.feedbackMessage.textContent = timedOut
+        ? "Time's up – that counts as incorrect."
+        : "Incorrect – better luck next time.";
     }
-    
+
     elements.feedbackExplanation.textContent = explanation;
     elements.questionFeedback.classList.remove('hidden');
     elements.continueBtn.classList.remove('hidden');
-    
+
     // Speak feedback and explanation
-    const feedbackText = (isCorrect ? "Correct – well done! " : "Incorrect – better luck next time. ") + explanation;
+    const incorrectSpoken = timedOut ? "Time's up. That counts as incorrect. " : "Incorrect – better luck next time. ";
+    const feedbackText = (isCorrect ? "Correct – well done! " : incorrectSpoken) + explanation;
     speechManager.speak(feedbackText);
-    
+
+    // Update score and streak once the answer is locked in.
+    recordAnswer(isCorrect);
+
     function onContinue() {
       elements.continueBtn.removeEventListener('click', onContinue);
       speechManager.stop();
@@ -1890,7 +1939,7 @@ async function handleTurn() {
   try {
     await questionBankReady;
     if (questions.length === 0) {
-      throw new Error('No questions available from the markdown question bank');
+      loadFallbackQuestions();
     }
 
     const currentPlayer = gameState.players[gameState.currentPlayer];
@@ -1990,10 +2039,13 @@ function finalizeTurn(newPosition) {
         position: p.position,
         avatar: p.avatar,
         score: p.score,
+        streak: p.streak,
         achievements: p.achievements,
         isAI: p.isAI,
       })),
       currentPlayer: gameState.currentPlayer,
+      winner: currentPlayer.name,
+      difficulty: gameState.difficulty,
       timestamp: Date.now(),
     });
     clearCurrentGame().catch(error => {
@@ -2010,10 +2062,13 @@ function finalizeTurn(newPosition) {
       position: p.position,
       avatar: p.avatar,
       score: p.score,
+      streak: p.streak,
       achievements: p.achievements,
       isAI: p.isAI,
     })),
     currentPlayer: gameState.currentPlayer,
+    difficulty: gameState.difficulty,
+    timerSeconds: gameState.timerSeconds,
     questionPool: gameState.questionPool?.map(q => q.id) || [],
   });
 }
@@ -2103,20 +2158,24 @@ function startGame() {
   }
 
   gameState = createInitialGameState(playerConfigs);
+  gameState.difficulty = elements.difficultySelect?.value || 'all';
+  gameState.timerSeconds = Number(elements.timerSelect?.value || 0);
   gameState.players.forEach((player, index) => {
     player.element = getPlayerToken(index);
     player.position = 0;
     player.hasStarted = false;
   });
   updatePlayersUi();
+  initializeQuestionPool();
 
   hideSetupModal();
-  
+
   gameState.currentPlayer = 0;
   gameState.isGameOver = false;
   gameState.isQuestionActive = false;
   gameState.isRolling = false;
 
+  elements.restartBtn.hidden = false;
   playMusic(elements.backgroundMusic);
   enableRollWhenQuestionsReady();
 }
@@ -2139,7 +2198,8 @@ function resetGame() {
   setDiceFace(1);
   updatePlayersUi();
   elements.rollDiceBtn.hidden = false;
-  elements.restartBtn.hidden = true;
+  // A restart keeps the game in progress, so the Restart button stays visible.
+  elements.restartBtn.hidden = false;
 
   gameState.players.forEach((player, index) => {
     updatePlayerPosition(index, 0);
@@ -2151,6 +2211,155 @@ function resetGame() {
 
 function showRulesModal() {
   showSetupModal(true);
+}
+
+/* ============================================================================
+   RESUME-GAME PROMPT
+   ============================================================================ */
+
+function promptResume(saved) {
+  hideSetupModal();
+  if (elements.resumeSummary) {
+    const names = (saved.players || []).map(p => p.name).join(', ');
+    elements.resumeSummary.textContent = names ? `Players: ${names}` : '';
+  }
+  if (!elements.resumeModal) return;
+  elements.resumeModal.hidden = false;
+  elements.resumeModal.classList.add('modal-active');
+  activateFocusTrap(elements.resumeModal);
+}
+
+function hideResumeModal() {
+  if (!elements.resumeModal) return;
+  elements.resumeModal.classList.remove('modal-active');
+  elements.resumeModal.hidden = true;
+  deactivateFocusTrap(elements.resumeModal);
+}
+
+/* Apply a previously saved game to the live state and continue play. */
+function applySavedGame(saved) {
+  gameState = createInitialGameState(saved.players || []);
+  gameState.difficulty = saved.difficulty || 'all';
+  gameState.timerSeconds = saved.timerSeconds || 0;
+  gameState.players.forEach((p, i) => {
+    const sp = saved.players?.[i] || {};
+    p.position = sp.position || 0;
+    p.score = sp.score || 0;
+    p.streak = sp.streak || 0;
+    p.achievements = sp.achievements || [];
+    p.hasStarted = p.position > 0;
+    p.element = getPlayerToken(i);
+  });
+  gameState.currentPlayer = saved.currentPlayer ?? 0;
+
+  // Restore the shuffled question pool (IDs only) to keep uniqueness.
+  if (saved.questionPool?.length) {
+    const byId = new Map(questions.map(q => [q.id, q]));
+    gameState.questionPool = saved.questionPool.map(id => byId.get(id)).filter(Boolean);
+  } else {
+    initializeQuestionPool();
+  }
+
+  gameState.players.forEach((player, idx) => syncAvatarPicker(idx, player.avatar));
+  updatePlayersUi();
+  elements.rollDiceBtn.hidden = false;
+  elements.restartBtn.hidden = false;   // A restored game is in progress.
+  playMusic(elements.backgroundMusic);
+  setRollButtonForCurrentPlayer();
+  scheduleAiTurnIfNeeded();
+}
+
+function resumeSavedGame() {
+  if (!pendingSavedGame) return;
+  const saved = pendingSavedGame;
+  pendingSavedGame = null;
+  hideResumeModal();
+  applySavedGame(saved);
+}
+
+function startNewFromResume() {
+  pendingSavedGame = null;
+  hideResumeModal();
+  clearCurrentGame().catch(error => console.warn('Unable to clear current game', error));
+  showSetupModal();
+}
+
+/* ============================================================================
+   GAME HISTORY
+   ============================================================================ */
+
+/* Determine the winner of an archived game: whoever reached 100, else top score. */
+function historyWinner(state) {
+  const players = state.players || [];
+  if (state.winner) return state.winner;
+  const reached = players.find(p => (p.position || 0) >= 100);
+  if (reached) return reached.name;
+  const top = players.slice().sort((a, b) => (b.score || 0) - (a.score || 0))[0];
+  return top?.name || '—';
+}
+
+function formatHistoryDate(timestamp) {
+  if (!timestamp) return '';
+  try {
+    return new Date(timestamp).toLocaleString(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  } catch {
+    return new Date(timestamp).toLocaleString();
+  }
+}
+
+async function renderHistoryList() {
+  const list = elements.historyList;
+  if (!list) return;
+  list.innerHTML = '<li class="history-empty">Loading…</li>';
+
+  let games = [];
+  try {
+    games = await fetchGameHistory(20);
+  } catch (error) {
+    console.warn('Unable to load game history', error);
+  }
+
+  if (!games.length) {
+    list.innerHTML = '<li class="history-empty">No finished games yet. Win a game to see it here!</li>';
+    return;
+  }
+
+  list.innerHTML = games.map(entry => {
+    const state = entry.state || {};
+    const players = state.players || [];
+    const winner = historyWinner(state);
+    const scores = players.slice()
+      .sort((a, b) => (b.score || 0) - (a.score || 0))
+      .map(p => `${escapeHtml(p.name)}: ${p.score || 0}`)
+      .join(' • ');
+    return `
+      <li class="history-row">
+        <div class="history-main">
+          <span class="history-winner">🏆 ${escapeHtml(winner)}</span>
+          <span class="history-date">${escapeHtml(formatHistoryDate(entry.timestamp))}</span>
+        </div>
+        <div class="history-scores">${scores}</div>
+      </li>
+    `;
+  }).join('');
+}
+
+function openHistoryModal() {
+  if (!elements.historyModal) return;
+  elements.historyModal.hidden = false;
+  elements.historyModal.classList.add('modal-active');
+  activateFocusTrap(elements.historyModal);
+  renderHistoryList();
+}
+
+function hideHistoryModal() {
+  if (!elements.historyModal) return;
+  elements.historyModal.classList.remove('modal-active');
+  elements.historyModal.hidden = true;
+  deactivateFocusTrap(elements.historyModal);
 }
 
 /* ============================================================================
@@ -2187,35 +2396,13 @@ function initGame() {
       return loadCurrentGame();
     })
     .then(saved => {
-      if (saved) {
-        gameState = createInitialGameState(saved.players || []);
-        gameState.players.forEach((p, i) => {
-          const sp = saved.players?.[i] || {};
-          p.position = sp.position || 0;
-          p.score = sp.score || 0;
-          p.achievements = sp.achievements || [];
-          p.hasStarted = p.position > 0;
-          p.element = getPlayerToken(i);
-        });
-        gameState.currentPlayer = saved.currentPlayer ?? 0;
-        // Restore the shuffled question pool (IDs only) to keep uniqueness
-        if (saved.questionPool?.length) {
-          const allTrue = questions.filter(q => q.type === 'true-false');
-          gameState.questionPool = saved.questionPool
-            .map(id => allTrue.find(q => q.id === id))
-            .filter(Boolean);
-        }
-        gameState.players.forEach((player, idx) => syncAvatarPicker(idx, player.avatar));
-        updatePlayersUi();
-        setRollButtonForCurrentPlayer();
-        if (appState.showRulesOnStart) {
-          showSetupModal();
-        } else {
-          scheduleAiTurnIfNeeded();
-        }
+      // A saved game in progress: ask the player whether to resume it rather
+      // than silently restoring. Otherwise leave the setup modal open.
+      if (saved && (saved.players || []).some(p => (p.position || 0) > 0)) {
+        pendingSavedGame = saved;
+        promptResume(saved);
       }
       // Roll dice button enabled after game start handled in startGame()
-
     })
     .catch(err => {
       console.warn('Failed to load game state', err);
@@ -2227,11 +2414,22 @@ function initGame() {
   gameState.players[1].element = elements.player2;
   
   // Event Listeners - Navigation
-  elements.backBtn.addEventListener('click', () => {
-    window.history.back();
-  });
+  // history.back() is a no-op when index.html is opened directly (no prior
+  // entry), so hide the Back button unless there is somewhere to go back to.
+  if (window.history.length <= 1) {
+    elements.backBtn.hidden = true;
+  } else {
+    elements.backBtn.addEventListener('click', () => {
+      window.history.back();
+    });
+  }
   
   elements.rulesBtn.addEventListener('click', showRulesModal);
+  elements.historyBtn?.addEventListener('click', openHistoryModal);
+  elements.historyCloseBtn?.addEventListener('click', hideHistoryModal);
+  elements.historyModal?.querySelector('.modal-overlay')?.addEventListener('click', hideHistoryModal);
+  elements.resumeContinueBtn?.addEventListener('click', resumeSavedGame);
+  elements.resumeNewBtn?.addEventListener('click', startNewFromResume);
   elements.themeBtn.addEventListener('click', toggleTheme);
   elements.musicBtn.addEventListener('click', toggleMusic);
   elements.soundBtn.addEventListener('click', toggleSound);
@@ -2278,15 +2476,39 @@ function initGame() {
   
   // Play again button
   elements.playAgainBtn.addEventListener('click', resetGame);
-  
+
+  // Register the service worker for offline support (http/https only).
+  registerServiceWorker();
+
   // Show setup modal on start (unless user disabled it) – now handled by loadCurrentGame
 
+}
+
+/* Register the offline service worker when the environment supports it. */
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(error => {
+      console.warn('Service worker registration failed', error);
+    });
+  });
 }
 
 
 /* Keyboard shortcuts */
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    hideQuestionModal();
+    // While a question is active, Escape must be a no-op: hiding the modal
+    // here would leave the turn unresolved (isQuestionActive stuck true, the
+    // answer callback never fires) and let players skip questions. The modal
+    // is only ever open during a question, so there is nothing else to close.
+    if (gameState.isQuestionActive) {
+      return;
+    }
+    // The history modal is purely informational, so Escape may close it.
+    if (elements.historyModal?.classList.contains('modal-active')) {
+      hideHistoryModal();
+    }
   }
 });

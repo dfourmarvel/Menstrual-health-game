@@ -1,8 +1,7 @@
 {
   "name": "menstrual-health-game",
   "version": "1.0.0",
-  "description": "**Documentation:** See the consolidated project documentation at [/plans/DOCUMENTATION.md](/plans/DOCUMENTATION.md).",
-  "main": "index.js",
+  "description": "A static, no-build board game that teaches menstrual health awareness through dice rolls and question cards.",
   "scripts": {
     "test": "node node_modules/@playwright/test/cli.js test"
   },
@@ -20,6 +19,6 @@
   "homepage": "https://github.com/dfourmarvel/Menstrual-health-game#readme",
   "devDependencies": {
     "@playwright/test": "^1.60.0",
-    "sharp": "^0.33.0"
+    "sharp": "^0.35.3"
   }
 }
