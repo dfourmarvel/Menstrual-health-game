@@ -75,8 +75,8 @@ The gap is small — mostly infra and docs.
 | Feature | This game | Bible Quiz | Notes |
 |---|---|---|---|
 | **Responsive multi-width board** (`srcset` with 600w PNG + 1200w WebP) | ✅ | ⚠️ simpler `<picture>` (WebP + single PNG fallback, no width `srcset`) | This game's board markup is actually a touch more responsive |
-| **`AUDIT.md`** design/audit doc | ✅ | ❌ | |
-| **`plans/`** folder (`plan.md`, `implementation_status.md`) | ✅ | ❌ | |
+| **`AUDIT.md`** design/audit doc | removed 2026-09-03 (superseded) | ❌ | |
+| **`plans/`** folder | removed 2026-09-03 (all items shipped) | ❌ | |
 | **Working `optimize-board.js`** out of the box | ✅ (targets `menstrual-maze-board.png`, which exists) | ✅ now (was broken — pointed at a missing file — fixed during the Bible Quiz audit) | |
 
 ---
