@@ -420,7 +420,7 @@ const gameRules = [
   },
   {
     title: "A Quick Note",
-    description: "This is an educational game, not medical advice. Content was reviewed with guidance from Dr. Frank. If you have concerns about your health, talk to a clinician.",
+    description: "This is an educational game, not medical advice. If you have concerns about your health, talk to a clinician.",
     icon: "ℹ️"
   },
   {
