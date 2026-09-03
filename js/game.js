@@ -419,6 +419,11 @@ const gameRules = [
     icon: "💪"
   },
   {
+    title: "A Quick Note",
+    description: "This is an educational game, not medical advice. Content was reviewed with guidance from Dr. Frank. If you have concerns about your health, talk to a clinician.",
+    icon: "ℹ️"
+  },
+  {
     title: "Let's Begin!",
     description: "Configure your player names and click Start Game to begin. Have fun while learning about menstrual health!",
     icon: "✨"
@@ -2489,10 +2494,31 @@ function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
   if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(error => {
+    navigator.serviceWorker.register('sw.js').then(registration => {
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        newWorker?.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            showUpdateBanner();
+          }
+        });
+      });
+    }).catch(error => {
       console.warn('Service worker registration failed', error);
     });
   });
+}
+
+/* Show a small dismissible "update available" banner and reload on click. */
+function showUpdateBanner() {
+  if (document.getElementById('sw-update-banner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'sw-update-banner';
+  banner.setAttribute('role', 'status');
+  banner.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#6366f1;color:#fff;padding:10px 16px;text-align:center;font-size:14px;cursor:pointer;';
+  banner.textContent = 'Update available — tap to reload';
+  banner.addEventListener('click', () => window.location.reload());
+  document.body.appendChild(banner);
 }
 
 

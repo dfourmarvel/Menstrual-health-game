@@ -1810,6 +1810,31 @@ button {
 }
 
 /* ============================================================================
+   SITE FOOTER / DISCLAIMER
+   ============================================================================ */
+
+.site-footer {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  padding: var(--spacing-sm, 8px) var(--spacing-md);
+  text-align: center;
+}
+
+.site-footer .disclaimer {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.site-footer .disclaimer a {
+  color: inherit;
+  text-decoration: underline;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+/* ============================================================================
    REDUCED MOTION
    ============================================================================ */
 

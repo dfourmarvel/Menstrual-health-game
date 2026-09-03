@@ -5,8 +5,7 @@ Educational board game (menstrual health trivia), vanilla HTML/CSS/JS. Static si
 ## Structure
 - `index.html`, `css/`, `js/` — the game itself
 - `assets/` — images/media
-- `questions.md`, `Menstrual_Health questions.md` — question content
-- `plans/` — `plan.md` and `implementation_status.md` track ongoing feature work; `plans/DOCUMENTATION.md` is the consolidated project doc (see `package.json` description)
+- `Menstrual_Health questions.md` — question content
 - `scripts/` — helper scripts (e.g. image optimization)
 - `tests/` — Playwright end-to-end tests
 
@@ -16,4 +15,3 @@ Educational board game (menstrual health trivia), vanilla HTML/CSS/JS. Static si
 
 ## Notes
 - GitHub: dfourmarvel/Menstrual-health-game
-- Check `plans/implementation_status.md` before starting new work to see what's already in progress.

@@ -14,7 +14,7 @@ test('shows rules first and continues to player setup', async ({ page }) => {
   await expect(page.locator('#rules-carousel')).toBeVisible();
   await expect(page.getByText('How to Play')).toBeVisible();
 
-  for (let i = 0; i < 7; i += 1) {
+  for (let i = 0; i < 8; i += 1) {
     await page.locator('#carousel-next').click();
   }
 

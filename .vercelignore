@@ -1,0 +1,14 @@
+CLAUDE.md
+AGENTS.md
+README.md
+playwright.config.ts
+tests/
+scripts/
+test-results/
+node_modules/
+package.json
+package-lock.json
+.claude/
+AUDIT.md
+ADDITIONAL_FEATURES.md
+plans/
